@@ -8,11 +8,41 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, FileText, Clock, CheckCircle, Users } from "lucide-react";
+import {
+  ArrowLeft,
+  FileText,
+  Clock,
+  CheckCircle,
+  Users,
+  Loader2,
+} from "lucide-react";
 import { Link } from "react-router-dom";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useAuth } from "@/hooks/use-auth";
+import { useToast } from "@/hooks/use-toast";
 
 const LayananSurat = () => {
+  const { login, logout, user, loading } = useAuth();
+  const { toast } = useToast();
   const [selectedService, setSelectedService] = useState<string | null>(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
   const services = [
     {
@@ -97,10 +127,151 @@ const LayananSurat = () => {
             <h1 className="text-2xl font-bold text-green-800">
               Layanan Surat Desa
             </h1>
-            <Button className="bg-green-600 hover:bg-green-700">
-              <Users className="w-4 h-4 mr-2" />
-              Login Admin
-            </Button>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                {loading ? (
+                  <Button
+                    variant="outline"
+                    className="border-green-600 text-green-600 hover:bg-green-50"
+                    disabled
+                  >
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Loading...
+                  </Button>
+                ) : user ? (
+                  <div className="flex items-center gap-2">
+                    <span className="text-green-800">{user.email}</span>
+                    <Button
+                      variant="outline"
+                      className="border-green-600 text-green-600 hover:bg-green-50"
+                      onClick={async () => {
+                        const result = await logout();
+                        if (result.success) {
+                          toast({
+                            title: "Logout berhasil",
+                            description: "Sampai jumpa kembali!",
+                          });
+                        }
+                      }}
+                    >
+                      Logout
+                    </Button>
+                  </div>
+                ) : (
+                  <Button className="bg-green-600 hover:bg-green-700">
+                    <Users className="w-4 h-4 mr-2" />
+                    Login Admin
+                  </Button>
+                )}
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Login Admin</DialogTitle>
+                  <DialogDescription>
+                    Masuk sebagai admin untuk mengelola layanan surat.
+                  </DialogDescription>
+                </DialogHeader>
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    setIsLoading(true);
+                    try {
+                      setEmailError("");
+                      setPasswordError("");
+                      setConfirmPasswordError("");
+
+                      const result = await login(email, password);
+                      if (result.success) {
+                        toast({
+                          title: "Login berhasil",
+                          description: "Selamat datang di dashboard admin",
+                        });
+                        setIsDialogOpen(false);
+                      } else {
+                        if (result.error) {
+                          if (result.error.includes("email")) {
+                            setEmailError(result.error);
+                          } else if (result.error.includes("password")) {
+                            setPasswordError(result.error);
+                          } else {
+                            toast({
+                              variant: "destructive",
+                              title: "Login gagal",
+                              description:
+                                result.error ||
+                                "Terjadi kesalahan. Silakan coba lagi.",
+                            });
+                          }
+                        }
+                      }
+                    } catch (error) {
+                      toast({
+                        variant: "destructive",
+                        title: "Error",
+                        description: "Terjadi kesalahan saat login",
+                      });
+                    } finally {
+                      setIsLoading(false);
+                    }
+                  }}
+                  className="space-y-4"
+                >
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="admin@example.com"
+                      value={email}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        setEmailError("");
+                      }}
+                      className={`bg-gray-100 placeholder:text-gray-800 ${
+                        emailError ? "border-red-500" : "border-gray-300"
+                      }`}
+                      required
+                    />
+                    {emailError && (
+                      <p className="text-sm text-red-500 mt-1">{emailError}</p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Password</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      placeholder="Masukkan kata sandi"
+                      value={password}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        setPasswordError("");
+                      }}
+                      className={`bg-gray-100 placeholder:text-gray-600 ${
+                        passwordError ? "border-red-500" : "border-gray-300"
+                      }`}
+                      required
+                    />
+                    {passwordError && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {passwordError}
+                      </p>
+                    )}
+                  </div>
+
+                  <Button
+                    type="submit"
+                    className="w-full bg-green-800 hover:bg-green-900 text-white"
+                    disabled={isLoading}
+                  >
+                    {isLoading && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
+                    {isLoading ? "Loading..." : "Login"}
+                  </Button>
+                </form>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </nav>
