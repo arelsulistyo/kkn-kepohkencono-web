@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { SuratTemplateType } from "@/components/surat-templates";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -24,11 +25,13 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
+import { Combobox } from "@/components/ui/combobox";
 
 const LayananSurat = () => {
   const { login, logout, user, loading } = useAuth();
@@ -105,10 +108,138 @@ const LayananSurat = () => {
     },
   ];
 
+  const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
+  const [namaPeminta, setNamaPeminta] = useState("");
+  const [alamatDomisili, setAlamatDomisili] = useState("");
+  const [namaPemintaError, setNamaPemintaError] = useState("");
+  const [alamatDomisiliError, setAlamatDomisiliError] = useState("");
+
+  const alamatOptions = [
+    {
+      value: "MANDING 05/01 KEPOHKENCONO PUCAKWANGI",
+      label: "MANDING 05/01 KEPOHKENCONO PUCAKWANGI",
+    },
+    {
+      value: "MANDING 04/01 KEPOHKENCONO PUCAKWANGI",
+      label: "MANDING 04/01 KEPOHKENCONO PUCAKWANGI",
+    },
+  ];
+
   const handleServiceSelect = (serviceId: string) => {
     setSelectedService(serviceId);
-    // Here you would navigate to the form page
-    console.log(`Selected service: ${serviceId}`);
+
+    // Check if user is logged in before allowing service access
+    if (!user) {
+      toast({
+        title: "Login Diperlukan",
+        description:
+          "Anda harus login terlebih dahulu untuk menggunakan layanan surat.",
+        variant: "destructive",
+      });
+      setIsDialogOpen(true); // Open login dialog
+      return;
+    }
+
+    // Reset form fields when opening the form
+    if (serviceId === "domisili") {
+      setNamaPeminta("");
+      setAlamatDomisili("");
+      setNamaPemintaError("");
+      setAlamatDomisiliError("");
+      setIsFormDialogOpen(true);
+    } else {
+      // Untuk layanan surat lainnya yang belum diimplementasikan
+      toast({
+        title: "Layanan Belum Tersedia",
+        description: `Layanan ${serviceId} sedang dalam pengembangan. Silakan coba lagi nanti.`,
+        variant: "default",
+      });
+      console.log(`Selected service: ${serviceId}`);
+    }
+  };
+
+  // Fungsi untuk mengkonversi URL gambar ke base64 telah dipindahkan ke komponen template surat
+
+  // Fungsi untuk menghasilkan PDF menggunakan template surat yang sesuai
+  const generatePDF = async () => {
+    try {
+      if (!selectedService) {
+        throw new Error("Tidak ada layanan surat yang dipilih");
+      }
+
+      // Import fungsi untuk mendapatkan template surat
+      const { getSuratTemplate } = await import("@/components/surat-templates");
+
+      // Dapatkan template surat berdasarkan tipe yang dipilih
+      const generateSurat = await getSuratTemplate(
+        selectedService as SuratTemplateType
+      );
+
+      // Siapkan data yang akan dikirim ke template surat
+      const suratData: any = {};
+
+      // Tambahkan data sesuai dengan tipe surat
+      if (selectedService === "domisili") {
+        suratData.namaPeminta = namaPeminta;
+        suratData.alamatDomisili = alamatDomisili;
+      }
+      // Tambahkan kondisi untuk tipe surat lainnya di masa depan
+      // else if (selectedService === 'skck') { ... }
+
+      // Gunakan template surat dengan data yang sesuai
+      const result = await generateSurat(suratData);
+
+      if (!result) {
+        throw new Error("Gagal membuat PDF");
+      }
+
+      // Return success
+      return true;
+    } catch (error) {
+      console.error("Gagal membuat PDF:", error);
+      toast({
+        title: "Gagal membuat PDF",
+        description: "Terjadi kesalahan saat membuat PDF. Silakan coba lagi.",
+        variant: "destructive",
+      });
+      return false;
+    }
+  };
+
+  const handleSubmitForm = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validate form
+    let isValid = true;
+
+    if (!namaPeminta.trim()) {
+      setNamaPemintaError("Nama peminta surat harus diisi");
+      isValid = false;
+    } else {
+      setNamaPemintaError("");
+    }
+
+    if (!alamatDomisili) {
+      setAlamatDomisiliError("Alamat domisili harus dipilih");
+      isValid = false;
+    } else {
+      setAlamatDomisiliError("");
+    }
+
+    if (isValid) {
+      // Generate PDF (async operation)
+      const pdfGenerated = await generatePDF();
+
+      // Process form submission if PDF was generated successfully
+      if (pdfGenerated) {
+        toast({
+          title: "Pengajuan Berhasil",
+          description:
+            "Surat Keterangan Domisili Anda sedang diproses dan telah diunduh",
+        });
+        setIsFormDialogOpen(false);
+      }
+    }
   };
 
   return (
@@ -228,7 +359,7 @@ const LayananSurat = () => {
                         setEmailError("");
                       }}
                       className={`bg-gray-100 placeholder:text-gray-800 ${
-                        emailError ? "border-red-500" : "border-gray-300"
+                        emailError ? "border-red-500" : "border-gray-400"
                       }`}
                       required
                     />
@@ -248,7 +379,7 @@ const LayananSurat = () => {
                         setPasswordError("");
                       }}
                       className={`bg-gray-100 placeholder:text-gray-600 ${
-                        passwordError ? "border-red-500" : "border-gray-300"
+                        passwordError ? "border-red-500" : "border-gray-400"
                       }`}
                       required
                     />
@@ -394,7 +525,7 @@ const LayananSurat = () => {
                       handleServiceSelect(service.id);
                     }}
                   >
-                    Ajukan Sekarang
+                    Buat Surat
                   </Button>
                 </CardContent>
               </Card>
@@ -408,7 +539,7 @@ const LayananSurat = () => {
         <div className="container mx-auto px-6">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-green-800 mb-4">
-              Cara Pengajuan
+              Cara Pembuatan Surat
             </h2>
             <p className="text-lg text-gray-700">
               Ikuti langkah-langkah mudah berikut ini
@@ -422,7 +553,7 @@ const LayananSurat = () => {
               </div>
               <h3 className="font-semibold text-green-800 mb-2">Pilih Surat</h3>
               <p className="text-gray-600 text-sm">
-                Pilih jenis surat yang ingin Anda ajukan
+                Pilih jenis surat yang ingin Anda buat
               </p>
             </div>
             <div className="text-center">
@@ -441,19 +572,19 @@ const LayananSurat = () => {
                 3
               </div>
               <h3 className="font-semibold text-green-800 mb-2">
-                Kirim Dokumen
+                Proses Dokumen
               </h3>
               <p className="text-gray-600 text-sm">
-                Upload dokumen pendukung yang diperlukan
+                Verifikasi data dan proses pembuatan surat
               </p>
             </div>
             <div className="text-center">
               <div className="w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-lg font-bold">
                 4
               </div>
-              <h3 className="font-semibold text-green-800 mb-2">Ambil Surat</h3>
+              <h3 className="font-semibold text-green-800 mb-2">Cetak Surat</h3>
               <p className="text-gray-600 text-sm">
-                Surat dapat diambil sesuai estimasi waktu
+                Cetak surat dan serahkan kepada warga
               </p>
             </div>
           </div>
@@ -466,7 +597,7 @@ const LayananSurat = () => {
           <h2 className="text-3xl font-bold mb-4">Butuh Bantuan?</h2>
           <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
             Tim kami siap membantu Anda. Jangan ragu untuk menghubungi kami jika
-            ada pertanyaan tentang proses pengajuan surat atau persyaratan yang
+            ada pertanyaan tentang proses pembuatan surat atau persyaratan yang
             diperlukan.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -486,6 +617,83 @@ const LayananSurat = () => {
           </div>
         </div>
       </section>
+
+      {/* Form Dialog for Surat Keterangan Domisili */}
+      <Dialog open={isFormDialogOpen} onOpenChange={setIsFormDialogOpen}>
+        <DialogContent className="sm:max-w-[650px] p-8">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">
+              Formulir Surat Keterangan Domisili
+            </DialogTitle>
+            <DialogDescription className="text-base mt-2">
+              Silakan lengkapi data berikut untuk pembuatan Surat Keterangan
+              Domisili.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleSubmitForm} className="space-y-6 mt-4">
+            <div className="space-y-3">
+              <Label htmlFor="namaPeminta" className="text-lg">
+                Nama Peminta Surat
+              </Label>
+              <Input
+                id="namaPeminta"
+                placeholder="Masukkan nama lengkap"
+                className={`text-base ${
+                  namaPemintaError ? "border-red-500" : "border-gray-400"
+                }`}
+                value={namaPeminta}
+                onChange={(e) => {
+                  setNamaPeminta(e.target.value);
+                  setNamaPemintaError("");
+                }}
+              />
+              {namaPemintaError && (
+                <p className="text-base text-red-500 mt-1">
+                  {namaPemintaError}
+                </p>
+              )}
+            </div>
+            <div className="space-y-3">
+              <Label htmlFor="alamatDomisili" className="text-lg">
+                Alamat Domisili
+              </Label>
+              <Combobox
+                options={alamatOptions}
+                value={alamatDomisili}
+                onValueChange={(value) => {
+                  setAlamatDomisili(value);
+                  setAlamatDomisiliError("");
+                }}
+                placeholder="Pilih alamat domisili"
+                className={`text-base ${
+                  alamatDomisiliError ? "border-red-500" : "border-gray-400"
+                }`}
+              />
+              {alamatDomisiliError && (
+                <p className="text-base text-red-500 mt-1">
+                  {alamatDomisiliError}
+                </p>
+              )}
+            </div>
+            <DialogFooter className="mt-8">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsFormDialogOpen(false)}
+                className="text-base h-12 px-6"
+              >
+                Batal
+              </Button>
+              <Button
+                type="submit"
+                className="bg-green-600 hover:bg-green-700 text-base h-12 px-6"
+              >
+                Buat Surat
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
