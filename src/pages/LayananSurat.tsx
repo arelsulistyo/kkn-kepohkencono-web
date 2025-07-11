@@ -109,10 +109,28 @@ const LayananSurat = () => {
   ];
 
   const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
+  const [isUsahaFormDialogOpen, setIsUsahaFormDialogOpen] = useState(false);
   const [namaPeminta, setNamaPeminta] = useState("");
   const [alamatDomisili, setAlamatDomisili] = useState("");
   const [namaPemintaError, setNamaPemintaError] = useState("");
   const [alamatDomisiliError, setAlamatDomisiliError] = useState("");
+  
+  // State untuk form Surat Keterangan Usaha
+  const [pekerjaan, setPekerjaan] = useState("");
+  const [alamat, setAlamat] = useState("");
+  const [jenisUsaha, setJenisUsaha] = useState("");
+  const [jenisGarapan, setJenisGarapan] = useState("");
+  const [luasLahan, setLuasLahan] = useState("");
+  const [lokasiLahan, setLokasiLahan] = useState("");
+  const [jenisBibit, setJenisBibit] = useState("");
+  const [hasilPanenTon, setHasilPanenTon] = useState("");
+  const [hasilPanenKw, setHasilPanenKw] = useState("");
+  const [hasilPanenKg, setHasilPanenKg] = useState("");
+  
+  // Error state untuk form Surat Keterangan Usaha
+  const [pekerjaanError, setPekerjaanError] = useState("");
+  const [alamatError, setAlamatError] = useState("");
+  const [jenisUsahaError, setJenisUsahaError] = useState("");
 
   const alamatOptions = [
     {
@@ -123,6 +141,12 @@ const LayananSurat = () => {
       value: "MANDING 04/01 KEPOHKENCONO PUCAKWANGI",
       label: "MANDING 04/01 KEPOHKENCONO PUCAKWANGI",
     },
+  ];
+  
+  const jenisGarapanOptions = [
+    { value: "Tambak", label: "Tambak" },
+    { value: "Sawah", label: "Sawah" },
+    { value: "Tegalan", label: "Tegalan" },
   ];
 
   const handleServiceSelect = (serviceId: string) => {
@@ -147,6 +171,27 @@ const LayananSurat = () => {
       setNamaPemintaError("");
       setAlamatDomisiliError("");
       setIsFormDialogOpen(true);
+    } else if (serviceId === "usaha") {
+      // Reset form fields for Surat Keterangan Usaha
+      setNamaPeminta("");
+      setPekerjaan("");
+      setAlamat("");
+      setJenisUsaha("");
+      setJenisGarapan("");
+      setLuasLahan("");
+      setLokasiLahan("");
+      setJenisBibit("");
+      setHasilPanenTon("");
+      setHasilPanenKw("");
+      setHasilPanenKg("");
+      
+      // Reset error states
+      setNamaPemintaError("");
+      setPekerjaanError("");
+      setAlamatError("");
+      setJenisUsahaError("");
+      
+      setIsUsahaFormDialogOpen(true);
     } else {
       // Untuk layanan surat lainnya yang belum diimplementasikan
       toast({
@@ -182,6 +227,24 @@ const LayananSurat = () => {
       if (selectedService === "domisili") {
         suratData.namaPeminta = namaPeminta;
         suratData.alamatDomisili = alamatDomisili;
+      } else if (selectedService === "usaha") {
+        suratData.namaPeminta = namaPeminta;
+        suratData.pekerjaan = pekerjaan;
+        suratData.alamat = alamat;
+        suratData.jenisUsaha = jenisUsaha;
+        
+        // Tambahkan data pertanian jika diisi
+        if (jenisGarapan) {
+          suratData.jenisGarapan = jenisGarapan;
+          suratData.luasLahan = luasLahan;
+          suratData.lokasiLahan = lokasiLahan;
+          suratData.jenisBibit = jenisBibit;
+          suratData.hasilPanen = {
+            ton: hasilPanenTon,
+            kw: hasilPanenKw,
+            kg: hasilPanenKg
+          };
+        }
       }
       // Tambahkan kondisi untuk tipe surat lainnya di masa depan
       // else if (selectedService === 'skck') { ... }
@@ -238,6 +301,56 @@ const LayananSurat = () => {
             "Surat Keterangan Domisili Anda sedang diproses dan telah diunduh",
         });
         setIsFormDialogOpen(false);
+      }
+    }
+  };
+  
+  const handleSubmitUsahaForm = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validate form
+    let isValid = true;
+
+    if (!namaPeminta.trim()) {
+      setNamaPemintaError("Nama peminta surat harus diisi");
+      isValid = false;
+    } else {
+      setNamaPemintaError("");
+    }
+
+    if (!pekerjaan.trim()) {
+      setPekerjaanError("Pekerjaan harus diisi");
+      isValid = false;
+    } else {
+      setPekerjaanError("");
+    }
+    
+    if (!alamat.trim()) {
+      setAlamatError("Alamat harus diisi");
+      isValid = false;
+    } else {
+      setAlamatError("");
+    }
+    
+    if (!jenisUsaha.trim()) {
+      setJenisUsahaError("Jenis usaha harus diisi");
+      isValid = false;
+    } else {
+      setJenisUsahaError("");
+    }
+
+    if (isValid) {
+      // Generate PDF (async operation)
+      const pdfGenerated = await generatePDF();
+
+      // Process form submission if PDF was generated successfully
+      if (pdfGenerated) {
+        toast({
+          title: "Pengajuan Berhasil",
+          description:
+            "Surat Keterangan Usaha Anda sedang diproses dan telah diunduh",
+        });
+        setIsUsahaFormDialogOpen(false);
       }
     }
   };
@@ -680,6 +793,233 @@ const LayananSurat = () => {
                 type="button"
                 variant="outline"
                 onClick={() => setIsFormDialogOpen(false)}
+                className="text-base h-12 px-6"
+              >
+                Batal
+              </Button>
+              <Button
+                type="submit"
+                className="bg-green-600 hover:bg-green-700 text-base h-12 px-6"
+              >
+                Buat Surat
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Form Dialog for Surat Keterangan Usaha */}
+      <Dialog open={isUsahaFormDialogOpen} onOpenChange={setIsUsahaFormDialogOpen}>
+        <DialogContent className="sm:max-w-[650px] p-8 max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">
+              Formulir Surat Keterangan Usaha
+            </DialogTitle>
+            <DialogDescription className="text-base mt-2">
+              Silakan lengkapi data berikut untuk pembuatan Surat Keterangan
+              Usaha.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleSubmitUsahaForm} className="space-y-6 mt-4">
+            <div className="space-y-3">
+              <Label htmlFor="namaPeminta" className="text-lg">
+                Nama Peminta Surat
+              </Label>
+              <Input
+                id="namaPeminta"
+                placeholder="Masukkan nama lengkap"
+                className={`text-base ${
+                  namaPemintaError ? "border-red-500" : "border-gray-400"
+                }`}
+                value={namaPeminta}
+                onChange={(e) => {
+                  setNamaPeminta(e.target.value);
+                  setNamaPemintaError("");
+                }}
+              />
+              {namaPemintaError && (
+                <p className="text-base text-red-500 mt-1">
+                  {namaPemintaError}
+                </p>
+              )}
+            </div>
+            
+            <div className="space-y-3">
+              <Label htmlFor="pekerjaan" className="text-lg">
+                Pekerjaan
+              </Label>
+              <Input
+                id="pekerjaan"
+                placeholder="Masukkan pekerjaan"
+                className={`text-base ${
+                  pekerjaanError ? "border-red-500" : "border-gray-400"
+                }`}
+                value={pekerjaan}
+                onChange={(e) => {
+                  setPekerjaan(e.target.value);
+                  setPekerjaanError("");
+                }}
+              />
+              {pekerjaanError && (
+                <p className="text-base text-red-500 mt-1">
+                  {pekerjaanError}
+                </p>
+              )}
+            </div>
+            
+            <div className="space-y-3">
+              <Label htmlFor="alamat" className="text-lg">
+                Alamat
+              </Label>
+              <Input
+                id="alamat"
+                placeholder="Masukkan alamat lengkap"
+                className={`text-base ${
+                  alamatError ? "border-red-500" : "border-gray-400"
+                }`}
+                value={alamat}
+                onChange={(e) => {
+                  setAlamat(e.target.value);
+                  setAlamatError("");
+                }}
+              />
+              {alamatError && (
+                <p className="text-base text-red-500 mt-1">
+                  {alamatError}
+                </p>
+              )}
+            </div>
+            
+            <div className="space-y-3">
+              <Label htmlFor="jenisUsaha" className="text-lg">
+                Jenis Usaha
+              </Label>
+              <Input
+                id="jenisUsaha"
+                placeholder="Masukkan jenis usaha"
+                className={`text-base ${
+                  jenisUsahaError ? "border-red-500" : "border-gray-400"
+                }`}
+                value={jenisUsaha}
+                onChange={(e) => {
+                  setJenisUsaha(e.target.value);
+                  setJenisUsahaError("");
+                }}
+              />
+              {jenisUsahaError && (
+                <p className="text-base text-red-500 mt-1">
+                  {jenisUsahaError}
+                </p>
+              )}
+            </div>
+            
+            <div className="border-t pt-4 mt-4">
+              <h3 className="text-lg font-semibold mb-4">Informasi Tambahan untuk Usaha Pertanian (Opsional)</h3>
+              
+              <div className="space-y-3 mb-4">
+                <Label htmlFor="jenisGarapan" className="text-lg">
+                  Jenis Garapan
+                </Label>
+                <Combobox
+                  options={jenisGarapanOptions}
+                  value={jenisGarapan}
+                  onValueChange={(value) => {
+                    setJenisGarapan(value);
+                  }}
+                  placeholder="Pilih jenis garapan"
+                  className="text-base border-gray-400"
+                />
+              </div>
+              
+              <div className="space-y-3 mb-4">
+                <Label htmlFor="luasLahan" className="text-lg">
+                  Luas Lahan (Ha)
+                </Label>
+                <Input
+                  id="luasLahan"
+                  placeholder="Masukkan luas lahan dalam hektar"
+                  className="text-base border-gray-400"
+                  value={luasLahan}
+                  onChange={(e) => setLuasLahan(e.target.value)}
+                />
+              </div>
+              
+              <div className="space-y-3 mb-4">
+                <Label htmlFor="lokasiLahan" className="text-lg">
+                  Lokasi Lahan (Desa)
+                </Label>
+                <Input
+                  id="lokasiLahan"
+                  placeholder="Masukkan lokasi lahan"
+                  className="text-base border-gray-400"
+                  value={lokasiLahan}
+                  onChange={(e) => setLokasiLahan(e.target.value)}
+                />
+              </div>
+              
+              <div className="space-y-3 mb-4">
+                <Label htmlFor="jenisBibit" className="text-lg">
+                  Jenis Bibit
+                </Label>
+                <Input
+                  id="jenisBibit"
+                  placeholder="Masukkan jenis bibit"
+                  className="text-base border-gray-400"
+                  value={jenisBibit}
+                  onChange={(e) => setJenisBibit(e.target.value)}
+                />
+              </div>
+              
+              <div className="space-y-3 mb-4">
+                <Label className="text-lg">
+                  Hasil Panen per Ha
+                </Label>
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <Label htmlFor="hasilPanenTon" className="text-sm">
+                      Ton
+                    </Label>
+                    <Input
+                      id="hasilPanenTon"
+                      placeholder="Ton"
+                      className="text-base border-gray-400"
+                      value={hasilPanenTon}
+                      onChange={(e) => setHasilPanenTon(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="hasilPanenKw" className="text-sm">
+                      Kwintal
+                    </Label>
+                    <Input
+                      id="hasilPanenKw"
+                      placeholder="Kw"
+                      className="text-base border-gray-400"
+                      value={hasilPanenKw}
+                      onChange={(e) => setHasilPanenKw(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="hasilPanenKg" className="text-sm">
+                      Kilogram
+                    </Label>
+                    <Input
+                      id="hasilPanenKg"
+                      placeholder="Kg"
+                      className="text-base border-gray-400"
+                      value={hasilPanenKg}
+                      onChange={(e) => setHasilPanenKg(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <DialogFooter className="mt-8">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsUsahaFormDialogOpen(false)}
                 className="text-base h-12 px-6"
               >
                 Batal

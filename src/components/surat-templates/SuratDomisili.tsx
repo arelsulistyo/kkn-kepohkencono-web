@@ -1,6 +1,7 @@
 import { jsPDF } from "jspdf";
 import { callAddFont } from "@/fonts/Bookman Old Style-normal.js";
 import { callAddFontBold } from "@/fonts/Bookman Old Style-bold.js";
+import { getNextLetterNumber } from "@/lib/firebase";
 
 interface SuratDomisiliProps {
   namaPeminta: string;
@@ -46,6 +47,9 @@ const generateSuratDomisili = async (
   const { namaPeminta, alamatDomisili } = props;
 
   try {
+    // Get the next letter number for this template
+    const letterNumber = await getNextLetterNumber("domisili");
+    
     // Buat instance jsPDF
     const doc = new jsPDF();
     jsPDF.API.events.push(["addFonts", callAddFont, callAddFontBold]);
@@ -104,7 +108,7 @@ const generateSuratDomisili = async (
     doc.setFontSize(12);
     doc.setFont("Bookman Old Style", "normal");
     doc.text(
-      "Nomor : 400.7.22.1 / 185 /VI / " + currentDate.getFullYear(),
+      `Nomor : 400.7.22.1 / ${letterNumber}`,
       105,
       76,
       {
@@ -170,7 +174,7 @@ const generateSuratDomisili = async (
     // doc.text("Kepohkencono Pucakwangi Pati.", 10, 170);
 
     doc.text(
-      "        Demikian Surat Keterangan tersebut kami buat dan dapat dipergunakan seperlunya",
+      "        Demikian Surat Keterangan tersebut kami buat dan dapat dipergunakan seperlunya.",
       20,
       160,
       { maxWidth: 170, align: "justify" }
