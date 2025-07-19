@@ -75,6 +75,20 @@ const LayananSurat = () => {
       status: "Tersedia",
     },
     {
+      id: "izin-keramaian",
+      title: "Surat Permohonan Izin Keramaian",
+      description:
+        "Surat izin untuk mengadakan acara atau kegiatan yang melibatkan banyak orang",
+      requirements: [
+        "KTP Asli",
+        "Kartu Keluarga",
+        "Surat Pengantar RT/RW",
+        "Rincian Acara",
+      ],
+      estimatedTime: "1-2 Hari Kerja",
+      status: "Tersedia",
+    },
+    {
       id: "skck",
       title: "Surat Pengantar SKCK",
       description:
@@ -130,6 +144,8 @@ const LayananSurat = () => {
   const [isUsahaFormDialogOpen, setIsUsahaFormDialogOpen] = useState(false);
   const [isPengantarDesaFormDialogOpen, setIsPengantarDesaFormDialogOpen] =
     useState(false);
+  const [isIzinKeramaianFormDialogOpen, setIsIzinKeramaianFormDialogOpen] =
+    useState(false);
   const [namaPeminta, setNamaPeminta] = useState("");
   const [alamatDomisili, setAlamatDomisili] = useState("");
   const [namaPemintaError, setNamaPemintaError] = useState("");
@@ -173,6 +189,37 @@ const LayananSurat = () => {
     undefined
   );
   const [keteranganLain, setKeteranganLain] = useState("");
+
+  // State untuk form Surat Izin Keramaian - tambahan fields
+  const [noHP, setNoHP] = useState("");
+  const [jabatan, setJabatan] = useState("Pemilik");
+  const [tanggalAcara, setTanggalAcara] = useState("");
+  const [tanggalAcaraDate, setTanggalAcaraDate] = useState<Date | undefined>(
+    undefined
+  );
+  const [waktuAcara, setWaktuAcara] = useState("");
+  const [tempatAcara, setTempatAcara] = useState("");
+  const [namaAcara, setNamaAcara] = useState("");
+  const [detailAcara, setDetailAcara] = useState("");
+
+  // State untuk data pemilik lokasi
+  const [pemilikLokasiNama, setPemilikLokasiNama] = useState("");
+  const [pemilikLokasiAlamat, setPemilikLokasiAlamat] = useState("");
+  const [pemilikLokasiPekerjaan, setPemilikLokasiPekerjaan] = useState("");
+
+  // Error state untuk fields tambahan
+  const [noHPError, setNoHPError] = useState("");
+  const [tanggalAcaraError, setTanggalAcaraError] = useState("");
+  const [waktuAcaraError, setWaktuAcaraError] = useState("");
+  const [tempatAcaraError, setTempatAcaraError] = useState("");
+  const [namaAcaraError, setNamaAcaraError] = useState("");
+  const [detailAcaraError, setDetailAcaraError] = useState("");
+
+  // Error state untuk data pemilik lokasi
+  const [pemilikLokasiNamaError, setPemilikLokasiNamaError] = useState("");
+  const [pemilikLokasiAlamatError, setPemilikLokasiAlamatError] = useState("");
+  const [pemilikLokasiPekerjaanError, setPemilikLokasiPekerjaanError] =
+    useState("");
 
   // Error state untuk form Surat Keterangan Pengantar Desa
   const [namaError, setNamaError] = useState("");
@@ -262,6 +309,8 @@ const LayananSurat = () => {
       setKeperluan("");
       setBerlakuMulai("");
       setBerlakuSampai("");
+      setBerlakuMulaiDate(undefined);
+      setBerlakuSampaiDate(undefined);
       setKeteranganLain("");
 
       // Reset error states
@@ -278,6 +327,67 @@ const LayananSurat = () => {
       setBerlakuSampaiError("");
 
       setIsPengantarDesaFormDialogOpen(true);
+    } else if (serviceId === "izin-keramaian") {
+      // Reset form fields for Surat Izin Keramaian (sama seperti Pengantar Desa)
+      setNama("");
+      setJenisKelamin("Lk");
+      setTempatLahir("Pati");
+      setTanggalLahir("");
+      setAgama("");
+      setPekerjaanPengantar("");
+      setRtPengantar("");
+      setRwPengantar("");
+      setKtpNomor("");
+      setKkNomor("");
+      setKeperluan("");
+      setBerlakuMulai("");
+      setBerlakuSampai("");
+      setBerlakuMulaiDate(undefined);
+      setBerlakuSampaiDate(undefined);
+      setKeteranganLain("");
+
+      // Reset tambahan fields untuk Izin Keramaian
+      setNoHP("");
+      setJabatan("Pemilik");
+      setTanggalAcara("");
+      setTanggalAcaraDate(undefined);
+      setWaktuAcara("");
+      setTempatAcara("");
+      setNamaAcara("");
+      setDetailAcara("");
+
+      // Reset data pemilik lokasi
+      setPemilikLokasiNama("");
+      setPemilikLokasiAlamat("");
+      setPemilikLokasiPekerjaan("");
+
+      // Reset error states
+      setNamaError("");
+      setTanggalLahirError("");
+      setAgamaError("");
+      setPekerjaanPengantarError("");
+      setRtPengantarError("");
+      setRwPengantarError("");
+      setKtpNomorError("");
+      setKkNomorError("");
+      setKeperluanError("");
+      setBerlakuMulaiError("");
+      setBerlakuSampaiError("");
+
+      // Reset error states untuk tambahan fields
+      setNoHPError("");
+      setTanggalAcaraError("");
+      setWaktuAcaraError("");
+      setTempatAcaraError("");
+      setNamaAcaraError("");
+      setDetailAcaraError("");
+
+      // Reset error data pemilik lokasi
+      setPemilikLokasiNamaError("");
+      setPemilikLokasiAlamatError("");
+      setPemilikLokasiPekerjaanError("");
+
+      setIsIzinKeramaianFormDialogOpen(true);
     } else {
       // Untuk layanan surat lainnya yang belum diimplementasikan
       toast({
@@ -350,6 +460,42 @@ const LayananSurat = () => {
         suratData.berlakuMulai = berlakuMulai;
         suratData.berlakuSampai = berlakuSampai;
         suratData.keteranganLain = keteranganLain;
+      } else if (selectedService === "izin-keramaian") {
+        suratData.nama = nama;
+        suratData.jenisKelamin = jenisKelamin;
+        suratData.tempatLahir = tempatLahir;
+        suratData.tanggalLahir = tanggalLahir;
+        suratData.agama = agama;
+        suratData.pekerjaan = pekerjaanPengantar;
+        suratData.tempatTinggal = {
+          rt: rtPengantar,
+          rw: rwPengantar,
+        };
+        suratData.suratBuktiDiri = {
+          ktpNomor: ktpNomor,
+          kkNomor: kkNomor,
+        };
+        suratData.keperluan = keperluan;
+        suratData.berlakuMulai = berlakuMulai;
+        suratData.berlakuSampai = berlakuSampai;
+        suratData.keteranganLain = keteranganLain;
+        // Tambahan fields untuk Izin Keramaian
+        suratData.noHP = noHP;
+        suratData.jabatan = jabatan;
+        suratData.keteranganAcara = {
+          namaAcara: namaAcara,
+          tanggalAcara: tanggalAcara,
+          waktuAcara: waktuAcara,
+          tempatAcara: tempatAcara,
+          detailAcara: detailAcara,
+        };
+
+        // Tambahkan data pemilik lokasi (required)
+        suratData.pemilikLokasi = {
+          nama: pemilikLokasiNama,
+          alamat: pemilikLokasiAlamat,
+          pekerjaan: pemilikLokasiPekerjaan,
+        };
       }
       // Tambahkan kondisi untuk tipe surat lainnya di masa depan
       // else if (selectedService === 'skck') { ... }
@@ -509,6 +655,8 @@ const LayananSurat = () => {
       setBerlakuSampaiError("");
     }
 
+    // Validasi untuk field tambahan dan data pemilik lokasi dilakukan di handleSubmitIzinKeramaianForm
+
     if (isValid) {
       // Set loading state to true
       setIsLoading(true);
@@ -591,6 +739,186 @@ const LayananSurat = () => {
               "Surat Keterangan Usaha telah berhasil dibuat dan diunduh",
           });
           setIsUsahaFormDialogOpen(false);
+        }
+      } catch (error) {
+        console.error("Error generating PDF:", error);
+        toast({
+          title: "Gagal Membuat Surat",
+          description:
+            "Terjadi kesalahan saat membuat surat. Silakan coba lagi.",
+          variant: "destructive",
+        });
+      } finally {
+        // Set loading state back to false
+        setIsLoading(false);
+      }
+    }
+  };
+
+  const handleSubmitIzinKeramaianForm = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validate form
+    let isValid = true;
+
+    if (!nama.trim()) {
+      setNamaError("Nama harus diisi");
+      isValid = false;
+    } else {
+      setNamaError("");
+    }
+
+    if (!tanggalLahir.trim()) {
+      setTanggalLahirError("Tanggal lahir harus diisi");
+      isValid = false;
+    } else {
+      setTanggalLahirError("");
+    }
+
+    if (!agama.trim()) {
+      setAgamaError("Agama harus diisi");
+      isValid = false;
+    } else {
+      setAgamaError("");
+    }
+
+    if (!pekerjaanPengantar.trim()) {
+      setPekerjaanPengantarError("Pekerjaan harus diisi");
+      isValid = false;
+    } else {
+      setPekerjaanPengantarError("");
+    }
+
+    if (!rtPengantar.trim()) {
+      setRtPengantarError("RT harus diisi");
+      isValid = false;
+    } else {
+      setRtPengantarError("");
+    }
+
+    if (!rwPengantar.trim()) {
+      setRwPengantarError("RW harus diisi");
+      isValid = false;
+    } else {
+      setRwPengantarError("");
+    }
+
+    if (!ktpNomor.trim()) {
+      setKtpNomorError("Nomor KTP harus diisi");
+      isValid = false;
+    } else {
+      setKtpNomorError("");
+    }
+
+    if (!kkNomor.trim()) {
+      setKkNomorError("Nomor KK harus diisi");
+      isValid = false;
+    } else {
+      setKkNomorError("");
+    }
+
+    if (!keperluan.trim()) {
+      setKeperluanError("Keperluan harus diisi");
+      isValid = false;
+    } else {
+      setKeperluanError("");
+    }
+
+    if (!berlakuMulai.trim()) {
+      setBerlakuMulaiError("Tanggal mulai berlaku harus diisi");
+      isValid = false;
+    } else {
+      setBerlakuMulaiError("");
+    }
+
+    if (!berlakuSampai.trim()) {
+      setBerlakuSampaiError("Tanggal akhir berlaku harus diisi");
+      isValid = false;
+    } else {
+      setBerlakuSampaiError("");
+    }
+
+    // Validasi data pemilik lokasi (required)
+    if (!pemilikLokasiNama.trim()) {
+      setPemilikLokasiNamaError("Nama pemilik lokasi harus diisi");
+      isValid = false;
+    } else {
+      setPemilikLokasiNamaError("");
+    }
+
+    if (!pemilikLokasiAlamat.trim()) {
+      setPemilikLokasiAlamatError("Alamat pemilik lokasi harus diisi");
+      isValid = false;
+    } else {
+      setPemilikLokasiAlamatError("");
+    }
+
+    if (!pemilikLokasiPekerjaan.trim()) {
+      setPemilikLokasiPekerjaanError("Pekerjaan pemilik lokasi harus diisi");
+      isValid = false;
+    } else {
+      setPemilikLokasiPekerjaanError("");
+    }
+
+    // Validasi field tambahan untuk Izin Keramaian
+    if (!noHP.trim()) {
+      setNoHPError("Nomor HP harus diisi");
+      isValid = false;
+    } else {
+      setNoHPError("");
+    }
+
+    if (!tanggalAcara.trim()) {
+      setTanggalAcaraError("Tanggal acara harus diisi");
+      isValid = false;
+    } else {
+      setTanggalAcaraError("");
+    }
+
+    if (!waktuAcara.trim()) {
+      setWaktuAcaraError("Waktu acara harus diisi");
+      isValid = false;
+    } else {
+      setWaktuAcaraError("");
+    }
+
+    if (!tempatAcara.trim()) {
+      setTempatAcaraError("Tempat acara harus diisi");
+      isValid = false;
+    } else {
+      setTempatAcaraError("");
+    }
+
+    if (!namaAcara.trim()) {
+      setNamaAcaraError("Nama acara/hajat harus diisi");
+      isValid = false;
+    } else {
+      setNamaAcaraError("");
+    }
+
+    if (!detailAcara.trim()) {
+      setDetailAcaraError("Detail acara/hajat harus diisi");
+      isValid = false;
+    } else {
+      setDetailAcaraError("");
+    }
+
+    if (isValid) {
+      // Set loading state to true
+      setIsLoading(true);
+
+      try {
+        // Generate PDF (async operation)
+        const pdfGenerated = await generatePDF();
+
+        // Process form submission if PDF was generated successfully
+        if (pdfGenerated) {
+          toast({
+            title: "Surat Berhasil Dibuat",
+            description:
+              "Surat Permohonan Izin Keramaian telah berhasil dibuat dan diunduh",
+          });
+          setIsIzinKeramaianFormDialogOpen(false);
         }
       } catch (error) {
         console.error("Error generating PDF:", error);
@@ -1606,13 +1934,20 @@ const LayananSurat = () => {
                       mode="single"
                       selected={berlakuMulaiDate}
                       onSelect={(date) => {
-                        setBerlakuMulaiDate(date);
                         if (date) {
+                          setBerlakuMulaiDate(date);
                           const formattedDate = format(date, "dd MMMM yyyy", {
                             locale: id,
                           });
                           setBerlakuMulai(formattedDate);
                           setBerlakuMulaiError("");
+
+                          // Close the popover immediately after selection
+                          const closeEvent = new Event("keydown");
+                          Object.defineProperty(closeEvent, "key", {
+                            value: "Escape",
+                          });
+                          document.dispatchEvent(closeEvent);
                         }
                       }}
                       initialFocus
@@ -1657,13 +1992,20 @@ const LayananSurat = () => {
                       mode="single"
                       selected={berlakuSampaiDate}
                       onSelect={(date) => {
-                        setBerlakuSampaiDate(date);
                         if (date) {
+                          setBerlakuSampaiDate(date);
                           const formattedDate = format(date, "dd MMMM yyyy", {
                             locale: id,
                           });
                           setBerlakuSampai(formattedDate);
                           setBerlakuSampaiError("");
+
+                          // Close the popover immediately after selection
+                          const closeEvent = new Event("keydown");
+                          Object.defineProperty(closeEvent, "key", {
+                            value: "Escape",
+                          });
+                          document.dispatchEvent(closeEvent);
                         }
                       }}
                       initialFocus
@@ -1697,6 +2039,731 @@ const LayananSurat = () => {
                 type="button"
                 variant="outline"
                 onClick={() => setIsPengantarDesaFormDialogOpen(false)}
+                className="text-base h-12 px-6"
+              >
+                Batal
+              </Button>
+              <Button
+                type="submit"
+                className="bg-green-600 hover:bg-green-700 text-base h-12 px-6"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Memproses...
+                  </>
+                ) : (
+                  "Buat Surat"
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Form Dialog for Surat Izin Keramaian */}
+      <Dialog
+        open={isIzinKeramaianFormDialogOpen}
+        onOpenChange={setIsIzinKeramaianFormDialogOpen}
+      >
+        <DialogContent className="sm:max-w-[650px] p-8 max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">
+              Formulir Surat Permohonan Izin Keramaian
+            </DialogTitle>
+            <DialogDescription className="text-base mt-2">
+              Silakan lengkapi data berikut untuk pembuatan Surat Permohonan
+              Izin Keramaian.
+            </DialogDescription>
+          </DialogHeader>
+          <form
+            onSubmit={handleSubmitIzinKeramaianForm}
+            className="space-y-6 mt-4"
+          >
+            <div className="space-y-2">
+              <Label htmlFor="nama" className="text-base">
+                Nama
+              </Label>
+              <Input
+                id="nama"
+                placeholder="Masukkan nama lengkap"
+                className={`text-base ${
+                  namaError ? "border-red-500" : "border-gray-400"
+                }`}
+                value={nama}
+                onChange={(e) => {
+                  setNama(e.target.value);
+                  setNamaError("");
+                }}
+              />
+              {namaError && (
+                <p className="text-base text-red-500 mt-1">{namaError}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="jenisKelamin" className="text-base">
+                Jenis Kelamin
+              </Label>
+              <div className="flex space-x-4">
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="jenisKelaminLk"
+                    name="jenisKelamin"
+                    value="Lk"
+                    checked={jenisKelamin === "Lk"}
+                    onChange={() => setJenisKelamin("Lk")}
+                    className="mr-2"
+                  />
+                  <Label htmlFor="jenisKelaminLk">Laki-laki</Label>
+                </div>
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="jenisKelaminPr"
+                    name="jenisKelamin"
+                    value="Pr"
+                    checked={jenisKelamin === "Pr"}
+                    onChange={() => setJenisKelamin("Pr")}
+                    className="mr-2"
+                  />
+                  <Label htmlFor="jenisKelaminPr">Perempuan</Label>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="tempatLahir" className="text-base">
+                  Tempat Lahir
+                </Label>
+                <Input
+                  id="tempatLahir"
+                  placeholder="Masukkan tempat lahir"
+                  className="text-base border-gray-400"
+                  value={tempatLahir}
+                  onChange={(e) => setTempatLahir(e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="tanggalLahir" className="text-base">
+                  Tanggal Lahir
+                </Label>
+                <Input
+                  id="tanggalLahir"
+                  placeholder="Masukkan tanggal lahir"
+                  className={`text-base ${
+                    tanggalLahirError ? "border-red-500" : "border-gray-400"
+                  }`}
+                  value={tanggalLahir}
+                  onChange={(e) => {
+                    setTanggalLahir(e.target.value);
+                    setTanggalLahirError("");
+                  }}
+                />
+                {tanggalLahirError && (
+                  <p className="text-base text-red-500 mt-1">
+                    {tanggalLahirError}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="agama" className="text-base">
+                Agama
+              </Label>
+              <Input
+                id="agama"
+                placeholder="Masukkan agama"
+                className={`text-base ${
+                  agamaError ? "border-red-500" : "border-gray-400"
+                }`}
+                value={agama}
+                onChange={(e) => {
+                  setAgama(e.target.value);
+                  setAgamaError("");
+                }}
+              />
+              {agamaError && (
+                <p className="text-base text-red-500 mt-1">{agamaError}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="pekerjaanPengantar" className="text-base">
+                Pekerjaan
+              </Label>
+              <Input
+                id="pekerjaanPengantar"
+                placeholder="Masukkan pekerjaan"
+                className={`text-base ${
+                  pekerjaanPengantarError ? "border-red-500" : "border-gray-400"
+                }`}
+                value={pekerjaanPengantar}
+                onChange={(e) => {
+                  setPekerjaanPengantar(e.target.value);
+                  setPekerjaanPengantarError("");
+                }}
+              />
+              {pekerjaanPengantarError && (
+                <p className="text-base text-red-500 mt-1">
+                  {pekerjaanPengantarError}
+                </p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-base">Tempat Tinggal</Label>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="rtPengantar" className="text-base">
+                    RT
+                  </Label>
+                  <Input
+                    id="rtPengantar"
+                    placeholder="Masukkan RT"
+                    className={`text-base ${
+                      rtPengantarError ? "border-red-500" : "border-gray-400"
+                    }`}
+                    value={rtPengantar}
+                    onChange={(e) => {
+                      setRtPengantar(e.target.value);
+                      setRtPengantarError("");
+                    }}
+                  />
+                  {rtPengantarError && (
+                    <p className="text-base text-red-500 mt-1">
+                      {rtPengantarError}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="rwPengantar" className="text-base">
+                    RW
+                  </Label>
+                  <Input
+                    id="rwPengantar"
+                    placeholder="Masukkan RW"
+                    className={`text-base ${
+                      rwPengantarError ? "border-red-500" : "border-gray-400"
+                    }`}
+                    value={rwPengantar}
+                    onChange={(e) => {
+                      setRwPengantar(e.target.value);
+                      setRwPengantarError("");
+                    }}
+                  />
+                  {rwPengantarError && (
+                    <p className="text-base text-red-500 mt-1">
+                      {rwPengantarError}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-base">Surat Bukti Diri</Label>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="ktpNomor" className="text-base">
+                    Nomor KTP
+                  </Label>
+                  <Input
+                    id="ktpNomor"
+                    placeholder="Masukkan nomor KTP"
+                    className={`text-base ${
+                      ktpNomorError ? "border-red-500" : "border-gray-400"
+                    }`}
+                    value={ktpNomor}
+                    onChange={(e) => {
+                      setKtpNomor(e.target.value);
+                      setKtpNomorError("");
+                    }}
+                  />
+                  {ktpNomorError && (
+                    <p className="text-base text-red-500 mt-1">
+                      {ktpNomorError}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="kkNomor" className="text-base">
+                    Nomor KK
+                  </Label>
+                  <Input
+                    id="kkNomor"
+                    placeholder="Masukkan nomor KK"
+                    className={`text-base ${
+                      kkNomorError ? "border-red-500" : "border-gray-400"
+                    }`}
+                    value={kkNomor}
+                    onChange={(e) => {
+                      setKkNomor(e.target.value);
+                      setKkNomorError("");
+                    }}
+                  />
+                  {kkNomorError && (
+                    <p className="text-base text-red-500 mt-1">
+                      {kkNomorError}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="keperluan" className="text-base">
+                Keperluan
+              </Label>
+              <textarea
+                id="keperluan"
+                placeholder="Masukkan keperluan"
+                className={`flex h-24 w-full rounded-md border bg-background px-4 py-3 text-base ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:border-black ${
+                  keperluanError ? "border-red-500" : "border-gray-400"
+                }`}
+                rows={4}
+                value={keperluan}
+                onChange={(e) => {
+                  setKeperluan(e.target.value);
+                  setKeperluanError("");
+                }}
+              />
+              {keperluanError && (
+                <p className="text-base text-red-500 mt-1">{keperluanError}</p>
+              )}
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="berlakuMulai" className="text-base">
+                  Berlaku Mulai
+                </Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={`w-full justify-start text-left font-normal ${
+                        berlakuMulaiError ? "border-red-500" : "border-gray-400"
+                      }`}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {berlakuMulaiDate ? (
+                        format(berlakuMulaiDate, "dd MMMM yyyy", { locale: id })
+                      ) : (
+                        <span className="text-muted-foreground">
+                          Masukkan tanggal mulai
+                        </span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={berlakuMulaiDate}
+                      onSelect={(date) => {
+                        if (date) {
+                          setBerlakuMulaiDate(date);
+                          const formattedDate = format(date, "dd MMMM yyyy", {
+                            locale: id,
+                          });
+                          setBerlakuMulai(formattedDate);
+                          setBerlakuMulaiError("");
+                          
+                          // Close the popover immediately after selection
+                          const closeEvent = new Event("keydown");
+                          Object.defineProperty(closeEvent, "key", {
+                            value: "Escape",
+                          });
+                          document.dispatchEvent(closeEvent);
+                        }
+                      }}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                {berlakuMulaiError && (
+                  <p className="text-base text-red-500 mt-1">
+                    {berlakuMulaiError}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="berlakuSampai" className="text-base">
+                  Berlaku Sampai
+                </Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={`w-full justify-start text-left font-normal ${
+                        berlakuSampaiError
+                          ? "border-red-500"
+                          : "border-gray-400"
+                      }`}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {berlakuSampaiDate ? (
+                        format(berlakuSampaiDate, "dd MMMM yyyy", {
+                          locale: id,
+                        })
+                      ) : (
+                        <span className="text-muted-foreground">
+                          Masukkan tanggal akhir
+                        </span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={berlakuSampaiDate}
+                      onSelect={(date) => {
+                        if (date) {
+                          setBerlakuSampaiDate(date);
+                          const formattedDate = format(date, "dd MMMM yyyy", {
+                            locale: id,
+                          });
+                          setBerlakuSampai(formattedDate);
+                          setBerlakuSampaiError("");
+                          
+                          // Close the popover immediately after selection
+                          const closeEvent = new Event("keydown");
+                          Object.defineProperty(closeEvent, "key", {
+                            value: "Escape",
+                          });
+                          document.dispatchEvent(closeEvent);
+                        }
+                      }}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                {berlakuSampaiError && (
+                  <p className="text-base text-red-500 mt-1">
+                    {berlakuSampaiError}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="keteranganLain" className="text-base">
+                Keterangan Lain-lain
+              </Label>
+              <textarea
+                id="keteranganLain"
+                placeholder="Masukkan keterangan lain (opsional)"
+                className="flex h-24 w-full rounded-md border border-gray-400 bg-background px-4 py-3 text-base ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:border-black"
+                rows={4}
+                value={keteranganLain}
+                onChange={(e) => setKeteranganLain(e.target.value)}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="noHP" className="text-base">
+                Nomor HP
+              </Label>
+              <Input
+                id="noHP"
+                placeholder="Masukkan nomor HP"
+                className={`text-base ${
+                  noHPError ? "border-red-500" : "border-gray-400"
+                }`}
+                value={noHP}
+                onChange={(e) => {
+                  setNoHP(e.target.value);
+                  setNoHPError("");
+                }}
+              />
+              {noHPError && (
+                <p className="text-base text-red-500 mt-1">{noHPError}</p>
+              )}
+            </div>
+
+            <div className="space-y-4">
+              <Label className="text-base font-bold">Keterangan Acara</Label>
+
+              <div className="space-y-2">
+                <Label htmlFor="jabatan" className="text-base">
+                  Jabatan
+                </Label>
+                <div className="flex space-x-4">
+                  <div className="flex items-center">
+                    <input
+                      type="radio"
+                      id="jabatanPemilik"
+                      name="jabatan"
+                      value="Pemilik"
+                      checked={jabatan === "Pemilik"}
+                      onChange={() => setJabatan("Pemilik")}
+                      className="mr-2"
+                    />
+                    <Label htmlFor="jabatanPemilik">
+                      Pemilik Hajat Keramaian
+                    </Label>
+                  </div>
+                  <div className="flex items-center">
+                    <input
+                      type="radio"
+                      id="jabatanPanitia"
+                      name="jabatan"
+                      value="Panitia"
+                      checked={jabatan === "Panitia"}
+                      onChange={() => setJabatan("Panitia")}
+                      className="mr-2"
+                    />
+                    <Label htmlFor="jabatanPanitia">
+                      Panitia Hajat Keramaian
+                    </Label>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="namaAcara" className="text-base">
+                  Nama Acara/Hajat
+                </Label>
+                <Input
+                  id="namaAcara"
+                  placeholder="Masukkan nama acara/hajat"
+                  className={`text-base ${
+                    namaAcaraError ? "border-red-500" : "border-gray-400"
+                  }`}
+                  value={namaAcara}
+                  onChange={(e) => {
+                    setNamaAcara(e.target.value);
+                    setNamaAcaraError("");
+                  }}
+                />
+                {namaAcaraError && (
+                  <p className="text-base text-red-500 mt-1">
+                    {namaAcaraError}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="tanggalAcara" className="text-base">
+                  Tanggal Acara
+                </Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={`w-full justify-start text-left font-normal ${
+                        tanggalAcaraError ? "border-red-500" : "border-gray-400"
+                      }`}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {tanggalAcaraDate ? (
+                        format(tanggalAcaraDate, "dd MMMM yyyy", { locale: id })
+                      ) : (
+                        <span className="text-muted-foreground">
+                          Masukkan tanggal acara
+                        </span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={tanggalAcaraDate}
+                      onSelect={(date) => {
+                        if (date) {
+                          setTanggalAcaraDate(date);
+                          const formattedDate = format(date, "dd MMMM yyyy", {
+                            locale: id,
+                          });
+                          setTanggalAcara(formattedDate);
+                          setTanggalAcaraError("");
+
+                          // Close the popover immediately after selection
+                          const closeEvent = new Event("keydown");
+                          Object.defineProperty(closeEvent, "key", {
+                            value: "Escape",
+                          });
+                          document.dispatchEvent(closeEvent);
+                        }
+                      }}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                {tanggalAcaraError && (
+                  <p className="text-base text-red-500 mt-1">
+                    {tanggalAcaraError}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="waktuAcara" className="text-base">
+                  Waktu Acara
+                </Label>
+                <Input
+                  id="waktuAcara"
+                  placeholder="Masukkan waktu acara (contoh: 09.00 - 17.00 WIB)"
+                  className={`text-base ${
+                    waktuAcaraError ? "border-red-500" : "border-gray-400"
+                  }`}
+                  value={waktuAcara}
+                  onChange={(e) => {
+                    setWaktuAcara(e.target.value);
+                    setWaktuAcaraError("");
+                  }}
+                />
+                {waktuAcaraError && (
+                  <p className="text-base text-red-500 mt-1">
+                    {waktuAcaraError}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="tempatAcara" className="text-base">
+                  Tempat Acara
+                </Label>
+                <Input
+                  id="tempatAcara"
+                  placeholder="Masukkan tempat acara"
+                  className={`text-base ${
+                    tempatAcaraError ? "border-red-500" : "border-gray-400"
+                  }`}
+                  value={tempatAcara}
+                  onChange={(e) => {
+                    setTempatAcara(e.target.value);
+                    setTempatAcaraError("");
+                  }}
+                />
+                {tempatAcaraError && (
+                  <p className="text-base text-red-500 mt-1">
+                    {tempatAcaraError}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="detailAcara" className="text-base">
+                  Detail Acara/Hajat
+                </Label>
+                <textarea
+                  id="detailAcara"
+                  placeholder="Masukkan detail acara/hajat"
+                  className={`flex h-24 w-full rounded-md border bg-background px-4 py-3 text-base ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:border-black ${
+                    detailAcaraError ? "border-red-500" : "border-gray-400"
+                  }`}
+                  rows={4}
+                  value={detailAcara}
+                  onChange={(e) => {
+                    setDetailAcara(e.target.value);
+                    setDetailAcaraError("");
+                  }}
+                />
+                {detailAcaraError && (
+                  <p className="text-base text-red-500 mt-1">
+                    {detailAcaraError}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-4 mt-6">
+              <Label className="text-base font-bold">Data Pemilik Lokasi</Label>
+              <p className="text-sm text-gray-600">
+                Isi data pemilik lokasi untuk halaman surat keterangan ijin
+                tempat lokasi kegiatan
+              </p>
+
+              <div className="space-y-2">
+                <Label htmlFor="pemilikLokasiNama" className="text-base">
+                  Nama Pemilik Lokasi
+                </Label>
+                <Input
+                  id="pemilikLokasiNama"
+                  placeholder="Masukkan nama pemilik lokasi"
+                  className={`text-base ${
+                    pemilikLokasiNamaError
+                      ? "border-red-500"
+                      : "border-gray-400"
+                  }`}
+                  value={pemilikLokasiNama}
+                  onChange={(e) => {
+                    setPemilikLokasiNama(e.target.value);
+                    setPemilikLokasiNamaError("");
+                  }}
+                />
+                {pemilikLokasiNamaError && (
+                  <p className="text-base text-red-500 mt-1">
+                    {pemilikLokasiNamaError}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="pemilikLokasiAlamat" className="text-base">
+                  Alamat Pemilik Lokasi
+                </Label>
+                <Input
+                  id="pemilikLokasiAlamat"
+                  placeholder="Masukkan alamat pemilik lokasi"
+                  className={`text-base ${
+                    pemilikLokasiAlamatError
+                      ? "border-red-500"
+                      : "border-gray-400"
+                  }`}
+                  value={pemilikLokasiAlamat}
+                  onChange={(e) => {
+                    setPemilikLokasiAlamat(e.target.value);
+                    setPemilikLokasiAlamatError("");
+                  }}
+                />
+                {pemilikLokasiAlamatError && (
+                  <p className="text-base text-red-500 mt-1">
+                    {pemilikLokasiAlamatError}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="pemilikLokasiPekerjaan" className="text-base">
+                  Pekerjaan Pemilik Lokasi
+                </Label>
+                <Input
+                  id="pemilikLokasiPekerjaan"
+                  placeholder="Masukkan pekerjaan pemilik lokasi"
+                  className={`text-base ${
+                    pemilikLokasiPekerjaanError
+                      ? "border-red-500"
+                      : "border-gray-400"
+                  }`}
+                  value={pemilikLokasiPekerjaan}
+                  onChange={(e) => {
+                    setPemilikLokasiPekerjaan(e.target.value);
+                    setPemilikLokasiPekerjaanError("");
+                  }}
+                />
+                {pemilikLokasiPekerjaanError && (
+                  <p className="text-base text-red-500 mt-1">
+                    {pemilikLokasiPekerjaanError}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <DialogFooter className="mt-8">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsIzinKeramaianFormDialogOpen(false)}
                 className="text-base h-12 px-6"
               >
                 Batal

@@ -287,7 +287,7 @@ const generateSuratPengantarDesa = async (
     // Add underline for AGUS SUMANTO
     const nameWidth = doc.getTextWidth("AGUS SUMANTO");
     doc.setLineWidth(0.3);
-    doc.line(145, yPos + 1, 145 + nameWidth, yPos + 1);
+    doc.line(147, yPos + 1, 147 + nameWidth, yPos + 1);
 
     yPos += lineHeight;
     doc.setFont("Bookman Old Style", "normal");

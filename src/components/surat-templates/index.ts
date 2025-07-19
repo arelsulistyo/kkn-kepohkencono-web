@@ -1,16 +1,18 @@
 import generateSuratDomisili from './SuratDomisili';
 import generateSuratKeteranganUsaha from './SuratKeteranganUsaha';
 import generateSuratPengantarDesa from './SuratPengantarDesa';
+import generateSuratIzinKeramaian from './SuratIzinKeramaian';
 
 // Ekspor semua template surat
 export {
   generateSuratDomisili,
   generateSuratKeteranganUsaha,
-  generateSuratPengantarDesa
+  generateSuratPengantarDesa,
+  generateSuratIzinKeramaian
 };
 
 // Tipe untuk template surat
-export type SuratTemplateType = 'domisili' | 'skck' | 'usaha' | 'tidak-mampu' | 'kelahiran' | 'kematian' | 'pengantar-desa';
+export type SuratTemplateType = 'domisili' | 'skck' | 'usaha' | 'tidak-mampu' | 'kelahiran' | 'kematian' | 'pengantar-desa' | 'izin-keramaian';
 
 // Fungsi untuk mendapatkan template surat berdasarkan tipe
 export const getSuratTemplate = async (type: SuratTemplateType) => {
@@ -21,6 +23,8 @@ export const getSuratTemplate = async (type: SuratTemplateType) => {
       return generateSuratKeteranganUsaha;
     case 'pengantar-desa':
       return generateSuratPengantarDesa;
+    case 'izin-keramaian':
+      return generateSuratIzinKeramaian;
     // Tambahkan case untuk template surat lainnya di masa depan
     // case 'skck':
     //   return generateSuratSKCK;
