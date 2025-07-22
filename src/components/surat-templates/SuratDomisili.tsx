@@ -6,6 +6,7 @@ import { getNextLetterNumber } from "@/lib/firebase";
 interface SuratDomisiliProps {
   namaPeminta: string;
   alamatDomisili: string;
+  signatureType?: "sekretaris" | "kepala"; // Optional parameter to choose signature type
 }
 
 /**
@@ -44,12 +45,12 @@ const getImgFromUrl = (imgUrl: string): Promise<string> => {
 const generateSuratDomisili = async (
   props: SuratDomisiliProps
 ): Promise<boolean> => {
-  const { namaPeminta, alamatDomisili } = props;
+  const { namaPeminta, alamatDomisili, signatureType = "sekretaris" } = props;
 
   try {
     // Get the next letter number for this template
     const letterNumber = await getNextLetterNumber("domisili");
-    
+
     // Buat instance jsPDF
     const doc = new jsPDF();
     jsPDF.API.events.push(["addFonts", callAddFont, callAddFontBold]);
@@ -107,14 +108,9 @@ const generateSuratDomisili = async (
     doc.line(105 - textWidth / 2, 71, 105 + textWidth / 2, 71);
     doc.setFontSize(12);
     doc.setFont("Bookman Old Style", "normal");
-    doc.text(
-      `Nomor : 400.7.22.1 / ${letterNumber}`,
-      105,
-      76,
-      {
-        align: "center",
-      }
-    );
+    doc.text(`Nomor : 400.7.22.1 / ${letterNumber}`, 105, 76, {
+      align: "center",
+    });
 
     // Add content
     doc.setFontSize(12);
@@ -206,10 +202,37 @@ const generateSuratDomisili = async (
     const formattedDate = `${day} ${month} ${year}`;
 
     doc.text(`Kepohkencono, ${formattedDate}`, 130, 180);
-    doc.text("Plt.Sekretaris Desa", 130, 185);
 
-    // Space for signature
-    doc.text("AGUS SUMANTO", 130, 225);
+    // Add signature based on selected type
+    if (signatureType === "sekretaris") {
+      // Sekretaris Desa signature
+      doc.text("Plt.Sekretaris Desa", 140, 185);
+
+      // Space for signature
+      doc.setFont("Bookman Old Style", "bold");
+      doc.text("AGUS SUMANTO", 142, 225);
+
+      // Add underline for the signature name
+      const signatureNameWidth = doc.getTextWidth("AGUS SUMANTO");
+      doc.setLineWidth(0.5);
+      doc.line(142, 226, 142 + signatureNameWidth, 226);
+      doc.setFont("Bookman Old Style", "normal");
+    } else {
+      // Kepala Desa signature (copied from SuratKelahiran)
+      doc.text("Pj.Kepala Desa Kepohkencono", 130, 185);
+
+      // Space for signature
+      doc.setFont("Bookman Old Style", "bold");
+      doc.text("NGASIMAN S.H.", 145, 225);
+
+      // Add underline for the signature name
+      const signatureNameWidth = doc.getTextWidth("NGASIMAN S.H.");
+      doc.setLineWidth(0.5);
+      doc.line(145, 226, 145 + signatureNameWidth, 226);
+
+      doc.setFont("Bookman Old Style", "normal");
+      doc.text("NIP. 197006051992031007", 133, 231);
+    }
 
     // Save the PDF
     doc.save(

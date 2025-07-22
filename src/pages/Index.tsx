@@ -57,19 +57,19 @@ const Index = () => {
       <nav className="bg-white/90 fixed w-full z-50 shadow-xl backdrop-blur-[2px]">
         <div className="container mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-[#567257] font-poppins">
+            <h1 className="text-2xl font-bold text-green-900 font-poppins">
               Desa Kepohkencono
             </h1>
             <div className="hidden md:flex space-x-8 items-center font-poppins">
               <a
                 href="#"
-                className={`text-green-700 hover:text-green-900 relative group py-1 ${
+                className={`text-green-900 hover:text-green-900 relative group py-1 ${
                   activeSection === "home" ? "font-semibold" : ""
                 }`}
               >
                 Beranda
                 <span
-                  className={`absolute -bottom-[2px] left-0 w-full h-0.5 bg-green-700 transform transition-transform duration-200 ease-out ${
+                  className={`absolute -bottom-[2px] left-0 w-full h-0.5 bg-green-900 transform transition-transform duration-200 ease-out ${
                     activeSection === "home"
                       ? "scale-x-100"
                       : "scale-x-0 group-hover:scale-x-100"
@@ -78,13 +78,13 @@ const Index = () => {
               </a>
               <a
                 href="#budaya"
-                className={`text-green-700 hover:text-green-900 relative group py-1 ${
+                className={`text-green-900 hover:text-green-900 relative group py-1 ${
                   activeSection === "budaya" ? "font-semibold" : ""
                 }`}
               >
                 Budaya
                 <span
-                  className={`absolute -bottom-[2px] left-0 w-full h-0.5 bg-green-700 transform transition-transform duration-200 ease-out ${
+                  className={`absolute -bottom-[2px] left-0 w-full h-0.5 bg-green-900 transform transition-transform duration-200 ease-out ${
                     activeSection === "budaya"
                       ? "scale-x-100"
                       : "scale-x-0 group-hover:scale-x-100"
@@ -93,13 +93,13 @@ const Index = () => {
               </a>
               <a
                 href="#gallery"
-                className={`text-green-700 hover:text-green-900 relative group py-1 ${
+                className={`text-green-900 hover:text-green-900 relative group py-1 ${
                   activeSection === "gallery" ? "font-semibold" : ""
                 }`}
               >
                 Galeri
                 <span
-                  className={`absolute -bottom-[2px] left-0 w-full h-0.5 bg-green-700 transform transition-transform duration-200 ease-out ${
+                  className={`absolute -bottom-[2px] left-0 w-full h-0.5 bg-green-900 transform transition-transform duration-200 ease-out ${
                     activeSection === "gallery"
                       ? "scale-x-100"
                       : "scale-x-0 group-hover:scale-x-100"
@@ -108,13 +108,13 @@ const Index = () => {
               </a>
               <Link
                 to="/team"
-                className={`text-green-700 hover:text-green-900 relative group py-1 ${
+                className={`text-green-900 hover:text-green-900 relative group py-1 ${
                   location.pathname === "/team" ? "font-semibold" : ""
                 }`}
               >
                 Tentang Tim Kami
                 <span
-                  className={`absolute -bottom-[2px] left-0 w-full h-0.5 bg-green-700 transform transition-transform duration-200 ease-out ${
+                  className={`absolute -bottom-[2px] left-0 w-full h-0.5 bg-green-900 transform transition-transform duration-200 ease-out ${
                     location.pathname === "/team"
                       ? "scale-x-100"
                       : "scale-x-0 group-hover:scale-x-100"
@@ -122,7 +122,7 @@ const Index = () => {
                 ></span>
               </Link>
               <Link to="/layanan-surat">
-                <Button className="bg-green-800 hover:bg-green-900">
+                <Button className="bg-green-900 hover:bg-green-900">
                   Layanan Surat
                 </Button>
               </Link>
@@ -132,7 +132,7 @@ const Index = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative h-screen flex items-center justify-center overflow-hidden pt-16">
         <img
           src="/kepoh_gate.jpeg"
           alt="Gerbang Desa"
@@ -145,7 +145,7 @@ const Index = () => {
         <div className="container mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-4xl font-bold text-green-800 mb-6">
+              <h2 className="text-4xl font-bold text-green-900 mb-6">
                 Tentang Desa Kepohkencono
               </h2>
               <p className="text-lg text-gray-700 mb-6 leading-relaxed">
@@ -160,7 +160,7 @@ const Index = () => {
                 membangun jembatan antara kearifan lokal dan kemajuan digital,
                 menciptakan harmoni yang berkelanjutan untuk generasi mendatang.
               </p>
-              <Button className="bg-green-600 hover:bg-green-700">
+              <Button className="bg-green-900 hover:bg-green-900">
                 Pelajari Lebih Lanjut
                 <ArrowRight className="ml-2 w-4 h-4" />
               </Button>
@@ -172,7 +172,7 @@ const Index = () => {
                 className="rounded-lg shadow-2xl"
               />
               <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-lg shadow-lg">
-                <p className="text-2xl font-bold text-green-800">500+</p>
+                <p className="text-2xl font-bold text-green-900">500+</p>
                 <p className="text-gray-600">Kepala Keluarga</p>
               </div>
             </div>
@@ -275,7 +275,7 @@ const Index = () => {
       <section id="features" className="py-20 bg-green-50">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-green-800 mb-4">
+            <h2 className="text-4xl font-bold text-green-900 mb-4">
               Keunggulan Desa Kami
             </h2>
             <p className="text-xl text-gray-700 max-w-3xl mx-auto">
@@ -289,7 +289,7 @@ const Index = () => {
                 <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Users className="w-8 h-8 text-green-600" />
                 </div>
-                <CardTitle className="text-green-800">
+                <CardTitle className="text-green-900">
                   Budaya & Warisan
                 </CardTitle>
               </CardHeader>
@@ -306,7 +306,7 @@ const Index = () => {
                 <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <MapPin className="w-8 h-8 text-blue-600" />
                 </div>
-                <CardTitle className="text-green-800">
+                <CardTitle className="text-green-900">
                   Wisata & Destinasi
                 </CardTitle>
               </CardHeader>
@@ -323,7 +323,7 @@ const Index = () => {
                 <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Briefcase className="w-8 h-8 text-orange-600" />
                 </div>
-                <CardTitle className="text-green-800">
+                <CardTitle className="text-green-900">
                   Produk Lokal UMKM
                 </CardTitle>
               </CardHeader>
@@ -342,7 +342,7 @@ const Index = () => {
       <section id="gallery" className="py-20 bg-white">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-green-800 mb-4">
+            <h2 className="text-4xl font-bold text-green-900 mb-4">
               Galeri Desa
             </h2>
             <p className="text-xl text-gray-700 max-w-3xl mx-auto">
@@ -405,7 +405,7 @@ const Index = () => {
             <Button
               variant="outline"
               size="lg"
-              className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white"
+              className="border-green-900 text-green-900 hover:bg-green-900 hover:text-white"
             >
               <Camera className="mr-2" />
               Lihat Semua Foto

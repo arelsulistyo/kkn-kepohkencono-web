@@ -136,7 +136,7 @@ const Team = () => {
       </nav>
 
       {/* Header Section */}
-      <section className="pt-24 pb-16 bg-gradient-to-r from-green-600 to-blue-600 text-white">
+      <section className="pt-40 pb-16 bg-gradient-to-r from-green-600 to-blue-600 text-white">
         <div className="container mx-auto px-6 text-center">
           <div className="mb-8">
             <Users className="w-16 h-16 mx-auto mb-4 opacity-90" />

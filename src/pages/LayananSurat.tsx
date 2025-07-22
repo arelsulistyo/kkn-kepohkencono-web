@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { SuratTemplateType } from "@/components/surat-templates";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,6 +17,18 @@ import {
   Users,
   Loader2,
   CalendarIcon,
+  Search,
+  Filter,
+  Home,
+  Building,
+  IdCard,
+  Award,
+  ScrollText,
+  Handshake,
+  UserCheck,
+  Heart,
+  Eye,
+  LogIn,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
@@ -41,6 +53,7 @@ import {
 } from "@/components/ui/popover";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
+import { TemplatePreviewDialog } from "@/components/preview";
 
 const LayananSurat = () => {
   const { login, logout, user, loading } = useAuth();
@@ -56,6 +69,57 @@ const LayananSurat = () => {
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
+  // Search and filter state
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(
+    "all"
+  );
+  const [filteredServices, setFilteredServices] = useState<typeof services>([]);
+
+  // Preview dialog state
+  const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false);
+  const [previewService, setPreviewService] = useState<
+    (typeof services)[0] | null
+  >(null);
+
+  // Categories for filter
+  const categories = [
+    { id: "all", name: "All" },
+    { id: "Personal", name: "Personal" },
+    { id: "Administratif", name: "Administratif" },
+    { id: "Bisnis", name: "Bisnis" },
+    { id: "Izin", name: "Izin" },
+  ];
+
+  // Filter services based on search query and selected category
+  const handlePreviewClick = (service: (typeof services)[0]) => {
+    setPreviewService(service);
+    setIsPreviewDialogOpen(true);
+  };
+
+  useEffect(() => {
+    let result = services;
+
+    // Filter by search query
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(
+        (service) =>
+          service.title.toLowerCase().includes(query) ||
+          service.description.toLowerCase().includes(query)
+      );
+    }
+
+    // Filter by category
+    if (selectedCategory && selectedCategory !== "all") {
+      result = result.filter(
+        (service) => service.category === selectedCategory
+      );
+    }
+
+    setFilteredServices(result);
+  }, [searchQuery, selectedCategory]);
+
   const services = [
     {
       id: "domisili",
@@ -64,6 +128,8 @@ const LayananSurat = () => {
       requirements: ["KTP Asli", "Kartu Keluarga", "Surat Pengantar RT/RW"],
       estimatedTime: "1-2 Hari Kerja",
       status: "Tersedia",
+      category: "Personal",
+      categoryColor: "bg-green-100 text-green-800",
     },
     {
       id: "pengantar-desa",
@@ -73,6 +139,8 @@ const LayananSurat = () => {
       requirements: ["KTP Asli", "Kartu Keluarga", "Surat Pengantar RT/RW"],
       estimatedTime: "1 Hari Kerja",
       status: "Tersedia",
+      category: "Administratif",
+      categoryColor: "bg-green-100 text-green-800",
     },
     {
       id: "izin-keramaian",
@@ -87,16 +155,10 @@ const LayananSurat = () => {
       ],
       estimatedTime: "1-2 Hari Kerja",
       status: "Tersedia",
+      category: "Izin",
+      categoryColor: "bg-green-100 text-green-800",
     },
-    {
-      id: "skck",
-      title: "Surat Pengantar SKCK",
-      description:
-        "Surat pengantar untuk pembuatan Surat Keterangan Catatan Kepolisian",
-      requirements: ["KTP Asli", "Kartu Keluarga", "Pas Foto 4x6"],
-      estimatedTime: "1 Hari Kerja",
-      status: "Tersedia",
-    },
+
     {
       id: "usaha",
       title: "Surat Keterangan Usaha",
@@ -105,6 +167,8 @@ const LayananSurat = () => {
       requirements: ["KTP Asli", "Kartu Keluarga", "Foto Tempat Usaha"],
       estimatedTime: "2-3 Hari Kerja",
       status: "Tersedia",
+      category: "Bisnis",
+      categoryColor: "bg-green-100 text-green-800",
     },
     {
       id: "tidak-mampu",
@@ -113,6 +177,8 @@ const LayananSurat = () => {
       requirements: ["KTP Asli", "Kartu Keluarga", "Surat Pengantar RT/RW"],
       estimatedTime: "1-2 Hari Kerja",
       status: "Tersedia",
+      category: "Personal",
+      categoryColor: "bg-green-100 text-green-800",
     },
     {
       id: "kelahiran",
@@ -125,6 +191,8 @@ const LayananSurat = () => {
       ],
       estimatedTime: "1 Hari Kerja",
       status: "Tersedia",
+      category: "Personal",
+      categoryColor: "bg-green-100 text-green-800",
     },
     {
       id: "kematian",
@@ -137,6 +205,8 @@ const LayananSurat = () => {
       ],
       estimatedTime: "1 Hari Kerja",
       status: "Tersedia",
+      category: "Personal",
+      categoryColor: "bg-green-100 text-green-800",
     },
   ];
 
@@ -146,8 +216,17 @@ const LayananSurat = () => {
     useState(false);
   const [isIzinKeramaianFormDialogOpen, setIsIzinKeramaianFormDialogOpen] =
     useState(false);
+  const [isKematianFormDialogOpen, setIsKematianFormDialogOpen] =
+    useState(false);
+  const [isKelahiranFormDialogOpen, setIsKelahiranFormDialogOpen] =
+    useState(false);
+  const [isTidakMampuFormDialogOpen, setIsTidakMampuFormDialogOpen] =
+    useState(false);
   const [namaPeminta, setNamaPeminta] = useState("");
   const [alamatDomisili, setAlamatDomisili] = useState("");
+  const [signatureType, setSignatureType] = useState<"sekretaris" | "kepala">(
+    "sekretaris"
+  );
   const [namaPemintaError, setNamaPemintaError] = useState("");
   const [alamatDomisiliError, setAlamatDomisiliError] = useState("");
 
@@ -202,6 +281,45 @@ const LayananSurat = () => {
   const [namaAcara, setNamaAcara] = useState("");
   const [detailAcara, setDetailAcara] = useState("");
 
+  // State untuk form Surat Keterangan Kematian
+  const [namaKematian, setNamaKematian] = useState("");
+  const [tempatLahirKematian, setTempatLahirKematian] = useState("");
+  const [tanggalLahirKematian, setTanggalLahirKematian] = useState("");
+  const [jenisKelaminKematian, setJenisKelaminKematian] = useState("L");
+  const [pekerjaanKematian, setPekerjaanKematian] = useState("");
+  const [alamatKematian, setAlamatKematian] = useState("");
+  const [agamaKematian, setAgamaKematian] = useState("");
+  const [hariTanggalKematian, setHariTanggalKematian] = useState("");
+  const [jamKematian, setJamKematian] = useState("");
+  const [sebabKematian, setSebabKematian] = useState("");
+  const [yangMenerangkan, setYangMenerangkan] = useState("");
+  const [tempatKematian, setTempatKematian] = useState("");
+
+  // State untuk form Surat Keterangan Kelahiran
+  const [namaPemohon, setNamaPemohon] = useState("");
+  const [tempatLahirPemohon, setTempatLahirPemohon] = useState("");
+  const [tanggalLahirPemohon, setTanggalLahirPemohon] = useState("");
+  const [jenisKelaminPemohon, setJenisKelaminPemohon] = useState("L");
+  const [pekerjaanPemohon, setPekerjaanPemohon] = useState("");
+  const [alamatPemohon, setAlamatPemohon] = useState("");
+  const [namaAnak, setNamaAnak] = useState("");
+  const [tempatLahirAnak, setTempatLahirAnak] = useState("");
+  const [tanggalLahirAnak, setTanggalLahirAnak] = useState("");
+  const [jenisKelaminAnak, setJenisKelaminAnak] = useState("L");
+  const [agamaAnak, setAgamaAnak] = useState("");
+  const [alamatAnak, setAlamatAnak] = useState("");
+  const [namaAyah, setNamaAyah] = useState("");
+  const [namaIbu, setNamaIbu] = useState("");
+
+  // State untuk form Surat Keterangan Tidak Mampu
+  const [namaPemohonTidakMampu, setNamaPemohonTidakMampu] = useState("");
+  const [tempatLahirPemohonTidakMampu, setTempatLahirPemohonTidakMampu] = useState("");
+  const [tanggalLahirPemohonTidakMampu, setTanggalLahirPemohonTidakMampu] = useState("");
+  const [jenisKelaminPemohonTidakMampu, setJenisKelaminPemohonTidakMampu] = useState("L");
+  const [pekerjaanPemohonTidakMampu, setPekerjaanPemohonTidakMampu] = useState("");
+  const [alamatPemohonTidakMampu, setAlamatPemohonTidakMampu] = useState("");
+  const [persyaratanTidakMampu, setPersyaratanTidakMampu] = useState("");
+
   // State untuk data pemilik lokasi
   const [pemilikLokasiNama, setPemilikLokasiNama] = useState("");
   const [pemilikLokasiAlamat, setPemilikLokasiAlamat] = useState("");
@@ -220,6 +338,42 @@ const LayananSurat = () => {
   const [pemilikLokasiAlamatError, setPemilikLokasiAlamatError] = useState("");
   const [pemilikLokasiPekerjaanError, setPemilikLokasiPekerjaanError] =
     useState("");
+
+  // Error state untuk form Surat Keterangan Kematian
+  const [namaKematianError, setNamaKematianError] = useState("");
+  const [tempatLahirKematianError, setTempatLahirKematianError] = useState("");
+  const [tanggalLahirKematianError, setTanggalLahirKematianError] =
+    useState("");
+  const [pekerjaanKematianError, setPekerjaanKematianError] = useState("");
+  const [alamatKematianError, setAlamatKematianError] = useState("");
+  const [agamaKematianError, setAgamaKematianError] = useState("");
+  const [hariTanggalKematianError, setHariTanggalKematianError] = useState("");
+  const [jamKematianError, setJamKematianError] = useState("");
+  const [sebabKematianError, setSebabKematianError] = useState("");
+  const [yangMenerangkanError, setYangMenerangkanError] = useState("");
+  const [tempatKematianError, setTempatKematianError] = useState("");
+
+  // Error state untuk form Surat Keterangan Kelahiran
+  const [namaPemohonError, setNamaPemohonError] = useState("");
+  const [tempatLahirPemohonError, setTempatLahirPemohonError] = useState("");
+  const [tanggalLahirPemohonError, setTanggalLahirPemohonError] = useState("");
+  const [pekerjaanPemohonError, setPekerjaanPemohonError] = useState("");
+  const [alamatPemohonError, setAlamatPemohonError] = useState("");
+  const [namaAnakError, setNamaAnakError] = useState("");
+  const [tempatLahirAnakError, setTempatLahirAnakError] = useState("");
+  const [tanggalLahirAnakError, setTanggalLahirAnakError] = useState("");
+  const [agamaAnakError, setAgamaAnakError] = useState("");
+  const [alamatAnakError, setAlamatAnakError] = useState("");
+  const [namaAyahError, setNamaAyahError] = useState("");
+  const [namaIbuError, setNamaIbuError] = useState("");
+
+  // Error state untuk form Surat Keterangan Tidak Mampu
+  const [namaPemohonTidakMampuError, setNamaPemohonTidakMampuError] = useState("");
+  const [tempatLahirPemohonTidakMampuError, setTempatLahirPemohonTidakMampuError] = useState("");
+  const [tanggalLahirPemohonTidakMampuError, setTanggalLahirPemohonTidakMampuError] = useState("");
+  const [pekerjaanPemohonTidakMampuError, setPekerjaanPemohonTidakMampuError] = useState("");
+  const [alamatPemohonTidakMampuError, setAlamatPemohonTidakMampuError] = useState("");
+  const [persyaratanTidakMampuError, setPersyaratanTidakMampuError] = useState("");
 
   // Error state untuk form Surat Keterangan Pengantar Desa
   const [namaError, setNamaError] = useState("");
@@ -270,6 +424,7 @@ const LayananSurat = () => {
     if (serviceId === "domisili") {
       setNamaPeminta("");
       setAlamatDomisili("");
+      setSignatureType("sekretaris"); // Reset to default signature type
       setNamaPemintaError("");
       setAlamatDomisiliError("");
       setIsFormDialogOpen(true);
@@ -388,6 +543,86 @@ const LayananSurat = () => {
       setPemilikLokasiPekerjaanError("");
 
       setIsIzinKeramaianFormDialogOpen(true);
+    } else if (serviceId === "kematian") {
+      // Reset form fields for Surat Keterangan Kematian
+      setNamaKematian("");
+      setTempatLahirKematian("");
+      setTanggalLahirKematian("");
+      setJenisKelaminKematian("L");
+      setPekerjaanKematian("");
+      setAlamatKematian("");
+      setAgamaKematian("");
+      setHariTanggalKematian("");
+      setJamKematian("");
+      setSebabKematian("");
+      setYangMenerangkan("");
+      setTempatKematian("");
+
+      // Reset error states
+      setNamaKematianError("");
+      setTempatLahirKematianError("");
+      setTanggalLahirKematianError("");
+      setPekerjaanKematianError("");
+      setAlamatKematianError("");
+      setAgamaKematianError("");
+      setHariTanggalKematianError("");
+      setJamKematianError("");
+      setSebabKematianError("");
+      setYangMenerangkanError("");
+      setTempatKematianError("");
+
+      setIsKematianFormDialogOpen(true);
+    } else if (serviceId === "kelahiran") {
+      // Reset form fields for Surat Keterangan Kelahiran
+      setNamaPemohon("");
+      setTempatLahirPemohon("");
+      setTanggalLahirPemohon("");
+      setJenisKelaminPemohon("L");
+      setPekerjaanPemohon("");
+      setAlamatPemohon("");
+      setNamaAnak("");
+      setTempatLahirAnak("");
+      setTanggalLahirAnak("");
+      setJenisKelaminAnak("L");
+      setAgamaAnak("");
+      setAlamatAnak("");
+      setNamaAyah("");
+      setNamaIbu("");
+
+      // Reset error states
+      setNamaPemohonError("");
+      setTempatLahirPemohonError("");
+      setTanggalLahirPemohonError("");
+      setPekerjaanPemohonError("");
+      setAlamatPemohonError("");
+      setNamaAnakError("");
+      setTempatLahirAnakError("");
+      setTanggalLahirAnakError("");
+      setAgamaAnakError("");
+      setAlamatAnakError("");
+      setNamaAyahError("");
+      setNamaIbuError("");
+
+      setIsKelahiranFormDialogOpen(true);
+    } else if (serviceId === "tidak-mampu") {
+      // Reset form fields for Surat Keterangan Tidak Mampu
+      setNamaPemohonTidakMampu("");
+      setTempatLahirPemohonTidakMampu("");
+      setTanggalLahirPemohonTidakMampu("");
+      setJenisKelaminPemohonTidakMampu("L");
+      setPekerjaanPemohonTidakMampu("");
+      setAlamatPemohonTidakMampu("");
+      setPersyaratanTidakMampu("");
+
+      // Reset error states
+      setNamaPemohonTidakMampuError("");
+      setTempatLahirPemohonTidakMampuError("");
+      setTanggalLahirPemohonTidakMampuError("");
+      setPekerjaanPemohonTidakMampuError("");
+      setAlamatPemohonTidakMampuError("");
+      setPersyaratanTidakMampuError("");
+
+      setIsTidakMampuFormDialogOpen(true);
     } else {
       // Untuk layanan surat lainnya yang belum diimplementasikan
       toast({
@@ -423,6 +658,7 @@ const LayananSurat = () => {
       if (selectedService === "domisili") {
         suratData.namaPeminta = namaPeminta;
         suratData.alamatDomisili = alamatDomisili;
+        suratData.signatureType = signatureType; // Add signature type
       } else if (selectedService === "usaha") {
         suratData.namaPeminta = namaPeminta;
         suratData.pekerjaan = pekerjaan;
@@ -496,9 +732,44 @@ const LayananSurat = () => {
           alamat: pemilikLokasiAlamat,
           pekerjaan: pemilikLokasiPekerjaan,
         };
+      } else if (selectedService === "kematian") {
+        suratData.nama = namaKematian;
+        suratData.tempatLahir = tempatLahirKematian;
+        suratData.tanggalLahir = tanggalLahirKematian;
+        suratData.jenisKelamin = jenisKelaminKematian;
+        suratData.pekerjaan = pekerjaanKematian;
+        suratData.alamat = alamatKematian;
+        suratData.agama = agamaKematian;
+        suratData.hariTanggalKematian = hariTanggalKematian;
+        suratData.jamKematian = jamKematian;
+        suratData.sebabKematian = sebabKematian;
+        suratData.yangMenerangkan = yangMenerangkan;
+        suratData.tempatKematian = tempatKematian;
+      } else if (selectedService === "kelahiran") {
+        suratData.namaPemohon = namaPemohon;
+        suratData.tempatLahirPemohon = tempatLahirPemohon;
+        suratData.tanggalLahirPemohon = tanggalLahirPemohon;
+        suratData.jenisKelaminPemohon = jenisKelaminPemohon;
+        suratData.pekerjaanPemohon = pekerjaanPemohon;
+        suratData.alamatPemohon = alamatPemohon;
+        suratData.namaAnak = namaAnak;
+        suratData.tempatLahirAnak = tempatLahirAnak;
+        suratData.tanggalLahirAnak = tanggalLahirAnak;
+        suratData.jenisKelaminAnak = jenisKelaminAnak;
+        suratData.agamaAnak = agamaAnak;
+        suratData.alamatAnak = alamatAnak;
+        suratData.namaAyah = namaAyah;
+        suratData.namaIbu = namaIbu;
+      } else if (selectedService === "tidak-mampu") {
+        suratData.namaPemohon = namaPemohonTidakMampu;
+        suratData.tempatLahirPemohon = tempatLahirPemohonTidakMampu;
+        suratData.tanggalLahirPemohon = tanggalLahirPemohonTidakMampu;
+        suratData.jenisKelaminPemohon = jenisKelaminPemohonTidakMampu;
+        suratData.pekerjaanPemohon = pekerjaanPemohonTidakMampu;
+        suratData.alamatPemohon = alamatPemohonTidakMampu;
+        suratData.persyaratan = persyaratanTidakMampu;
       }
       // Tambahkan kondisi untuk tipe surat lainnya di masa depan
-      // else if (selectedService === 'skck') { ... }
 
       // Gunakan template surat dengan data yang sesuai
       const result = await generateSurat(suratData);
@@ -755,6 +1026,246 @@ const LayananSurat = () => {
     }
   };
 
+  const handleSubmitKematianForm = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validate form
+    let isValid = true;
+
+    if (!namaKematian.trim()) {
+      setNamaKematianError("Nama harus diisi");
+      isValid = false;
+    } else {
+      setNamaKematianError("");
+    }
+
+    if (!tempatLahirKematian.trim()) {
+      setTempatLahirKematianError("Tempat lahir harus diisi");
+      isValid = false;
+    } else {
+      setTempatLahirKematianError("");
+    }
+
+    if (!tanggalLahirKematian.trim()) {
+      setTanggalLahirKematianError("Tanggal lahir harus diisi");
+      isValid = false;
+    } else {
+      setTanggalLahirKematianError("");
+    }
+
+    if (!pekerjaanKematian.trim()) {
+      setPekerjaanKematianError("Pekerjaan harus diisi");
+      isValid = false;
+    } else {
+      setPekerjaanKematianError("");
+    }
+
+    if (!alamatKematian.trim()) {
+      setAlamatKematianError("Alamat harus diisi");
+      isValid = false;
+    } else {
+      setAlamatKematianError("");
+    }
+
+    if (!agamaKematian.trim()) {
+      setAgamaKematianError("Agama harus diisi");
+      isValid = false;
+    } else {
+      setAgamaKematianError("");
+    }
+
+    if (!hariTanggalKematian.trim()) {
+      setHariTanggalKematianError("Hari/tanggal kematian harus diisi");
+      isValid = false;
+    } else {
+      setHariTanggalKematianError("");
+    }
+
+    if (!jamKematian.trim()) {
+      setJamKematianError("Jam kematian harus diisi");
+      isValid = false;
+    } else {
+      setJamKematianError("");
+    }
+
+    if (!sebabKematian.trim()) {
+      setSebabKematianError("Sebab kematian harus diisi");
+      isValid = false;
+    } else {
+      setSebabKematianError("");
+    }
+
+    if (!yangMenerangkan.trim()) {
+      setYangMenerangkanError("Yang menerangkan kematian harus diisi");
+      isValid = false;
+    } else {
+      setYangMenerangkanError("");
+    }
+
+    if (!tempatKematian.trim()) {
+      setTempatKematianError("Tempat kematian harus diisi");
+      isValid = false;
+    } else {
+      setTempatKematianError("");
+    }
+
+    if (isValid) {
+      // Set loading state to true
+      setIsLoading(true);
+
+      try {
+        // Generate PDF (async operation)
+        const pdfGenerated = await generatePDF();
+
+        // Process form submission if PDF was generated successfully
+        if (pdfGenerated) {
+          toast({
+            title: "Surat Berhasil Dibuat",
+            description:
+              "Surat Keterangan Kematian telah berhasil dibuat dan diunduh",
+          });
+          setIsKematianFormDialogOpen(false);
+        }
+      } catch (error) {
+        console.error("Error generating PDF:", error);
+        toast({
+          title: "Gagal Membuat Surat",
+          description:
+            "Terjadi kesalahan saat membuat surat. Silakan coba lagi.",
+          variant: "destructive",
+        });
+      } finally {
+        // Set loading state back to false
+        setIsLoading(false);
+      }
+    }
+  };
+
+  const handleSubmitKelahiranForm = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validate form
+    let isValid = true;
+
+    // Validate pemohon data
+    if (!namaPemohon.trim()) {
+      setNamaPemohonError("Nama pemohon harus diisi");
+      isValid = false;
+    } else {
+      setNamaPemohonError("");
+    }
+
+    if (!tempatLahirPemohon.trim()) {
+      setTempatLahirPemohonError("Tempat lahir pemohon harus diisi");
+      isValid = false;
+    } else {
+      setTempatLahirPemohonError("");
+    }
+
+    if (!tanggalLahirPemohon.trim()) {
+      setTanggalLahirPemohonError("Tanggal lahir pemohon harus diisi");
+      isValid = false;
+    } else {
+      setTanggalLahirPemohonError("");
+    }
+
+    if (!pekerjaanPemohon.trim()) {
+      setPekerjaanPemohonError("Pekerjaan pemohon harus diisi");
+      isValid = false;
+    } else {
+      setPekerjaanPemohonError("");
+    }
+
+    if (!alamatPemohon.trim()) {
+      setAlamatPemohonError("Alamat pemohon harus diisi");
+      isValid = false;
+    } else {
+      setAlamatPemohonError("");
+    }
+
+    // Validate anak data
+    if (!namaAnak.trim()) {
+      setNamaAnakError("Nama anak harus diisi");
+      isValid = false;
+    } else {
+      setNamaAnakError("");
+    }
+
+    if (!tempatLahirAnak.trim()) {
+      setTempatLahirAnakError("Tempat lahir anak harus diisi");
+      isValid = false;
+    } else {
+      setTempatLahirAnakError("");
+    }
+
+    if (!tanggalLahirAnak.trim()) {
+      setTanggalLahirAnakError("Tanggal lahir anak harus diisi");
+      isValid = false;
+    } else {
+      setTanggalLahirAnakError("");
+    }
+
+    if (!agamaAnak.trim()) {
+      setAgamaAnakError("Agama anak harus diisi");
+      isValid = false;
+    } else {
+      setAgamaAnakError("");
+    }
+
+    if (!alamatAnak.trim()) {
+      setAlamatAnakError("Alamat anak harus diisi");
+      isValid = false;
+    } else {
+      setAlamatAnakError("");
+    }
+
+    // Validate orang tua data
+    if (!namaAyah.trim()) {
+      setNamaAyahError("Nama ayah harus diisi");
+      isValid = false;
+    } else {
+      setNamaAyahError("");
+    }
+
+    if (!namaIbu.trim()) {
+      setNamaIbuError("Nama ibu harus diisi");
+      isValid = false;
+    } else {
+      setNamaIbuError("");
+    }
+
+    if (isValid) {
+      // Set loading state to true
+      setIsLoading(true);
+
+      try {
+        // Generate PDF (async operation)
+        const pdfGenerated = await generatePDF();
+
+        // Process form submission if PDF was generated successfully
+        if (pdfGenerated) {
+          toast({
+            title: "Surat Berhasil Dibuat",
+            description:
+              "Surat Keterangan Kelahiran telah berhasil dibuat dan diunduh",
+          });
+          setIsKelahiranFormDialogOpen(false);
+        }
+      } catch (error) {
+        console.error("Error generating PDF:", error);
+        toast({
+          title: "Gagal Membuat Surat",
+          description:
+            "Terjadi kesalahan saat membuat surat. Silakan coba lagi.",
+          variant: "destructive",
+        });
+      } finally {
+        // Set loading state back to false
+        setIsLoading(false);
+      }
+    }
+  };
+
   const handleSubmitIzinKeramaianForm = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -935,378 +1446,1501 @@ const LayananSurat = () => {
     }
   };
 
+  const handleSubmitTidakMampuForm = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validate form
+    let isValid = true;
+
+    if (!namaPemohonTidakMampu.trim()) {
+      setNamaPemohonTidakMampuError("Nama pemohon harus diisi");
+      isValid = false;
+    } else {
+      setNamaPemohonTidakMampuError("");
+    }
+
+    if (!tempatLahirPemohonTidakMampu.trim()) {
+      setTempatLahirPemohonTidakMampuError("Tempat lahir harus diisi");
+      isValid = false;
+    } else {
+      setTempatLahirPemohonTidakMampuError("");
+    }
+
+    if (!tanggalLahirPemohonTidakMampu.trim()) {
+      setTanggalLahirPemohonTidakMampuError("Tanggal lahir harus diisi");
+      isValid = false;
+    } else {
+      setTanggalLahirPemohonTidakMampuError("");
+    }
+
+    if (!pekerjaanPemohonTidakMampu.trim()) {
+      setPekerjaanPemohonTidakMampuError("Pekerjaan harus diisi");
+      isValid = false;
+    } else {
+      setPekerjaanPemohonTidakMampuError("");
+    }
+
+    if (!alamatPemohonTidakMampu.trim()) {
+      setAlamatPemohonTidakMampuError("Alamat harus diisi");
+      isValid = false;
+    } else {
+      setAlamatPemohonTidakMampuError("");
+    }
+
+    if (!persyaratanTidakMampu.trim()) {
+      setPersyaratanTidakMampuError("Persyaratan harus diisi");
+      isValid = false;
+    } else {
+      setPersyaratanTidakMampuError("");
+    }
+
+    if (isValid) {
+      // Set loading state to true
+      setIsLoading(true);
+
+      try {
+        // Generate PDF (async operation)
+        const pdfGenerated = await generatePDF();
+
+        // Process form submission if PDF was generated successfully
+        if (pdfGenerated) {
+          toast({
+            title: "Surat Berhasil Dibuat",
+            description:
+              "Surat Keterangan Tidak Mampu telah berhasil dibuat dan diunduh",
+          });
+          setIsTidakMampuFormDialogOpen(false);
+        }
+      } catch (error) {
+        console.error("Error generating PDF:", error);
+        toast({
+          title: "Gagal Membuat Surat",
+          description:
+            "Terjadi kesalahan saat membuat surat. Silakan coba lagi.",
+          variant: "destructive",
+        });
+      } finally {
+        // Set loading state back to false
+        setIsLoading(false);
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-green-50">
       {/* Navigation */}
-      <nav className="bg-white/90 backdrop-blur-sm fixed w-full z-50 shadow-sm">
+      <nav className="bg-white/90 backdrop-blur-[2px] fixed w-full z-50 shadow-xl top-0 left-0">
         <div className="container mx-auto px-6 py-4">
-          <div className="flex justify-between items-center">
-            <Link
-              to="/"
-              className="flex items-center space-x-2 text-green-800 hover:text-green-900"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              <span className="font-semibold">Kembali ke Beranda</span>
-            </Link>
-            <h1 className="text-2xl font-bold text-green-800">
-              Layanan Surat Desa
-            </h1>
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                {loading ? (
-                  <Button
-                    variant="outline"
-                    className="border-green-600 text-green-600 hover:bg-green-50"
-                    disabled
-                  >
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Loading...
-                  </Button>
-                ) : user ? (
-                  <div className="flex items-center gap-2">
-                    <span className="text-green-800">{user.email}</span>
-                    <Button
-                      variant="outline"
-                      className="border-green-600 text-green-600 hover:bg-green-50"
-                      onClick={async () => {
-                        const result = await logout();
-                        if (result.success) {
+          <div className="grid grid-cols-3 items-center">
+            <div className="flex justify-start">
+              <Link
+                to="/"
+                className="flex items-center space-x-2 text-green-800 hover:text-green-900"
+              >
+                <ArrowLeft className="w-5 h-5" />
+                <span className="font-semibold">Kembali ke Beranda</span>
+              </Link>
+            </div>
+            <div className="flex flex-col items-center justify-center col-span-1">
+              <div className="flex items-center">
+                <div className="bg-gradient-to-r from-green-600 to-emerald-600 p-2 rounded-md mr-2">
+                  <FileText className="w-6 h-6 text-white" />
+                </div>
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent font-poppins">
+                  Layanan Surat Desa
+                </h1>
+              </div>
+              <p className="text-md text-gray-600 mt-1 max-w-md text-center">
+                Template Siap Pakai untuk Administrasi Desa Kepohkencono
+              </p>
+            </div>
+            <div className="flex justify-end">
+              {loading ? (
+                <Button
+                  variant="outline"
+                  className="border-green-600 text-green-600 hover:bg-green-50"
+                  disabled
+                >
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Loading...
+                </Button>
+              ) : user ? (
+                <div className="flex justify-end">
+                  <div className="flex items-center gap-3">
+                    {/* User Profile Dropdown */}
+                    <div className="relative group">
+                      <div className="flex items-center gap-3 bg-white border border-gray-200 rounded-full px-4 py-2 hover:border-green-300 hover:shadow-md transition-all duration-300 cursor-pointer">
+                        {/* User Avatar */}
+                        <div className="w-8 h-8 bg-gradient-to-br from-green-600 to-emerald-600 rounded-full flex items-center justify-center">
+                          <span className="text-white text-sm font-semibold">
+                            {user.email
+                              ? user.email.substring(0, 2).toUpperCase()
+                              : "AD"}
+                          </span>
+                        </div>
+
+                        {/* User Info */}
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium text-gray-900">
+                            {user.email}
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            Administrator
+                          </span>
+                        </div>
+
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="ml-2 text-gray-500 hover:text-red-600 hover:bg-red-50 p-1 h-auto"
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            const result = await logout();
+                            if (result.success) {
+                              toast({
+                                title: "Logout berhasil",
+                                description: "Sampai jumpa kembali!",
+                              });
+                            }
+                          }}
+                        >
+                          Logout
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-6 py-2 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+                      <LogIn className="h-4 w-4" />
+                      Login
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader className="pb-0">
+                      <DialogTitle>Login Admin</DialogTitle>
+                      <DialogDescription>
+                        Masuk sebagai admin untuk mengelola layanan surat.
+                      </DialogDescription>
+                    </DialogHeader>
+                    <form
+                      onSubmit={async (e) => {
+                        e.preventDefault();
+                        setIsLoading(true);
+                        try {
+                          setEmailError("");
+                          setPasswordError("");
+                          setConfirmPasswordError("");
+
+                          const result = await login(email, password);
+                          if (result.success) {
+                            toast({
+                              title: "Login berhasil",
+                              description: "Selamat datang di dashboard admin",
+                            });
+                            setIsDialogOpen(false);
+                          } else {
+                            if (result.error) {
+                              if (result.error.includes("email")) {
+                                setEmailError(result.error);
+                              } else if (result.error.includes("password")) {
+                                setPasswordError(result.error);
+                              } else {
+                                toast({
+                                  variant: "destructive",
+                                  title: "Login gagal",
+                                  description:
+                                    result.error ||
+                                    "Terjadi kesalahan. Silakan coba lagi.",
+                                });
+                              }
+                            }
+                          }
+                        } catch (error) {
                           toast({
-                            title: "Logout berhasil",
-                            description: "Sampai jumpa kembali!",
+                            variant: "destructive",
+                            title: "Error",
+                            description: "Terjadi kesalahan saat login",
                           });
+                        } finally {
+                          setIsLoading(false);
                         }
                       }}
+                      className="space-y-4"
                     >
-                      Logout
-                    </Button>
-                  </div>
-                ) : (
-                  <Button className="bg-green-600 hover:bg-green-700">
-                    <Users className="w-4 h-4 mr-2" />
-                    Login Admin
-                  </Button>
-                )}
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Login Admin</DialogTitle>
-                  <DialogDescription>
-                    Masuk sebagai admin untuk mengelola layanan surat.
+                      <div className="space-y-2">
+                        <Label htmlFor="email">Email</Label>
+                        <Input
+                          id="email"
+                          type="email"
+                          placeholder="admin@example.com"
+                          value={email}
+                          onChange={(e) => {
+                            setEmail(e.target.value);
+                            setEmailError("");
+                          }}
+                          className={`bg-gray-100 placeholder:text-gray-800 ${
+                            emailError ? "border-red-500" : "border-gray-400"
+                          }`}
+                          required
+                        />
+                        {emailError && (
+                          <p className="text-sm text-red-500 mt-1">
+                            {emailError}
+                          </p>
+                        )}
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="password">Password</Label>
+                        <Input
+                          id="password"
+                          type="password"
+                          placeholder="Masukkan kata sandi"
+                          value={password}
+                          onChange={(e) => {
+                            setPassword(e.target.value);
+                            setPasswordError("");
+                          }}
+                          className={`bg-gray-100 placeholder:text-gray-600 ${
+                            passwordError ? "border-red-500" : "border-gray-400"
+                          }`}
+                          required
+                        />
+                        {passwordError && (
+                          <p className="text-sm text-red-500 mt-1">
+                            {passwordError}
+                          </p>
+                        )}
+                      </div>
+
+                      <Button
+                        type="submit"
+                        className="w-full bg-green-800 hover:bg-green-900 text-white"
+                        disabled={isLoading}
+                      >
+                        {isLoading && (
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        )}
+                        {isLoading ? "Loading..." : "Login"}
+                      </Button>
+                    </form>
+                  </DialogContent>
+                </Dialog>
+              )}
+            </div>
+
+            {/* Form Dialog for Surat Keterangan Kematian */}
+            <Dialog
+              open={isKematianFormDialogOpen}
+              onOpenChange={setIsKematianFormDialogOpen}
+            >
+              <DialogContent className="sm:max-w-[650px] p-6 max-h-[90vh] overflow-y-auto">
+                <DialogHeader className="pb-0">
+                  <DialogTitle className="text-2xl font-bold">
+                    Formulir Surat Keterangan Kematian
+                  </DialogTitle>
+                  <DialogDescription className="text-base mt-1">
+                    Silakan lengkapi data berikut untuk pembuatan Surat
+                    Keterangan Kematian.
                   </DialogDescription>
                 </DialogHeader>
                 <form
-                  onSubmit={async (e) => {
-                    e.preventDefault();
-                    setIsLoading(true);
-                    try {
-                      setEmailError("");
-                      setPasswordError("");
-                      setConfirmPasswordError("");
-
-                      const result = await login(email, password);
-                      if (result.success) {
-                        toast({
-                          title: "Login berhasil",
-                          description: "Selamat datang di dashboard admin",
-                        });
-                        setIsDialogOpen(false);
-                      } else {
-                        if (result.error) {
-                          if (result.error.includes("email")) {
-                            setEmailError(result.error);
-                          } else if (result.error.includes("password")) {
-                            setPasswordError(result.error);
-                          } else {
-                            toast({
-                              variant: "destructive",
-                              title: "Login gagal",
-                              description:
-                                result.error ||
-                                "Terjadi kesalahan. Silakan coba lagi.",
-                            });
-                          }
-                        }
-                      }
-                    } catch (error) {
-                      toast({
-                        variant: "destructive",
-                        title: "Error",
-                        description: "Terjadi kesalahan saat login",
-                      });
-                    } finally {
-                      setIsLoading(false);
-                    }
-                  }}
-                  className="space-y-4"
+                  onSubmit={handleSubmitKematianForm}
+                  className="space-y-4 mt-2"
                 >
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="admin@example.com"
-                      value={email}
-                      onChange={(e) => {
-                        setEmail(e.target.value);
-                        setEmailError("");
-                      }}
-                      className={`bg-gray-100 placeholder:text-gray-800 ${
-                        emailError ? "border-red-500" : "border-gray-400"
-                      }`}
-                      required
-                    />
-                    {emailError && (
-                      <p className="text-sm text-red-500 mt-1">{emailError}</p>
-                    )}
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
-                    <Input
-                      id="password"
-                      type="password"
-                      placeholder="Masukkan kata sandi"
-                      value={password}
-                      onChange={(e) => {
-                        setPassword(e.target.value);
-                        setPasswordError("");
-                      }}
-                      className={`bg-gray-100 placeholder:text-gray-600 ${
-                        passwordError ? "border-red-500" : "border-gray-400"
-                      }`}
-                      required
-                    />
-                    {passwordError && (
-                      <p className="text-sm text-red-500 mt-1">
-                        {passwordError}
-                      </p>
-                    )}
+                  {/* Data Almarhum/Almarhumah */}
+                  <div className="border-t pt-2 mt-1">
+                    <h3 className="text-lg font-semibold mb-3">
+                      Data Almarhum/Almarhumah
+                    </h3>
+
+                    <div className="space-y-2 mt-2">
+                      <Label htmlFor="namaKematian" className="text-base">
+                        Nama
+                      </Label>
+                      <Input
+                        id="namaKematian"
+                        placeholder="Masukkan nama lengkap"
+                        className={`text-base ${
+                          namaKematianError
+                            ? "border-red-500"
+                            : "border-gray-400"
+                        }`}
+                        value={namaKematian}
+                        onChange={(e) => {
+                          setNamaKematian(e.target.value);
+                          setNamaKematianError("");
+                        }}
+                      />
+                      {namaKematianError && (
+                        <p className="text-base text-red-500 mt-1">
+                          {namaKematianError}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 mt-3">
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="tempatLahirKematian"
+                          className="text-base"
+                        >
+                          Tempat Lahir
+                        </Label>
+                        <Input
+                          id="tempatLahirKematian"
+                          placeholder="Masukkan tempat lahir"
+                          className={`text-base ${
+                            tempatLahirKematianError
+                              ? "border-red-500"
+                              : "border-gray-400"
+                          }`}
+                          value={tempatLahirKematian}
+                          onChange={(e) => {
+                            setTempatLahirKematian(e.target.value);
+                            setTempatLahirKematianError("");
+                          }}
+                        />
+                        {tempatLahirKematianError && (
+                          <p className="text-base text-red-500 mt-1">
+                            {tempatLahirKematianError}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="tanggalLahirKematian"
+                          className="text-base"
+                        >
+                          Tanggal Lahir
+                        </Label>
+                        <Input
+                          id="tanggalLahirKematian"
+                          placeholder="Masukkan tanggal lahir"
+                          className={`text-base ${
+                            tanggalLahirKematianError
+                              ? "border-red-500"
+                              : "border-gray-400"
+                          }`}
+                          value={tanggalLahirKematian}
+                          onChange={(e) => {
+                            setTanggalLahirKematian(e.target.value);
+                            setTanggalLahirKematianError("");
+                          }}
+                        />
+                        {tanggalLahirKematianError && (
+                          <p className="text-base text-red-500 mt-1">
+                            {tanggalLahirKematianError}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="space-y-2 mt-3">
+                      <Label
+                        htmlFor="jenisKelaminKematian"
+                        className="text-base"
+                      >
+                        Jenis Kelamin
+                      </Label>
+                      <div className="flex space-x-4">
+                        <div className="flex items-center">
+                          <input
+                            type="radio"
+                            id="jenisKelaminL"
+                            name="jenisKelaminKematian"
+                            value="L"
+                            checked={jenisKelaminKematian === "L"}
+                            onChange={() => setJenisKelaminKematian("L")}
+                            className="mr-2"
+                          />
+                          <Label htmlFor="jenisKelaminL">Laki-laki</Label>
+                        </div>
+                        <div className="flex items-center">
+                          <input
+                            type="radio"
+                            id="jenisKelaminP"
+                            name="jenisKelaminKematian"
+                            value="P"
+                            checked={jenisKelaminKematian === "P"}
+                            onChange={() => setJenisKelaminKematian("P")}
+                            className="mr-2"
+                          />
+                          <Label htmlFor="jenisKelaminP">Perempuan</Label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2 mt-3">
+                      <Label htmlFor="pekerjaanKematian" className="text-base">
+                        Pekerjaan
+                      </Label>
+                      <Input
+                        id="pekerjaanKematian"
+                        placeholder="Masukkan pekerjaan"
+                        className={`text-base ${
+                          pekerjaanKematianError
+                            ? "border-red-500"
+                            : "border-gray-400"
+                        }`}
+                        value={pekerjaanKematian}
+                        onChange={(e) => {
+                          setPekerjaanKematian(e.target.value);
+                          setPekerjaanKematianError("");
+                        }}
+                      />
+                      {pekerjaanKematianError && (
+                        <p className="text-base text-red-500 mt-1">
+                          {pekerjaanKematianError}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="space-y-2 mt-3">
+                      <Label htmlFor="alamatKematian" className="text-base">
+                        Alamat
+                      </Label>
+                      <Input
+                        id="alamatKematian"
+                        placeholder="Masukkan alamat lengkap"
+                        className={`text-base ${
+                          alamatKematianError
+                            ? "border-red-500"
+                            : "border-gray-400"
+                        }`}
+                        value={alamatKematian}
+                        onChange={(e) => {
+                          setAlamatKematian(e.target.value);
+                          setAlamatKematianError("");
+                        }}
+                      />
+                      {alamatKematianError && (
+                        <p className="text-base text-red-500 mt-1">
+                          {alamatKematianError}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="space-y-2 mt-3">
+                      <Label htmlFor="agamaKematian" className="text-base">
+                        Agama
+                      </Label>
+                      <Input
+                        id="agamaKematian"
+                        placeholder="Masukkan agama"
+                        className={`text-base ${
+                          agamaKematianError
+                            ? "border-red-500"
+                            : "border-gray-400"
+                        }`}
+                        value={agamaKematian}
+                        onChange={(e) => {
+                          setAgamaKematian(e.target.value);
+                          setAgamaKematianError("");
+                        }}
+                      />
+                      {agamaKematianError && (
+                        <p className="text-base text-red-500 mt-1">
+                          {agamaKematianError}
+                        </p>
+                      )}
+                    </div>
                   </div>
 
-                  <Button
-                    type="submit"
-                    className="w-full bg-green-800 hover:bg-green-900 text-white"
-                    disabled={isLoading}
-                  >
-                    {isLoading && (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    )}
-                    {isLoading ? "Loading..." : "Login"}
-                  </Button>
+                  <div className="border-t pt-2 mt-6">
+                    <h3 className="text-lg font-semibold mb-1">
+                      Data Kematian
+                    </h3>
+
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor="hariTanggalKematian"
+                        className="text-base"
+                      >
+                        Hari/Tanggal Kematian
+                      </Label>
+                      <Input
+                        id="hariTanggalKematian"
+                        placeholder="Contoh: Senin, 10 Januari 2023"
+                        className={`text-base ${
+                          hariTanggalKematianError
+                            ? "border-red-500"
+                            : "border-gray-400"
+                        }`}
+                        value={hariTanggalKematian}
+                        onChange={(e) => {
+                          setHariTanggalKematian(e.target.value);
+                          setHariTanggalKematianError("");
+                        }}
+                      />
+                      {hariTanggalKematianError && (
+                        <p className="text-base text-red-500 mt-1">
+                          {hariTanggalKematianError}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="space-y-2 mt-3">
+                      <Label htmlFor="jamKematian" className="text-base">
+                        Jam Kematian
+                      </Label>
+                      <Input
+                        id="jamKematian"
+                        placeholder="Contoh: 14:30 WIB"
+                        className={`text-base ${
+                          jamKematianError
+                            ? "border-red-500"
+                            : "border-gray-400"
+                        }`}
+                        value={jamKematian}
+                        onChange={(e) => {
+                          setJamKematian(e.target.value);
+                          setJamKematianError("");
+                        }}
+                      />
+                      {jamKematianError && (
+                        <p className="text-base text-red-500 mt-1">
+                          {jamKematianError}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="space-y-2 mt-3">
+                      <Label htmlFor="sebabKematian" className="text-base">
+                        Sebab Kematian
+                      </Label>
+                      <Input
+                        id="sebabKematian"
+                        placeholder="Masukkan sebab kematian"
+                        className={`text-base ${
+                          sebabKematianError
+                            ? "border-red-500"
+                            : "border-gray-400"
+                        }`}
+                        value={sebabKematian}
+                        onChange={(e) => {
+                          setSebabKematian(e.target.value);
+                          setSebabKematianError("");
+                        }}
+                      />
+                      {sebabKematianError && (
+                        <p className="text-base text-red-500 mt-1">
+                          {sebabKematianError}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="space-y-2 mt-3">
+                      <Label htmlFor="yangMenerangkan" className="text-base">
+                        Yang Menerangkan Kematian
+                      </Label>
+                      <Input
+                        id="yangMenerangkan"
+                        placeholder="Contoh: Dokter RS Pati / Keluarga"
+                        className={`text-base ${
+                          yangMenerangkanError
+                            ? "border-red-500"
+                            : "border-gray-400"
+                        }`}
+                        value={yangMenerangkan}
+                        onChange={(e) => {
+                          setYangMenerangkan(e.target.value);
+                          setYangMenerangkanError("");
+                        }}
+                      />
+                      {yangMenerangkanError && (
+                        <p className="text-base text-red-500 mt-1">
+                          {yangMenerangkanError}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="space-y-2 mt-4">
+                      <Label htmlFor="tempatKematian" className="text-base">
+                        Tempat Kematian
+                      </Label>
+                      <Input
+                        id="tempatKematian"
+                        placeholder="Contoh: RS Pati / Rumah"
+                        className={`text-base ${
+                          tempatKematianError
+                            ? "border-red-500"
+                            : "border-gray-400"
+                        }`}
+                        value={tempatKematian}
+                        onChange={(e) => {
+                          setTempatKematian(e.target.value);
+                          setTempatKematianError("");
+                        }}
+                      />
+                      {tempatKematianError && (
+                        <p className="text-base text-red-500 mt-1">
+                          {tempatKematianError}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <DialogFooter className="mt-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setIsKematianFormDialogOpen(false)}
+                      className="text-base h-12 px-6"
+                    >
+                      Batal
+                    </Button>
+                    <Button
+                      type="submit"
+                      className="bg-green-900 hover:bg-green-900 text-base h-12 px-6"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Memproses...
+                        </>
+                      ) : (
+                        "Buat Surat"
+                      )}
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
+
+            {/* Form Dialog for Surat Keterangan Kelahiran */}
+            <Dialog
+              open={isKelahiranFormDialogOpen}
+              onOpenChange={setIsKelahiranFormDialogOpen}
+            >
+              <DialogContent className="sm:max-w-[650px] p-6 max-h-[90vh] overflow-y-auto">
+                <DialogHeader className="pb-0">
+                  <DialogTitle className="text-2xl font-bold">
+                    Formulir Surat Keterangan Kelahiran
+                  </DialogTitle>
+                  <DialogDescription className="text-base mt-1 mb-0">
+                    Silakan lengkapi data berikut untuk pembuatan Surat
+                    Keterangan Kelahiran.
+                  </DialogDescription>
+                </DialogHeader>
+                <form
+                  onSubmit={handleSubmitKelahiranForm}
+                  className="space-y-4 mt-0"
+                >
+                  {/* Data Pemohon */}
+                  <div className="border-t pt-2 mt-1">
+                    <h3 className="text-lg font-semibold mb-1">Data Pemohon</h3>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="namaPemohon" className="text-base">
+                        Nama
+                      </Label>
+                      <Input
+                        id="namaPemohon"
+                        placeholder="Masukkan nama lengkap"
+                        className={`text-base ${
+                          namaPemohonError
+                            ? "border-red-500"
+                            : "border-gray-400"
+                        }`}
+                        value={namaPemohon}
+                        onChange={(e) => {
+                          setNamaPemohon(e.target.value);
+                          setNamaPemohonError("");
+                        }}
+                      />
+                      {namaPemohonError && (
+                        <p className="text-base text-red-500 mt-1">
+                          {namaPemohonError}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 mt-3">
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="tempatLahirPemohon"
+                          className="text-base"
+                        >
+                          Tempat Lahir
+                        </Label>
+                        <Input
+                          id="tempatLahirPemohon"
+                          placeholder="Masukkan tempat lahir"
+                          className={`text-base ${
+                            tempatLahirPemohonError
+                              ? "border-red-500"
+                              : "border-gray-400"
+                          }`}
+                          value={tempatLahirPemohon}
+                          onChange={(e) => {
+                            setTempatLahirPemohon(e.target.value);
+                            setTempatLahirPemohonError("");
+                          }}
+                        />
+                        {tempatLahirPemohonError && (
+                          <p className="text-base text-red-500 mt-1">
+                            {tempatLahirPemohonError}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="tanggalLahirPemohon"
+                          className="text-base"
+                        >
+                          Tanggal Lahir
+                        </Label>
+                        <Input
+                          id="tanggalLahirPemohon"
+                          placeholder="Masukkan tanggal lahir"
+                          className={`text-base ${
+                            tanggalLahirPemohonError
+                              ? "border-red-500"
+                              : "border-gray-400"
+                          }`}
+                          value={tanggalLahirPemohon}
+                          onChange={(e) => {
+                            setTanggalLahirPemohon(e.target.value);
+                            setTanggalLahirPemohonError("");
+                          }}
+                        />
+                        {tanggalLahirPemohonError && (
+                          <p className="text-base text-red-500 mt-1">
+                            {tanggalLahirPemohonError}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="space-y-2 mt-3">
+                      <Label
+                        htmlFor="jenisKelaminPemohon"
+                        className="text-base"
+                      >
+                        Jenis Kelamin
+                      </Label>
+                      <div className="flex space-x-4">
+                        <div className="flex items-center">
+                          <input
+                            type="radio"
+                            id="jenisKelaminPemohonL"
+                            name="jenisKelaminPemohon"
+                            value="L"
+                            checked={jenisKelaminPemohon === "L"}
+                            onChange={() => setJenisKelaminPemohon("L")}
+                            className="mr-2"
+                          />
+                          <Label htmlFor="jenisKelaminPemohonL">
+                            Laki-laki
+                          </Label>
+                        </div>
+                        <div className="flex items-center">
+                          <input
+                            type="radio"
+                            id="jenisKelaminPemohonP"
+                            name="jenisKelaminPemohon"
+                            value="P"
+                            checked={jenisKelaminPemohon === "P"}
+                            onChange={() => setJenisKelaminPemohon("P")}
+                            className="mr-2"
+                          />
+                          <Label htmlFor="jenisKelaminPemohonP">
+                            Perempuan
+                          </Label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2 mt-3">
+                      <Label htmlFor="pekerjaanPemohon" className="text-base">
+                        Pekerjaan
+                      </Label>
+                      <Input
+                        id="pekerjaanPemohon"
+                        placeholder="Masukkan pekerjaan"
+                        className={`text-base ${
+                          pekerjaanPemohonError
+                            ? "border-red-500"
+                            : "border-gray-400"
+                        }`}
+                        value={pekerjaanPemohon}
+                        onChange={(e) => {
+                          setPekerjaanPemohon(e.target.value);
+                          setPekerjaanPemohonError("");
+                        }}
+                      />
+                      {pekerjaanPemohonError && (
+                        <p className="text-base text-red-500 mt-1">
+                          {pekerjaanPemohonError}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="space-y-2 mt-3">
+                      <Label htmlFor="alamatPemohon" className="text-base">
+                        Alamat
+                      </Label>
+                      <Input
+                        id="alamatPemohon"
+                        placeholder="Masukkan alamat lengkap"
+                        className={`text-base ${
+                          alamatPemohonError
+                            ? "border-red-500"
+                            : "border-gray-400"
+                        }`}
+                        value={alamatPemohon}
+                        onChange={(e) => {
+                          setAlamatPemohon(e.target.value);
+                          setAlamatPemohonError("");
+                        }}
+                      />
+                      {alamatPemohonError && (
+                        <p className="text-base text-red-500 mt-1">
+                          {alamatPemohonError}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Data Anak */}
+                  <div className="border-t pt-4 mt-2">
+                    <h3 className="text-lg font-semibold mb-3">Data Anak</h3>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="namaAnak" className="text-base">
+                        Nama
+                      </Label>
+                      <Input
+                        id="namaAnak"
+                        placeholder="Masukkan nama lengkap anak"
+                        className={`text-base ${
+                          namaAnakError ? "border-red-500" : "border-gray-400"
+                        }`}
+                        value={namaAnak}
+                        onChange={(e) => {
+                          setNamaAnak(e.target.value);
+                          setNamaAnakError("");
+                        }}
+                      />
+                      {namaAnakError && (
+                        <p className="text-base text-red-500 mt-1">
+                          {namaAnakError}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 mt-3">
+                      <div className="space-y-2">
+                        <Label htmlFor="tempatLahirAnak" className="text-base">
+                          Tempat Lahir
+                        </Label>
+                        <Input
+                          id="tempatLahirAnak"
+                          placeholder="Masukkan tempat lahir anak"
+                          className={`text-base ${
+                            tempatLahirAnakError
+                              ? "border-red-500"
+                              : "border-gray-400"
+                          }`}
+                          value={tempatLahirAnak}
+                          onChange={(e) => {
+                            setTempatLahirAnak(e.target.value);
+                            setTempatLahirAnakError("");
+                          }}
+                        />
+                        {tempatLahirAnakError && (
+                          <p className="text-base text-red-500 mt-1">
+                            {tempatLahirAnakError}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="tanggalLahirAnak" className="text-base">
+                          Tanggal Lahir
+                        </Label>
+                        <Input
+                          id="tanggalLahirAnak"
+                          placeholder="Masukkan tanggal lahir anak"
+                          className={`text-base ${
+                            tanggalLahirAnakError
+                              ? "border-red-500"
+                              : "border-gray-400"
+                          }`}
+                          value={tanggalLahirAnak}
+                          onChange={(e) => {
+                            setTanggalLahirAnak(e.target.value);
+                            setTanggalLahirAnakError("");
+                          }}
+                        />
+                        {tanggalLahirAnakError && (
+                          <p className="text-base text-red-500 mt-1">
+                            {tanggalLahirAnakError}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="space-y-2 mt-3">
+                      <Label htmlFor="jenisKelaminAnak" className="text-base">
+                        Jenis Kelamin
+                      </Label>
+                      <div className="flex space-x-4">
+                        <div className="flex items-center">
+                          <input
+                            type="radio"
+                            id="jenisKelaminAnakL"
+                            name="jenisKelaminAnak"
+                            value="L"
+                            checked={jenisKelaminAnak === "L"}
+                            onChange={() => setJenisKelaminAnak("L")}
+                            className="mr-2"
+                          />
+                          <Label htmlFor="jenisKelaminAnakL">Laki-laki</Label>
+                        </div>
+                        <div className="flex items-center">
+                          <input
+                            type="radio"
+                            id="jenisKelaminAnakP"
+                            name="jenisKelaminAnak"
+                            value="P"
+                            checked={jenisKelaminAnak === "P"}
+                            onChange={() => setJenisKelaminAnak("P")}
+                            className="mr-2"
+                          />
+                          <Label htmlFor="jenisKelaminAnakP">Perempuan</Label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2 mt-3">
+                      <Label htmlFor="agamaAnak" className="text-base">
+                        Agama
+                      </Label>
+                      <Input
+                        id="agamaAnak"
+                        placeholder="Masukkan agama anak"
+                        className={`text-base ${
+                          agamaAnakError ? "border-red-500" : "border-gray-400"
+                        }`}
+                        value={agamaAnak}
+                        onChange={(e) => {
+                          setAgamaAnak(e.target.value);
+                          setAgamaAnakError("");
+                        }}
+                      />
+                      {agamaAnakError && (
+                        <p className="text-base text-red-500 mt-1">
+                          {agamaAnakError}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="space-y-2 mt-3">
+                      <Label htmlFor="alamatAnak" className="text-base">
+                        Alamat
+                      </Label>
+                      <Input
+                        id="alamatAnak"
+                        placeholder="Masukkan alamat anak"
+                        className={`text-base ${
+                          alamatAnakError ? "border-red-500" : "border-gray-400"
+                        }`}
+                        value={alamatAnak}
+                        onChange={(e) => {
+                          setAlamatAnak(e.target.value);
+                          setAlamatAnakError("");
+                        }}
+                      />
+                      {alamatAnakError && (
+                        <p className="text-base text-red-500 mt-1">
+                          {alamatAnakError}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Data Orang Tua */}
+                  <div className="border-t pt-4 mt-2">
+                    <h3 className="text-lg font-semibold mb-3">
+                      Data Orang Tua
+                    </h3>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="namaAyah" className="text-base">
+                        Nama Ayah
+                      </Label>
+                      <Input
+                        id="namaAyah"
+                        placeholder="Masukkan nama ayah"
+                        className={`text-base ${
+                          namaAyahError ? "border-red-500" : "border-gray-400"
+                        }`}
+                        value={namaAyah}
+                        onChange={(e) => {
+                          setNamaAyah(e.target.value);
+                          setNamaAyahError("");
+                        }}
+                      />
+                      {namaAyahError && (
+                        <p className="text-base text-red-500 mt-1">
+                          {namaAyahError}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="space-y-2 mt-3">
+                      <Label htmlFor="namaIbu" className="text-base">
+                        Nama Ibu
+                      </Label>
+                      <Input
+                        id="namaIbu"
+                        placeholder="Masukkan nama ibu"
+                        className={`text-base ${
+                          namaIbuError ? "border-red-500" : "border-gray-400"
+                        }`}
+                        value={namaIbu}
+                        onChange={(e) => {
+                          setNamaIbu(e.target.value);
+                          setNamaIbuError("");
+                        }}
+                      />
+                      {namaIbuError && (
+                        <p className="text-base text-red-500 mt-1">
+                          {namaIbuError}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <DialogFooter className="mt-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setIsKelahiranFormDialogOpen(false)}
+                      className="text-base h-12 px-6"
+                    >
+                      Batal
+                    </Button>
+                    <Button
+                      type="submit"
+                      className="bg-green-900 hover:bg-green-900 text-base h-12 px-6"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Memproses...
+                        </>
+                      ) : (
+                        "Buat Surat"
+                      )}
+                    </Button>
+                  </DialogFooter>
                 </form>
               </DialogContent>
             </Dialog>
           </div>
         </div>
       </nav>
+      {/* How to Create Letters - Step by Step Guide */}
+      <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-b pt-28">
+        <div className="container mx-auto px-4 py-12">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl font-bold text-gray-900 mb-3">
+              Cara Membuat Surat
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Ikuti langkah-langkah sederhana berikut untuk membuat surat resmi
+              dengan mudah dan cepat
+            </p>
+          </div>
 
-      {/* Header Section */}
-      <section className="pt-24 pb-16 bg-gradient-to-r from-green-600 to-blue-600 text-white">
-        <div className="container mx-auto px-6 text-center">
-          <FileText className="w-16 h-16 mx-auto mb-4 opacity-90" />
-          <h1 className="text-5xl font-bold mb-4">Layanan Surat Desa</h1>
-          <p className="text-xl opacity-90 max-w-3xl mx-auto">
-            Dapatkan surat-surat administrasi desa dengan mudah dan cepat.
-            Sistem digital yang memungkinkan Anda mengajukan permohonan kapan
-            saja, di mana saja.
-          </p>
-        </div>
-      </section>
+          <div className="max-w-5xl mx-auto">
+            <div className="grid md:grid-cols-4 gap-6">
+              {/* Step 1 */}
+              <div className="relative">
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mb-4 shadow-lg">
+                    <svg
+                      className="h-8 w-8 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      />
+                    </svg>
+                  </div>
+                  <div className="bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full mb-3">
+                    Langkah 1
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    Pilih Surat
+                  </h3>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    Pilih jenis surat yang ingin dibuat dari berbagai template
+                    yang tersedia
+                  </p>
+                </div>
+                {/* Arrow for desktop */}
+                <div className="hidden md:block absolute top-8 -right-3 text-gray-300">
+                  <svg
+                    className="h-6 w-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </div>
+              </div>
 
-      {/* Info Section */}
-      <section className="py-12 bg-white">
-        <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-3 gap-8 text-center">
-            <div className="space-y-3">
-              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-                <FileText className="w-6 h-6 text-green-600" />
+              {/* Step 2 */}
+              <div className="relative">
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center mb-4 shadow-lg">
+                    <svg
+                      className="h-8 w-8 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                      />
+                    </svg>
+                  </div>
+                  <div className="bg-emerald-100 text-emerald-800 text-xs font-semibold px-3 py-1 rounded-full mb-3">
+                    Langkah 2
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    Isi Formulir
+                  </h3>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    Lengkapi data dan informasi yang diperlukan sesuai dengan
+                    jenis surat
+                  </p>
+                </div>
+                {/* Arrow for desktop */}
+                <div className="hidden md:block absolute top-8 -right-3 text-gray-300">
+                  <svg
+                    className="h-6 w-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </div>
               </div>
-              <h3 className="text-lg font-semibold text-green-800">
-                Mudah & Praktis
-              </h3>
-              <p className="text-gray-600">
-                Ajukan permohonan surat secara online tanpa perlu antri
-              </p>
+
+              {/* Step 3 */}
+              <div className="relative">
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-16 h-16 bg-gradient-to-br from-teal-500 to-teal-600 rounded-full flex items-center justify-center mb-4 shadow-lg">
+                    <svg
+                      className="h-8 w-8 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"
+                      />
+                    </svg>
+                  </div>
+                  <div className="bg-teal-100 text-teal-800 text-xs font-semibold px-3 py-1 rounded-full mb-3">
+                    Langkah 3
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    Buat Surat
+                  </h3>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    Klik tombol "Buat Surat" untuk menghasilkan dokumen final
+                  </p>
+                </div>
+                {/* Arrow for desktop */}
+                <div className="hidden md:block absolute top-8 -right-3 text-gray-300">
+                  <svg
+                    className="h-6 w-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </div>
+              </div>
+
+              {/* Step 4 */}
+              <div className="relative">
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-16 h-16 bg-gradient-to-br from-green-600 to-green-700 rounded-full flex items-center justify-center mb-4 shadow-lg">
+                    <svg
+                      className="h-8 w-8 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                      />
+                    </svg>
+                  </div>
+                  <div className="bg-green-100 text-green-800 text-xs font-semibold px-3 py-1 rounded-full mb-3">
+                    Langkah 4
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    Cetak Surat
+                  </h3>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    Cetak surat dan serahkan kepada warga yang membutuhkan
+                  </p>
+                </div>
+              </div>
             </div>
-            <div className="space-y-3">
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
-                <Clock className="w-6 h-6 text-blue-600" />
-              </div>
-              <h3 className="text-lg font-semibold text-green-800">
-                Proses Cepat
-              </h3>
-              <p className="text-gray-600">
-                Estimasi waktu pemrosesan yang jelas untuk setiap jenis surat
-              </p>
-            </div>
-            <div className="space-y-3">
-              <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto">
-                <CheckCircle className="w-6 h-6 text-orange-600" />
-              </div>
-              <h3 className="text-lg font-semibold text-green-800">
-                Terpercaya
-              </h3>
-              <p className="text-gray-600">
-                Sistem yang aman dengan verifikasi resmi dari perangkat desa
-              </p>
+          </div>
+
+          {/* Call to Action */}
+          <div className="text-center mt-12">
+            <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full px-6 py-3 shadow-lg">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span className="text-sm font-medium text-gray-700">
+                Siap untuk membuat surat? Mulai sekarang!
+              </span>
             </div>
           </div>
         </div>
-      </section>
+      </div>
 
       {/* Services Grid */}
-      <section className="py-16">
+      <section className="pt-8 pb-16">
         <div className="container mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-green-800 mb-4">
-              Pilih Jenis Surat
-            </h2>
-            <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-              Silakan pilih jenis surat yang ingin Anda ajukan. Pastikan Anda
-              telah menyiapkan dokumen-dokumen yang diperlukan sebelum mengisi
-              formulir.
-            </p>
+          {/* <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold text-green-900 mb-4">
+                Pilih Jenis Surat
+              </h2>
+              <p className="text-lg text-gray-700 max-w-2xl mx-auto">
+                Silakan pilih jenis surat yang ingin Anda ajukan. Pastikan Anda
+                telah menyiapkan dokumen-dokumen yang diperlukan sebelum mengisi
+                formulir.
+              </p>
+            </div> */}
+
+          {/* Search and Filter Section */}
+          <div className="mb-8">
+            <div className="flex flex-col md:flex-row gap-4 mb-6">
+              <div className="relative flex-1">
+                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <Search className="h-4 w-4 text-gray-500" />
+                </div>
+                <Input
+                  type="text"
+                  placeholder="Cari layanan surat..."
+                  className="pl-10"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <Filter className="h-4 w-4 text-gray-500" />
+                <div className="flex flex-wrap gap-2">
+                  {categories.map((category) => (
+                    <Button
+                      key={category.id}
+                      variant={
+                        selectedCategory === category.id ? "default" : "outline"
+                      }
+                      size="sm"
+                      onClick={() => setSelectedCategory(category.id)}
+                      className={`rounded-md ${
+                        selectedCategory === category.id
+                          ? "bg-green-600 hover:bg-green-700 text-white"
+                          : "hover:bg-green-50 hover:text-green-700 hover:border-green-300"
+                      }`}
+                    >
+                      {category.name}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
 
+          {/* Results Count */}
+          <div className="text-sm text-gray-500 mb-4">
+            Menunjukkan {filteredServices.length} dari {services.length}{" "}
+            template
+          </div>
+
+          {/* Templates Grid - Matching the image layout */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.map((service) => (
-              <Card
-                key={service.id}
-                className={`hover:shadow-lg transition-all duration-300 cursor-pointer border-2 ${
-                  selectedService === service.id
-                    ? "border-green-500 bg-green-50"
-                    : "border-gray-200 hover:border-green-300"
-                }`}
-                onClick={() => handleServiceSelect(service.id)}
-              >
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <FileText className="w-8 h-8 text-green-600 mb-2" />
-                    <Badge className="bg-green-100 text-green-800">
-                      {service.status}
+            {filteredServices.length > 0 ? (
+              filteredServices.map((service) => (
+                <Card
+                  key={service.id}
+                  className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 bg-white border border-gray-200"
+                >
+                  <CardHeader className="pb-4">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-green-100 rounded-lg text-green-600">
+                          {service.id === "domisili" && (
+                            <Home className="w-6 h-6" />
+                          )}
+                          {service.id === "pengantar-desa" && (
+                            <ScrollText className="w-6 h-6" />
+                          )}
+                          {service.id === "izin-keramaian" && (
+                            <Users className="w-6 h-6" />
+                          )}
+
+                          {service.id === "usaha" && (
+                            <Building className="w-6 h-6" />
+                          )}
+                          {service.id === "tidak-mampu" && (
+                            <UserCheck className="w-6 h-6" />
+                          )}
+                          {service.id === "kelahiran" && (
+                            <Heart className="w-6 h-6" />
+                          )}
+                          {service.id === "kematian" && (
+                            <Award className="w-6 h-6" />
+                          )}
+                          {![
+                            "domisili",
+                            "pengantar-desa",
+                            "izin-keramaian",
+                            "usaha",
+                            "tidak-mampu",
+                            "kelahiran",
+                            "kematian",
+                          ].includes(service.id) && (
+                            <FileText className="w-6 h-6" />
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <CardTitle className="text-xl font-semibold text-gray-900 leading-tight">
+                            {service.title}
+                          </CardTitle>
+                        </div>
+                      </div>
+                      <Badge className="bg-green-100 text-green-700 hover:bg-green-100 text-xs font-medium">
+                        {service.status}
+                      </Badge>
+                    </div>
+                    <Badge
+                      variant="outline"
+                      className={`${service.categoryColor} border-0 text-xs font-medium w-fit rounded-full px-3 py-1`}
+                    >
+                      {service.category}
                     </Badge>
-                  </div>
-                  <CardTitle className="text-green-800">
-                    {service.title}
-                  </CardTitle>
-                  <CardDescription className="text-gray-600">
-                    {service.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <h4 className="font-semibold text-gray-800 mb-2">
-                      Syarat:
-                    </h4>
-                    <ul className="text-sm text-gray-600 space-y-1">
-                      {service.requirements.map((req, index) => (
-                        <li key={index} className="flex items-center">
-                          <CheckCircle className="w-3 h-3 text-green-500 mr-2 flex-shrink-0" />
-                          {req}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div className="flex items-center text-sm text-gray-600">
-                    <Clock className="w-4 h-4 mr-2 text-blue-500" />
-                    Estimasi: {service.estimatedTime}
-                  </div>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <CardDescription className="mb-4 text-sm leading-relaxed text-gray-600">
+                      {service.description}
+                    </CardDescription>
+
+                    {/* Requirements Section */}
+                    <div className="mb-6">
+                      <h4 className="text-sm font-semibold text-gray-900 mb-3">
+                        Syarat:
+                      </h4>
+                      <div className="space-y-2">
+                        {service.requirements.map((req, index) => (
+                          <div key={index} className="flex items-center gap-2">
+                            <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
+                            <span className="text-sm text-gray-600">{req}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex gap-3">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1 bg-transparent border-green-600 text-green-600 hover:bg-green-50 hover:text-green-700"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handlePreviewClick(service);
+                        }}
+                      >
+                        <Eye className="h-4 w-4 mr-2" />
+                        Preview
+                      </Button>
+                      <Button
+                        size="sm"
+                        className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleServiceSelect(service.id);
+                        }}
+                      >
+                        Buat Surat
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              <div className="col-span-3 text-center py-12">
+                <div className="flex flex-col items-center justify-center">
+                  <Search className="h-12 w-12 text-gray-400 mb-4" />
+                  <h3 className="text-xl font-medium text-gray-900 mb-2">
+                    Tidak ada layanan yang ditemukan
+                  </h3>
+                  <p className="text-gray-500 mb-4">
+                    Coba ubah kata kunci pencarian atau filter kategori
+                  </p>
                   <Button
-                    className="w-full bg-green-600 hover:bg-green-700"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleServiceSelect(service.id);
+                    variant="outline"
+                    onClick={() => {
+                      setSearchQuery("");
+                      setSelectedCategory("all");
                     }}
                   >
-                    Buat Surat
+                    Reset Pencarian
                   </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-green-800 mb-4">
-              Cara Pembuatan Surat
-            </h2>
-            <p className="text-lg text-gray-700">
-              Ikuti langkah-langkah mudah berikut ini
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-lg font-bold">
-                1
+                </div>
               </div>
-              <h3 className="font-semibold text-green-800 mb-2">Pilih Surat</h3>
-              <p className="text-gray-600 text-sm">
-                Pilih jenis surat yang ingin Anda buat
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-lg font-bold">
-                2
-              </div>
-              <h3 className="font-semibold text-green-800 mb-2">
-                Isi Formulir
-              </h3>
-              <p className="text-gray-600 text-sm">
-                Lengkapi data diri dan informasi yang diperlukan
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-lg font-bold">
-                3
-              </div>
-              <h3 className="font-semibold text-green-800 mb-2">
-                Proses Dokumen
-              </h3>
-              <p className="text-gray-600 text-sm">
-                Verifikasi data dan proses pembuatan surat
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-12 h-12 bg-green-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-lg font-bold">
-                4
-              </div>
-              <h3 className="font-semibold text-green-800 mb-2">Cetak Surat</h3>
-              <p className="text-gray-600 text-sm">
-                Cetak surat dan serahkan kepada warga
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section className="py-16 bg-green-600 text-white">
-        <div className="container mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold mb-4">Butuh Bantuan?</h2>
-          <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Tim kami siap membantu Anda. Jangan ragu untuk menghubungi kami jika
-            ada pertanyaan tentang proses pembuatan surat atau persyaratan yang
-            diperlukan.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              size="lg"
-              className="bg-white text-green-600 hover:bg-gray-100"
-            >
-              Hubungi Admin Desa
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-white text-white hover:bg-white hover:text-green-600"
-            >
-              Panduan Lengkap
-            </Button>
+            )}
           </div>
         </div>
       </section>
@@ -1368,6 +3002,40 @@ const LayananSurat = () => {
                 </p>
               )}
             </div>
+
+            <div className="space-y-3">
+              <Label htmlFor="signatureType" className="text-lg">
+                Pilih Tanda Tangan
+              </Label>
+              <div className="flex flex-col space-y-2">
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="sekretaris"
+                    name="signatureType"
+                    value="sekretaris"
+                    checked={signatureType === "sekretaris"}
+                    onChange={() => setSignatureType("sekretaris")}
+                    className="mr-2"
+                  />
+                  <Label htmlFor="sekretaris">
+                    Plt.Sekretaris Desa - AGUS SUMANTO
+                  </Label>
+                </div>
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="kepala"
+                    name="signatureType"
+                    value="kepala"
+                    checked={signatureType === "kepala"}
+                    onChange={() => setSignatureType("kepala")}
+                    className="mr-2"
+                  />
+                  <Label htmlFor="kepala">Pj.Kepala Desa - NGASIMAN S.H.</Label>
+                </div>
+              </div>
+            </div>
             <DialogFooter className="mt-8">
               <Button
                 type="button"
@@ -1379,7 +3047,7 @@ const LayananSurat = () => {
               </Button>
               <Button
                 type="submit"
-                className="bg-green-600 hover:bg-green-700 text-base h-12 px-6"
+                className="bg-green-900 hover:bg-green-900 text-base h-12 px-6"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -1395,7 +3063,6 @@ const LayananSurat = () => {
           </form>
         </DialogContent>
       </Dialog>
-
       {/* Form Dialog for Surat Keterangan Usaha */}
       <Dialog
         open={isUsahaFormDialogOpen}
@@ -1611,7 +3278,7 @@ const LayananSurat = () => {
               </Button>
               <Button
                 type="submit"
-                className="bg-green-600 hover:bg-green-700 text-base h-12 px-6"
+                className="bg-green-900 hover:bg-green-900 text-base h-12 px-6"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -1627,7 +3294,6 @@ const LayananSurat = () => {
           </form>
         </DialogContent>
       </Dialog>
-
       {/* Form Dialog for Surat Keterangan Pengantar Desa */}
       <Dialog
         open={isPengantarDesaFormDialogOpen}
@@ -2045,7 +3711,7 @@ const LayananSurat = () => {
               </Button>
               <Button
                 type="submit"
-                className="bg-green-600 hover:bg-green-700 text-base h-12 px-6"
+                className="bg-green-900 hover:bg-green-900 text-base h-12 px-6"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -2061,7 +3727,6 @@ const LayananSurat = () => {
           </form>
         </DialogContent>
       </Dialog>
-
       {/* Form Dialog for Surat Izin Keramaian */}
       <Dialog
         open={isIzinKeramaianFormDialogOpen}
@@ -2375,7 +4040,7 @@ const LayananSurat = () => {
                           });
                           setBerlakuMulai(formattedDate);
                           setBerlakuMulaiError("");
-                          
+
                           // Close the popover immediately after selection
                           const closeEvent = new Event("keydown");
                           Object.defineProperty(closeEvent, "key", {
@@ -2433,7 +4098,7 @@ const LayananSurat = () => {
                           });
                           setBerlakuSampai(formattedDate);
                           setBerlakuSampaiError("");
-                          
+
                           // Close the popover immediately after selection
                           const closeEvent = new Event("keydown");
                           Object.defineProperty(closeEvent, "key", {
@@ -2770,7 +4435,7 @@ const LayananSurat = () => {
               </Button>
               <Button
                 type="submit"
-                className="bg-green-600 hover:bg-green-700 text-base h-12 px-6"
+                className="bg-green-900 hover:bg-green-900 text-base h-12 px-6"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -2786,6 +4451,268 @@ const LayananSurat = () => {
           </form>
         </DialogContent>
       </Dialog>
+      
+      {/* Form Dialog for Surat Keterangan Tidak Mampu */}
+      <Dialog open={isTidakMampuFormDialogOpen} onOpenChange={setIsTidakMampuFormDialogOpen}>
+        <DialogContent className="sm:max-w-[650px] p-6 max-h-[90vh] overflow-y-auto">
+          <DialogHeader className="pb-0">
+            <DialogTitle className="text-2xl font-bold">
+              Formulir Surat Keterangan Tidak Mampu
+            </DialogTitle>
+            <DialogDescription className="text-base mt-1 mb-0">
+              Silakan lengkapi data berikut untuk pembuatan Surat Keterangan Tidak Mampu.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleSubmitTidakMampuForm} className="space-y-4 mt-0">
+            <div className="border-t pt-2 mt-1">
+              <h3 className="text-lg font-semibold mb-1">Data Pemohon</h3>
+
+              <div className="space-y-2">
+                <Label htmlFor="namaPemohonTidakMampu" className="text-base">
+                  Nama
+                </Label>
+                <Input
+                  id="namaPemohonTidakMampu"
+                  placeholder="Masukkan nama lengkap"
+                  className={`text-base ${
+                    namaPemohonTidakMampuError ? "border-red-500" : "border-gray-400"
+                  }`}
+                  value={namaPemohonTidakMampu}
+                  onChange={(e) => {
+                    setNamaPemohonTidakMampu(e.target.value);
+                    setNamaPemohonTidakMampuError("");
+                  }}
+                />
+                {namaPemohonTidakMampuError && (
+                  <p className="text-base text-red-500 mt-1">
+                    {namaPemohonTidakMampuError}
+                  </p>
+                )}
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 mt-3">
+                <div className="space-y-2">
+                  <Label htmlFor="tempatLahirPemohonTidakMampu" className="text-base">
+                    Tempat Lahir
+                  </Label>
+                  <Input
+                    id="tempatLahirPemohonTidakMampu"
+                    placeholder="Masukkan tempat lahir"
+                    className={`text-base ${
+                      tempatLahirPemohonTidakMampuError ? "border-red-500" : "border-gray-400"
+                    }`}
+                    value={tempatLahirPemohonTidakMampu}
+                    onChange={(e) => {
+                      setTempatLahirPemohonTidakMampu(e.target.value);
+                      setTempatLahirPemohonTidakMampuError("");
+                    }}
+                  />
+                  {tempatLahirPemohonTidakMampuError && (
+                    <p className="text-base text-red-500 mt-1">
+                      {tempatLahirPemohonTidakMampuError}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="tanggalLahirPemohonTidakMampu" className="text-base">
+                    Tanggal Lahir
+                  </Label>
+                  <Input
+                    id="tanggalLahirPemohonTidakMampu"
+                    placeholder="Masukkan tanggal lahir"
+                    className={`text-base ${
+                      tanggalLahirPemohonTidakMampuError ? "border-red-500" : "border-gray-400"
+                    }`}
+                    value={tanggalLahirPemohonTidakMampu}
+                    onChange={(e) => {
+                      setTanggalLahirPemohonTidakMampu(e.target.value);
+                      setTanggalLahirPemohonTidakMampuError("");
+                    }}
+                  />
+                  {tanggalLahirPemohonTidakMampuError && (
+                    <p className="text-base text-red-500 mt-1">
+                      {tanggalLahirPemohonTidakMampuError}
+                    </p>
+                  )}
+                </div>
+              </div>
+            
+              <div className="space-y-2 mt-3">
+                <Label htmlFor="jenisKelaminPemohonTidakMampu" className="text-base">
+                  Jenis Kelamin
+                </Label>
+                <div className="flex space-x-4">
+                  <div className="flex items-center">
+                    <input
+                      type="radio"
+                      id="jenisKelaminPemohonTidakMampuL"
+                      name="jenisKelaminPemohonTidakMampu"
+                      value="L"
+                      checked={jenisKelaminPemohonTidakMampu === "L"}
+                      onChange={() => setJenisKelaminPemohonTidakMampu("L")}
+                      className="mr-2"
+                    />
+                    <Label htmlFor="jenisKelaminPemohonTidakMampuL">
+                      Laki-laki
+                    </Label>
+                  </div>
+                  <div className="flex items-center">
+                    <input
+                      type="radio"
+                      id="jenisKelaminPemohonTidakMampuP"
+                      name="jenisKelaminPemohonTidakMampu"
+                      value="P"
+                      checked={jenisKelaminPemohonTidakMampu === "P"}
+                      onChange={() => setJenisKelaminPemohonTidakMampu("P")}
+                      className="mr-2"
+                    />
+                    <Label htmlFor="jenisKelaminPemohonTidakMampuP">
+                      Perempuan
+                    </Label>
+                  </div>
+                </div>
+              </div>
+            
+              <div className="space-y-2 mt-3">
+                <Label htmlFor="pekerjaanPemohonTidakMampu" className="text-base">
+                  Pekerjaan
+                </Label>
+                <Input
+                  id="pekerjaanPemohonTidakMampu"
+                  placeholder="Masukkan pekerjaan"
+                  className={`text-base ${
+                    pekerjaanPemohonTidakMampuError ? "border-red-500" : "border-gray-400"
+                  }`}
+                  value={pekerjaanPemohonTidakMampu}
+                  onChange={(e) => {
+                    setPekerjaanPemohonTidakMampu(e.target.value);
+                    setPekerjaanPemohonTidakMampuError("");
+                  }}
+                />
+                {pekerjaanPemohonTidakMampuError && (
+                  <p className="text-base text-red-500 mt-1">
+                    {pekerjaanPemohonTidakMampuError}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2 mt-3">
+                <Label htmlFor="alamatPemohonTidakMampu" className="text-base">
+                  Alamat
+                </Label>
+                <Input
+                  id="alamatPemohonTidakMampu"
+                  placeholder="Masukkan alamat lengkap"
+                  className={`text-base ${
+                    alamatPemohonTidakMampuError ? "border-red-500" : "border-gray-400"
+                  }`}
+                  value={alamatPemohonTidakMampu}
+                  onChange={(e) => {
+                    setAlamatPemohonTidakMampu(e.target.value);
+                    setAlamatPemohonTidakMampuError("");
+                  }}
+                />
+                {alamatPemohonTidakMampuError && (
+                  <p className="text-base text-red-500 mt-1">
+                    {alamatPemohonTidakMampuError}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2 mt-3">
+                <Label htmlFor="persyaratanTidakMampu" className="text-base">
+                  Persyaratan
+                </Label>
+                <Input
+                  id="persyaratanTidakMampu"
+                  placeholder="Masukkan persyaratan yang diperlukan"
+                  className={`text-base ${
+                    persyaratanTidakMampuError ? "border-red-500" : "border-gray-400"
+                  }`}
+                  value={persyaratanTidakMampu}
+                  onChange={(e) => {
+                    setPersyaratanTidakMampu(e.target.value);
+                    setPersyaratanTidakMampuError("");
+                  }}
+                />
+                {persyaratanTidakMampuError && (
+                  <p className="text-base text-red-500 mt-1">
+                    {persyaratanTidakMampuError}
+                  </p>
+                )}
+              </div>
+            </div>
+            
+            <DialogFooter className="mt-8">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsTidakMampuFormDialogOpen(false)}
+                className="text-base h-12 px-6"
+              >
+                Batal
+              </Button>
+              <Button
+                type="submit"
+                className="bg-green-900 hover:bg-green-900 text-base h-12 px-6"
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Memproses...
+                  </>
+                ) : (
+                  "Buat Surat"
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Template Preview Dialog */}
+      {previewService && (
+        <TemplatePreviewDialog
+          open={isPreviewDialogOpen}
+          onOpenChange={setIsPreviewDialogOpen}
+          title={previewService.title}
+          category={previewService.category}
+          googleDriveUrl={
+            previewService.id === "domisili"
+              ? "https://docs.google.com/document/d/1VNWZgmVvHC0HWbGXy92nvCtiFTflJlZW/edit"
+              : previewService.id === "kelahiran"
+              ? "https://docs.google.com/document/d/18jD9y82RSUWBYFBxvDd896UzrMsUfH4Y/edit"
+              : previewService.id === "kematian"
+              ? "https://docs.google.com/document/d/1ANlR4Hs0-JPdnWkybG1iwpLGO2GZ0ORp/edit"
+              : previewService.id === "usaha"
+              ? "https://docs.google.com/document/d/17N_RDvdRmuaQxz6Zj4lkT4kPoAwttdU_/edit"
+              : previewService.id === "tidak-mampu"
+              ? "https://docs.google.com/document/d/1TidakMampuDocumentID/edit"
+              : "https://drive.google.com/drive/folders/1234567890"
+          }
+          pdfUrl={
+            previewService.id === "domisili"
+              ? "/pdf_preview/Surat_Keterangan_Domisili_Preview.pdf"
+              : previewService.id === "kelahiran"
+              ? "/pdf_preview/Surat_Keterangan_Kelahiran_Preview.pdf"
+              : previewService.id === "kematian"
+              ? "/pdf_preview/Surat_Keterangan_Kematian_Preview.pdf"
+              : previewService.id === "usaha"
+              ? "/pdf_preview/Surat_Keterangan_Usaha_Preview.pdf"
+              : previewService.id === "tidak-mampu"
+              ? "/pdf_preview/Surat_Keterangan_Tidak_Mampu_Preview.pdf"
+              : "https://drive.google.com/file/d/1234567890/view"
+          }
+          requirements={previewService.requirements} // Pass the requirements specific to this surat
+          serviceId={previewService.id} // Pass the service ID to display the correct icon
+          onUseTemplate={() => {
+            setIsPreviewDialogOpen(false);
+            handleServiceSelect(previewService.id);
+          }}
+        />
+      )}
     </div>
   );
 };

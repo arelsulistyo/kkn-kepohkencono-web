@@ -163,14 +163,14 @@ const generateSuratIzinKeramaian = async (
     });
 
     // Add content
-    doc.setFontSize(12);
+    doc.setFontSize(10);
     doc.setFont("Bookman Old Style", "normal");
-    doc.text("Yang bertanda tangan di bawah ini, menerangkan bahwa :", 20, 93);
+    doc.text("Yang bertanda tangan di bawah ini, menerangkan bahwa :", 20, 87);
 
     doc.setFont("Bookman Old Style", "normal");
 
     // Add user data
-    let yPos = 105;
+    let yPos = 97;
     const lineHeight = 7;
 
     // 1. Nama
@@ -282,24 +282,25 @@ const generateSuratIzinKeramaian = async (
     // }
 
     // Add a new page just for the signature section (this will be page 2)
-    doc.addPage();
+    // doc.addPage();
 
     // Set font for the signature page
     doc.setFont("Bookman Old Style", "normal");
-    doc.setFontSize(12);
+    doc.setFontSize(10);
 
-    // Add content for the signature page
-    let signaturePageY = 20;
+    // Add content for the signature section at the bottom of the page
+    // A4 page height is 297mm, which is about 280 in jsPDF units
+    let signaturePageY = 230; // Position near the bottom of the page
     const signatureLineHeight = 7;
 
-    // Add closing statement on the signature page
+    // Add closing statement on the signature section
     doc.text(
       "Demikian untuk menjadikan maklum bagi yang berkepentingan",
       20,
-      signaturePageY,
+      signaturePageY - 5,
       { maxWidth: 170, align: "justify" }
     );
-    signaturePageY += signatureLineHeight * 2;
+    signaturePageY += signatureLineHeight;
 
     // Add signature section
     doc.text("Tanda tangan pemegang", 20, signaturePageY);
@@ -327,17 +328,25 @@ const generateSuratIzinKeramaian = async (
     signaturePageY += signatureLineHeight;
 
     doc.text("Pj. Kepala Desa Kepohkencono", 120, signaturePageY);
-    signaturePageY += signatureLineHeight * 6;
+    signaturePageY += signatureLineHeight * 4; // Reduced spacing for signatures
 
     // Add signature names
     doc.setFont("Bookman Old Style", "bold");
-    doc.text("(" + nama.toUpperCase() + ")", 37, signaturePageY);
-    doc.text("NGASIMAN,S.H.", 135, signaturePageY);
+    // Fix text positioning to center the text under "Tanda tangan pemegang"
+    const signatureText = "(" + nama.toUpperCase() + ")";
+    // Calculate the center position under "Tanda tangan pemegang" (which starts at X=20)
+    const signatureTextWidth = doc.getTextWidth(signatureText);
+    const centerX =
+      20 +
+      doc.getTextWidth("Tanda tangan pemegang") / 2 -
+      signatureTextWidth / 2;
+    doc.text(signatureText, centerX, signaturePageY);
+    doc.text("NGASIMAN,S.H.", 133, signaturePageY);
 
     // Add underline for NGASIMAN,S.H.
     const nameWidth = doc.getTextWidth("NGASIMAN,S.H.");
     doc.setLineWidth(0.3);
-    doc.line(135, signaturePageY + 1, 135 + nameWidth, signaturePageY + 1);
+    doc.line(133, signaturePageY + 1, 133 + nameWidth, signaturePageY + 1);
 
     signaturePageY += signatureLineHeight;
     doc.setFont("Bookman Old Style", "normal");
@@ -478,12 +487,14 @@ const generateSuratIzinKeramaian = async (
     doc.setLineWidth(0.3);
     doc.line(35, y2Pos + 1, 35 + nameWidth2, y2Pos + 1);
 
-    // Center the applicant name
+    // Center the applicant name under "Yang Membuat Permohonan"
     const applicantName = "(" + nama.toUpperCase() + ")";
     const applicantWidth = doc.getTextWidth(applicantName);
-    doc.text(applicantName, 145 + applicantWidth / 2, y2Pos, {
-      align: "center",
-    });
+    const centerX2 =
+      120 +
+      doc.getTextWidth("Yang Membuat Permohonan") / 2 -
+      applicantWidth / 2;
+    doc.text(applicantName, centerX2, y2Pos);
 
     y2Pos += lineHeight2;
 
@@ -628,12 +639,14 @@ const generateSuratIzinKeramaian = async (
     doc.setLineWidth(0.3);
     doc.line(35, y3Pos + 1, 35 + nameWidth3, y3Pos + 1);
 
-    // Center the applicant name
+    // Center the applicant name under "Yang Membuat Permohonan"
     const applicantName3 = "(" + nama.toUpperCase() + ")";
     const applicantWidth3 = doc.getTextWidth(applicantName3);
-    doc.text(applicantName3, 145 + applicantWidth3 / 2, y3Pos, {
-      align: "center",
-    });
+    const centerX3 =
+      120 +
+      doc.getTextWidth("Yang Membuat Permohonan") / 2 -
+      applicantWidth3 / 2;
+    doc.text(applicantName3, centerX3, y3Pos);
 
     y3Pos += lineHeight3;
 
@@ -784,7 +797,11 @@ const generateSuratIzinKeramaian = async (
         : "........................") +
       ")";
     const ownerNameWidth = doc.getTextWidth(ownerName);
-    doc.text(ownerName, 145 + ownerNameWidth / 2, y4Pos, { align: "center" });
+    const centerX4Owner =
+      120 +
+      doc.getTextWidth("Yang Memberikan Ijin Lokasi") / 2 -
+      ownerNameWidth / 2;
+    doc.text(ownerName, centerX4Owner, y4Pos);
     doc.setFont("Bookman Old Style", "normal");
 
     // Add a fourth page with DENAH LOKASI KERAMAIAN
@@ -863,12 +880,14 @@ const generateSuratIzinKeramaian = async (
       doc.setLineWidth(0.3);
       doc.line(35, y4MapPos + 1, 35 + nameWidth2, y4MapPos + 1);
 
-      // Center the applicant name
+      // Center the applicant name under "Yang Membuat Permohonan"
       const applicantName = "(" + nama.toUpperCase() + ")";
       const applicantWidth = doc.getTextWidth(applicantName);
-      doc.text(applicantName, 145 + applicantWidth / 2, y4MapPos, {
-        align: "center",
-      });
+      const centerX4Map =
+        120 +
+        doc.getTextWidth("Yang Membuat Permohonan") / 2 -
+        applicantWidth / 2;
+      doc.text(applicantName, centerX4Map, y4MapPos);
 
       y4MapPos += lineHeight4Map;
 
@@ -901,12 +920,14 @@ const generateSuratIzinKeramaian = async (
       doc.setLineWidth(0.3);
       doc.line(35, y4MapPos + 1, 35 + nameWidth2, y4MapPos + 1);
 
-      // Center the applicant name
+      // Center the applicant name under "Yang Membuat Permohonan"
       const applicantName = "(" + nama.toUpperCase() + ")";
       const applicantWidth = doc.getTextWidth(applicantName);
-      doc.text(applicantName, 145 + applicantWidth / 2, y4MapPos, {
-        align: "center",
-      });
+      const centerX4Map =
+        120 +
+        doc.getTextWidth("Yang Membuat Permohonan") / 2 -
+        applicantWidth / 2;
+      doc.text(applicantName, centerX4Map, y4MapPos);
 
       y4MapPos += lineHeight4Map;
 
@@ -1015,12 +1036,14 @@ const generateSuratIzinKeramaian = async (
     doc.setLineWidth(0.3);
     doc.line(35, y5Pos + 1, 35 + nameWidth5, y5Pos + 1);
 
-    // Center the applicant name
+    // Center the applicant name under "Yang Membuat Permohonan"
     const applicantName5 = "(" + nama.toUpperCase() + ")";
     const applicantWidth5 = doc.getTextWidth(applicantName5);
-    doc.text(applicantName5, 145 + applicantWidth5 / 2, y5Pos, {
-      align: "center",
-    });
+    const centerX5 =
+      120 +
+      doc.getTextWidth("Yang Membuat Permohonan") / 2 -
+      applicantWidth5 / 2;
+    doc.text(applicantName5, centerX5, y5Pos);
 
     y5Pos += lineHeight5;
 
