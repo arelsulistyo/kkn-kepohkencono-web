@@ -132,6 +132,18 @@ const TemplatePreviewDialog: React.FC<TemplatePreviewDialogProps> = ({
                       className="w-full h-full"
                       title="Surat Keterangan Domisili Preview"
                     />
+                  ) : serviceId === "pengantar-desa" ? (
+                    <iframe
+                      src="/pdf_preview/Surat_Keterangan_Pengantar_Desa_Preview.pdf"
+                      className="w-full h-full"
+                      title="Surat Keterangan Pengantar Desa Preview"
+                    />
+                  ) : serviceId === "izin-keramaian" ? (
+                    <iframe
+                      src="/pdf_preview/Surat_Permohonan_Izin_Keramaian_Preview.pdf"
+                      className="w-full h-full"
+                      title="Surat Permohonan Izin Keramaian Preview"
+                    />
                   ) : serviceId === "kelahiran" ? (
                     <iframe
                       src="/pdf_preview/Surat_Keterangan_Kelahiran_Preview.pdf"
@@ -254,6 +266,16 @@ const TemplatePreviewDialog: React.FC<TemplatePreviewDialogProps> = ({
                           if (serviceId === "domisili") {
                             window.open(
                               "/pdf_preview/Surat_Keterangan_Domisili_Preview.pdf",
+                              "_blank"
+                            );
+                          } else if (serviceId === "pengantar-desa") {
+                            window.open(
+                              "/pdf_preview/Surat_Keterangan_Pengantar_Desa_Preview.pdf",
+                              "_blank"
+                            );
+                          } else if (serviceId === "izin-keramaian") {
+                            window.open(
+                              "/pdf_preview/Surat_Permohonan_Izin_Keramaian_Preview.pdf",
                               "_blank"
                             );
                           } else if (serviceId === "kelahiran") {

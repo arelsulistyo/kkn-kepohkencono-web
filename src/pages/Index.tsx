@@ -126,6 +126,11 @@ const Index = () => {
                   Layanan Surat
                 </Button>
               </Link>
+              <Link to="/visualisasi-data">
+                <Button className="bg-blue-900 hover:bg-blue-900">
+                  Visualisasi Data
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

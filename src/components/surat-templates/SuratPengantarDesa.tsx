@@ -152,7 +152,7 @@ const generateSuratPengantarDesa = async (
     // 1. Nama
     doc.text("1.", 20, yPos);
     doc.text("Nama", 25, yPos);
-    doc.text(": " + nama + " " + jenisKelamin, 100, yPos);
+    doc.text(": " + nama + " " + "(" + jenisKelamin + ")", 100, yPos);
     yPos += lineHeight;
 
     // 2. Tempat & tanggal lahir

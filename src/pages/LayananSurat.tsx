@@ -29,6 +29,7 @@ import {
   Heart,
   Eye,
   LogIn,
+  Download,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
@@ -313,10 +314,14 @@ const LayananSurat = () => {
 
   // State untuk form Surat Keterangan Tidak Mampu
   const [namaPemohonTidakMampu, setNamaPemohonTidakMampu] = useState("");
-  const [tempatLahirPemohonTidakMampu, setTempatLahirPemohonTidakMampu] = useState("");
-  const [tanggalLahirPemohonTidakMampu, setTanggalLahirPemohonTidakMampu] = useState("");
-  const [jenisKelaminPemohonTidakMampu, setJenisKelaminPemohonTidakMampu] = useState("L");
-  const [pekerjaanPemohonTidakMampu, setPekerjaanPemohonTidakMampu] = useState("");
+  const [tempatLahirPemohonTidakMampu, setTempatLahirPemohonTidakMampu] =
+    useState("");
+  const [tanggalLahirPemohonTidakMampu, setTanggalLahirPemohonTidakMampu] =
+    useState("");
+  const [jenisKelaminPemohonTidakMampu, setJenisKelaminPemohonTidakMampu] =
+    useState("L");
+  const [pekerjaanPemohonTidakMampu, setPekerjaanPemohonTidakMampu] =
+    useState("");
   const [alamatPemohonTidakMampu, setAlamatPemohonTidakMampu] = useState("");
   const [persyaratanTidakMampu, setPersyaratanTidakMampu] = useState("");
 
@@ -368,12 +373,22 @@ const LayananSurat = () => {
   const [namaIbuError, setNamaIbuError] = useState("");
 
   // Error state untuk form Surat Keterangan Tidak Mampu
-  const [namaPemohonTidakMampuError, setNamaPemohonTidakMampuError] = useState("");
-  const [tempatLahirPemohonTidakMampuError, setTempatLahirPemohonTidakMampuError] = useState("");
-  const [tanggalLahirPemohonTidakMampuError, setTanggalLahirPemohonTidakMampuError] = useState("");
-  const [pekerjaanPemohonTidakMampuError, setPekerjaanPemohonTidakMampuError] = useState("");
-  const [alamatPemohonTidakMampuError, setAlamatPemohonTidakMampuError] = useState("");
-  const [persyaratanTidakMampuError, setPersyaratanTidakMampuError] = useState("");
+  const [namaPemohonTidakMampuError, setNamaPemohonTidakMampuError] =
+    useState("");
+  const [
+    tempatLahirPemohonTidakMampuError,
+    setTempatLahirPemohonTidakMampuError,
+  ] = useState("");
+  const [
+    tanggalLahirPemohonTidakMampuError,
+    setTanggalLahirPemohonTidakMampuError,
+  ] = useState("");
+  const [pekerjaanPemohonTidakMampuError, setPekerjaanPemohonTidakMampuError] =
+    useState("");
+  const [alamatPemohonTidakMampuError, setAlamatPemohonTidakMampuError] =
+    useState("");
+  const [persyaratanTidakMampuError, setPersyaratanTidakMampuError] =
+    useState("");
 
   // Error state untuk form Surat Keterangan Pengantar Desa
   const [namaError, setNamaError] = useState("");
@@ -2095,7 +2110,7 @@ const LayananSurat = () => {
                     </Button>
                     <Button
                       type="submit"
-                      className="bg-green-900 hover:bg-green-900 text-base h-12 px-6"
+                      className="bg-green-600 hover:bg-green-700 text-base h-12 px-6"
                       disabled={isLoading}
                     >
                       {isLoading ? (
@@ -2104,7 +2119,10 @@ const LayananSurat = () => {
                           Memproses...
                         </>
                       ) : (
-                        "Buat Surat"
+                        <>
+                          <Download className="mr-2 h-4 w-4" />
+                          Unduh Surat
+                        </>
                       )}
                     </Button>
                   </DialogFooter>
@@ -2530,7 +2548,7 @@ const LayananSurat = () => {
                     </Button>
                     <Button
                       type="submit"
-                      className="bg-green-900 hover:bg-green-900 text-base h-12 px-6"
+                      className="bg-green-600 hover:bg-green-700 text-base h-12 px-6"
                       disabled={isLoading}
                     >
                       {isLoading ? (
@@ -2539,7 +2557,10 @@ const LayananSurat = () => {
                           Memproses...
                         </>
                       ) : (
-                        "Buat Surat"
+                        <>
+                          <Download className="mr-2 h-4 w-4" />
+                          Unduh Surat
+                        </>
                       )}
                     </Button>
                   </DialogFooter>
@@ -2680,10 +2701,10 @@ const LayananSurat = () => {
                     Langkah 3
                   </div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    Buat Surat
+                    Unduh Surat
                   </h3>
                   <p className="text-sm text-gray-600 leading-relaxed">
-                    Klik tombol "Buat Surat" untuk menghasilkan dokumen final
+                    Klik tombol "Unduh Surat" untuk menghasilkan dokumen final
                   </p>
                 </div>
                 {/* Arrow for desktop */}
@@ -3047,7 +3068,7 @@ const LayananSurat = () => {
               </Button>
               <Button
                 type="submit"
-                className="bg-green-900 hover:bg-green-900 text-base h-12 px-6"
+                className="bg-green-600 hover:bg-green-700 text-base h-12 px-6"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -3056,7 +3077,10 @@ const LayananSurat = () => {
                     Memproses...
                   </>
                 ) : (
-                  "Buat Surat"
+                  <>
+                    <Download className="mr-2 h-4 w-4" />
+                    Unduh Surat
+                  </>
                 )}
               </Button>
             </DialogFooter>
@@ -3278,7 +3302,7 @@ const LayananSurat = () => {
               </Button>
               <Button
                 type="submit"
-                className="bg-green-900 hover:bg-green-900 text-base h-12 px-6"
+                className="bg-green-600 hover:bg-green-700 text-base h-12 px-6"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -3287,7 +3311,10 @@ const LayananSurat = () => {
                     Memproses...
                   </>
                 ) : (
-                  "Buat Surat"
+                  <>
+                    <Download className="mr-2 h-4 w-4" />
+                    Unduh Surat
+                  </>
                 )}
               </Button>
             </DialogFooter>
@@ -3711,7 +3738,7 @@ const LayananSurat = () => {
               </Button>
               <Button
                 type="submit"
-                className="bg-green-900 hover:bg-green-900 text-base h-12 px-6"
+                className="bg-green-600 hover:bg-green-700 text-base h-12 px-6"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -3720,7 +3747,10 @@ const LayananSurat = () => {
                     Memproses...
                   </>
                 ) : (
-                  "Buat Surat"
+                  <>
+                    <Download className="mr-2 h-4 w-4" />
+                    Unduh Surat
+                  </>
                 )}
               </Button>
             </DialogFooter>
@@ -4435,7 +4465,7 @@ const LayananSurat = () => {
               </Button>
               <Button
                 type="submit"
-                className="bg-green-900 hover:bg-green-900 text-base h-12 px-6"
+                className="bg-green-600 hover:bg-green-700 text-base h-12 px-6"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -4444,26 +4474,36 @@ const LayananSurat = () => {
                     Memproses...
                   </>
                 ) : (
-                  "Buat Surat"
+                  <>
+                    <Download className="mr-2 h-4 w-4" />
+                    Unduh Surat
+                  </>
                 )}
               </Button>
             </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
-      
+
       {/* Form Dialog for Surat Keterangan Tidak Mampu */}
-      <Dialog open={isTidakMampuFormDialogOpen} onOpenChange={setIsTidakMampuFormDialogOpen}>
+      <Dialog
+        open={isTidakMampuFormDialogOpen}
+        onOpenChange={setIsTidakMampuFormDialogOpen}
+      >
         <DialogContent className="sm:max-w-[650px] p-6 max-h-[90vh] overflow-y-auto">
           <DialogHeader className="pb-0">
             <DialogTitle className="text-2xl font-bold">
               Formulir Surat Keterangan Tidak Mampu
             </DialogTitle>
             <DialogDescription className="text-base mt-1 mb-0">
-              Silakan lengkapi data berikut untuk pembuatan Surat Keterangan Tidak Mampu.
+              Silakan lengkapi data berikut untuk pembuatan Surat Keterangan
+              Tidak Mampu.
             </DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleSubmitTidakMampuForm} className="space-y-4 mt-0">
+          <form
+            onSubmit={handleSubmitTidakMampuForm}
+            className="space-y-4 mt-0"
+          >
             <div className="border-t pt-2 mt-1">
               <h3 className="text-lg font-semibold mb-1">Data Pemohon</h3>
 
@@ -4475,7 +4515,9 @@ const LayananSurat = () => {
                   id="namaPemohonTidakMampu"
                   placeholder="Masukkan nama lengkap"
                   className={`text-base ${
-                    namaPemohonTidakMampuError ? "border-red-500" : "border-gray-400"
+                    namaPemohonTidakMampuError
+                      ? "border-red-500"
+                      : "border-gray-400"
                   }`}
                   value={namaPemohonTidakMampu}
                   onChange={(e) => {
@@ -4492,14 +4534,19 @@ const LayananSurat = () => {
 
               <div className="grid grid-cols-2 gap-3 mt-3">
                 <div className="space-y-2">
-                  <Label htmlFor="tempatLahirPemohonTidakMampu" className="text-base">
+                  <Label
+                    htmlFor="tempatLahirPemohonTidakMampu"
+                    className="text-base"
+                  >
                     Tempat Lahir
                   </Label>
                   <Input
                     id="tempatLahirPemohonTidakMampu"
                     placeholder="Masukkan tempat lahir"
                     className={`text-base ${
-                      tempatLahirPemohonTidakMampuError ? "border-red-500" : "border-gray-400"
+                      tempatLahirPemohonTidakMampuError
+                        ? "border-red-500"
+                        : "border-gray-400"
                     }`}
                     value={tempatLahirPemohonTidakMampu}
                     onChange={(e) => {
@@ -4515,14 +4562,19 @@ const LayananSurat = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="tanggalLahirPemohonTidakMampu" className="text-base">
+                  <Label
+                    htmlFor="tanggalLahirPemohonTidakMampu"
+                    className="text-base"
+                  >
                     Tanggal Lahir
                   </Label>
                   <Input
                     id="tanggalLahirPemohonTidakMampu"
                     placeholder="Masukkan tanggal lahir"
                     className={`text-base ${
-                      tanggalLahirPemohonTidakMampuError ? "border-red-500" : "border-gray-400"
+                      tanggalLahirPemohonTidakMampuError
+                        ? "border-red-500"
+                        : "border-gray-400"
                     }`}
                     value={tanggalLahirPemohonTidakMampu}
                     onChange={(e) => {
@@ -4537,9 +4589,12 @@ const LayananSurat = () => {
                   )}
                 </div>
               </div>
-            
+
               <div className="space-y-2 mt-3">
-                <Label htmlFor="jenisKelaminPemohonTidakMampu" className="text-base">
+                <Label
+                  htmlFor="jenisKelaminPemohonTidakMampu"
+                  className="text-base"
+                >
                   Jenis Kelamin
                 </Label>
                 <div className="flex space-x-4">
@@ -4573,16 +4628,21 @@ const LayananSurat = () => {
                   </div>
                 </div>
               </div>
-            
+
               <div className="space-y-2 mt-3">
-                <Label htmlFor="pekerjaanPemohonTidakMampu" className="text-base">
+                <Label
+                  htmlFor="pekerjaanPemohonTidakMampu"
+                  className="text-base"
+                >
                   Pekerjaan
                 </Label>
                 <Input
                   id="pekerjaanPemohonTidakMampu"
                   placeholder="Masukkan pekerjaan"
                   className={`text-base ${
-                    pekerjaanPemohonTidakMampuError ? "border-red-500" : "border-gray-400"
+                    pekerjaanPemohonTidakMampuError
+                      ? "border-red-500"
+                      : "border-gray-400"
                   }`}
                   value={pekerjaanPemohonTidakMampu}
                   onChange={(e) => {
@@ -4605,7 +4665,9 @@ const LayananSurat = () => {
                   id="alamatPemohonTidakMampu"
                   placeholder="Masukkan alamat lengkap"
                   className={`text-base ${
-                    alamatPemohonTidakMampuError ? "border-red-500" : "border-gray-400"
+                    alamatPemohonTidakMampuError
+                      ? "border-red-500"
+                      : "border-gray-400"
                   }`}
                   value={alamatPemohonTidakMampu}
                   onChange={(e) => {
@@ -4628,7 +4690,9 @@ const LayananSurat = () => {
                   id="persyaratanTidakMampu"
                   placeholder="Masukkan persyaratan yang diperlukan"
                   className={`text-base ${
-                    persyaratanTidakMampuError ? "border-red-500" : "border-gray-400"
+                    persyaratanTidakMampuError
+                      ? "border-red-500"
+                      : "border-gray-400"
                   }`}
                   value={persyaratanTidakMampu}
                   onChange={(e) => {
@@ -4643,7 +4707,7 @@ const LayananSurat = () => {
                 )}
               </div>
             </div>
-            
+
             <DialogFooter className="mt-8">
               <Button
                 type="button"
@@ -4655,7 +4719,7 @@ const LayananSurat = () => {
               </Button>
               <Button
                 type="submit"
-                className="bg-green-900 hover:bg-green-900 text-base h-12 px-6"
+                className="bg-green-600 hover:bg-green-700 text-base h-12 px-6"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -4664,14 +4728,17 @@ const LayananSurat = () => {
                     Memproses...
                   </>
                 ) : (
-                  "Buat Surat"
+                  <>
+                    <Download className="mr-2 h-4 w-4" />
+                    Unduh Surat
+                  </>
                 )}
               </Button>
             </DialogFooter>
           </form>
         </DialogContent>
       </Dialog>
-      
+
       {/* Template Preview Dialog */}
       {previewService && (
         <TemplatePreviewDialog
@@ -4682,6 +4749,10 @@ const LayananSurat = () => {
           googleDriveUrl={
             previewService.id === "domisili"
               ? "https://docs.google.com/document/d/1VNWZgmVvHC0HWbGXy92nvCtiFTflJlZW/edit"
+              : previewService.id === "pengantar-desa"
+              ? "https://docs.google.com/document/d/17QoC3EGBAfcJK_6-Y8Keke4fXNTzmF2u/edit"
+              : previewService.id === "izin-keramaian"
+              ? "https://docs.google.com/document/d/1BijWyHFzuxUJfaLa6cSJlTQUk2ybfY_d/edit"
               : previewService.id === "kelahiran"
               ? "https://docs.google.com/document/d/18jD9y82RSUWBYFBxvDd896UzrMsUfH4Y/edit"
               : previewService.id === "kematian"
@@ -4689,12 +4760,16 @@ const LayananSurat = () => {
               : previewService.id === "usaha"
               ? "https://docs.google.com/document/d/17N_RDvdRmuaQxz6Zj4lkT4kPoAwttdU_/edit"
               : previewService.id === "tidak-mampu"
-              ? "https://docs.google.com/document/d/1TidakMampuDocumentID/edit"
+              ? "https://docs.google.com/document/d/1MHLYmGWXXuVtRi77zDupsbKJ8xn-YHFF/edit"
               : "https://drive.google.com/drive/folders/1234567890"
           }
           pdfUrl={
             previewService.id === "domisili"
               ? "/pdf_preview/Surat_Keterangan_Domisili_Preview.pdf"
+              : previewService.id === "pengantar-desa"
+              ? "/pdf_preview/Surat_Keterangan_Pengantar_Desa_Preview.pdf"
+              : previewService.id === "izin-keramaian"
+              ? "/pdf_preview/Surat_Permohonan_Izin_Keramaian_Preview.pdf"
               : previewService.id === "kelahiran"
               ? "/pdf_preview/Surat_Keterangan_Kelahiran_Preview.pdf"
               : previewService.id === "kematian"
