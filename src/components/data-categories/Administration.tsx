@@ -135,33 +135,33 @@ const Administration = () => {
   }, []);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 md:space-y-8">
       {/* KTP Status Distribution */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileText className="h-5 w-5 text-blue-600" />
+        <CardHeader className="pb-3 md:pb-6">
+          <CardTitle className="flex items-center gap-2 text-base md:text-lg">
+            <FileText className="h-4 w-4 md:h-5 md:w-5 text-blue-600" />
             Status Kepemilikan KTP
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-sm md:text-base">
             Distribusi penduduk berdasarkan status wajib KTP
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="grid md:grid-cols-2 gap-8">
+        <CardContent className="px-3 md:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
             <ChartContainer
               config={{
                 wajibKTP: { label: "Wajib KTP", color: "#3B82F6" },
                 belumWajibKTP: { label: "Belum Wajib KTP", color: "#10B981" },
               }}
-              className="h-[300px]"
+              className="h-[200px] md:h-[300px]"
             >
               <PieChart>
                 <Pie
                   data={ktpData}
                   cx="50%"
                   cy="50%"
-                  outerRadius={100}
+                  outerRadius={80}
                   fill="#8884d8"
                   dataKey="value"
                   label={({ name, percentage }) => `${name}: ${percentage}%`}
@@ -174,10 +174,10 @@ const Administration = () => {
               </PieChart>
             </ChartContainer>
 
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               {ktpData.map((ktp) => (
-                <div key={ktp.name} className="space-y-2">
-                  <div className="flex justify-between items-center">
+                <div key={ktp.name} className="space-y-1 md:space-y-2">
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-2">
                     <span className="text-sm font-medium text-gray-700">
                       {ktp.name}
                     </span>
@@ -188,9 +188,9 @@ const Administration = () => {
                       </span>
                     </div>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-3">
+                  <div className="w-full bg-gray-200 rounded-full h-2 md:h-3">
                     <div
-                      className="h-3 rounded-full transition-all duration-700"
+                      className="h-2 md:h-3 rounded-full transition-all duration-700"
                       style={{
                         width: `${ktp.percentage}%`,
                         backgroundColor: ktp.color,
@@ -206,30 +206,30 @@ const Administration = () => {
 
       {/* Birth Certificate Status Distribution */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileText className="h-5 w-5 text-purple-600" />
+        <CardHeader className="pb-3 md:pb-6">
+          <CardTitle className="flex items-center gap-2 text-base md:text-lg">
+            <FileText className="h-4 w-4 md:h-5 md:w-5 text-purple-600" />
             Status Kepemilikan Akta Kelahiran (U17)
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-sm md:text-base">
             Distribusi kepemilikan akta kelahiran untuk usia di bawah 17 tahun
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="grid md:grid-cols-2 gap-8">
+        <CardContent className="px-3 md:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
             <ChartContainer
               config={{
                 memilikiAkta: { label: "Memiliki Akta", color: "#8B5CF6" },
                 belumMemilikiAkta: { label: "Belum Memiliki Akta", color: "#F59E0B" },
               }}
-              className="h-[300px]"
+              className="h-[200px] md:h-[300px]"
             >
               <PieChart>
                 <Pie
                   data={aktaData}
                   cx="50%"
                   cy="50%"
-                  outerRadius={100}
+                  outerRadius={80}
                   fill="#8884d8"
                   dataKey="value"
                   label={({ name, percentage }) => `${name}: ${percentage}%`}
@@ -242,10 +242,10 @@ const Administration = () => {
               </PieChart>
             </ChartContainer>
 
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               {aktaData.map((akta) => (
-                <div key={akta.name} className="space-y-2">
-                  <div className="flex justify-between items-center">
+                <div key={akta.name} className="space-y-1 md:space-y-2">
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-2">
                     <span className="text-sm font-medium text-gray-700">
                       {akta.name}
                     </span>
@@ -256,9 +256,9 @@ const Administration = () => {
                       </span>
                     </div>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-3">
+                  <div className="w-full bg-gray-200 rounded-full h-2 md:h-3">
                     <div
-                      className="h-3 rounded-full transition-all duration-700"
+                      className="h-2 md:h-3 rounded-full transition-all duration-700"
                       style={{
                         width: `${akta.percentage}%`,
                         backgroundColor: akta.color,
@@ -273,44 +273,44 @@ const Administration = () => {
       </Card>
 
       {/* Summary Statistics */}
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
         {/* KTP Statistics */}
-        <div className="grid md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
           <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Total Penduduk</CardTitle>
+            <CardHeader className="pb-2 md:pb-4">
+              <CardTitle className="text-sm md:text-lg">Total Penduduk</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-gray-900">
+            <CardContent className="pt-0">
+              <div className="text-xl md:text-3xl font-bold text-gray-900">
                 {totalPopulation.toLocaleString()}
               </div>
-              <p className="text-sm text-gray-600 mt-1">Jumlah total penduduk</p>
+              <p className="text-xs md:text-sm text-gray-600 mt-1">Jumlah total penduduk</p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Wajib KTP</CardTitle>
+            <CardHeader className="pb-2 md:pb-4">
+              <CardTitle className="text-sm md:text-lg">Wajib KTP</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-blue-600">
+            <CardContent className="pt-0">
+              <div className="text-xl md:text-3xl font-bold text-blue-600">
                 {wajibKTP.toLocaleString()}
               </div>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-xs md:text-sm text-gray-600 mt-1">
                 Penduduk yang wajib memiliki KTP
               </p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Belum Wajib KTP</CardTitle>
+            <CardHeader className="pb-2 md:pb-4">
+              <CardTitle className="text-sm md:text-lg">Belum Wajib KTP</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-green-600">
+            <CardContent className="pt-0">
+              <div className="text-xl md:text-3xl font-bold text-green-600">
                 {belumWajibKTP.toLocaleString()}
               </div>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-xs md:text-sm text-gray-600 mt-1">
                 Penduduk yang belum wajib memiliki KTP
               </p>
             </CardContent>
@@ -318,42 +318,42 @@ const Administration = () => {
         </div>
 
         {/* Akta Statistics */}
-        <div className="grid md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
           <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Total Anak U17</CardTitle>
+            <CardHeader className="pb-2 md:pb-4">
+              <CardTitle className="text-sm md:text-lg">Total Anak U17</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-gray-900">
+            <CardContent className="pt-0">
+              <div className="text-xl md:text-3xl font-bold text-gray-900">
                 {totalAkta.toLocaleString()}
               </div>
-              <p className="text-sm text-gray-600 mt-1">Jumlah anak di bawah 17 tahun</p>
+              <p className="text-xs md:text-sm text-gray-600 mt-1">Jumlah anak di bawah 17 tahun</p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Memiliki Akta</CardTitle>
+            <CardHeader className="pb-2 md:pb-4">
+              <CardTitle className="text-sm md:text-lg">Memiliki Akta</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-purple-600">
+            <CardContent className="pt-0">
+              <div className="text-xl md:text-3xl font-bold text-purple-600">
                 {memilikiAkta.toLocaleString()}
               </div>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-xs md:text-sm text-gray-600 mt-1">
                 Anak yang sudah memiliki akta kelahiran
               </p>
             </CardContent>
           </Card>
 
           <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Belum Memiliki Akta</CardTitle>
+            <CardHeader className="pb-2 md:pb-4">
+              <CardTitle className="text-sm md:text-lg">Belum Memiliki Akta</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold text-orange-600">
+            <CardContent className="pt-0">
+              <div className="text-xl md:text-3xl font-bold text-orange-600">
                 {belumMemilikiAkta.toLocaleString()}
               </div>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-xs md:text-sm text-gray-600 mt-1">
                 Anak yang belum memiliki akta kelahiran
               </p>
             </CardContent>

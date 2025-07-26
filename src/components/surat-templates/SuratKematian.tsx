@@ -148,13 +148,7 @@ const generateSuratKematian = async (
     // Add user data
     let yPos = 110;
     const lineHeight = 7;
-    
-    // Data Almarhum/Almarhumah heading
-    doc.setFont("Bookman Old Style", "bold");
-    doc.text("Data Almarhum/Almarhumah", 20, yPos);
-    doc.setFont("Bookman Old Style", "normal");
-    yPos += lineHeight * 1.5;
-    
+
     // Nama
     doc.text("Nama", 20, yPos);
     doc.text(": " + nama, 100, yPos);
@@ -185,12 +179,6 @@ const generateSuratKematian = async (
     doc.text(": " + agama, 100, yPos);
     yPos += lineHeight * 2;
 
-    // Data Kematian heading
-    doc.setFont("Bookman Old Style", "bold");
-    doc.text("Data Kematian", 20, yPos);
-    doc.setFont("Bookman Old Style", "normal");
-    yPos += lineHeight * 1.5;
-    
     // Keterangan kematian
     doc.text("Yang bersangkutan benar telah meninggal dunia pada:", 20, yPos);
     yPos += lineHeight * 1.5;

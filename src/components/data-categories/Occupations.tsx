@@ -289,20 +289,20 @@ const Occupations = () => {
   }, []);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 md:space-y-8">
       {/* Enhanced Occupation Analysis */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Briefcase className="h-5 w-5 text-blue-600" />
+        <CardHeader className="pb-3 md:pb-6">
+          <CardTitle className="flex items-center gap-2 text-base md:text-lg">
+            <Briefcase className="h-4 w-4 md:h-5 md:w-5 text-blue-600" />
             Distribusi Pekerjaan
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-sm md:text-base">
             Rincian pekerjaan di berbagai sektor
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="grid md:grid-cols-2 gap-8">
+        <CardContent className="px-3 md:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
             <ChartContainer
               config={{
                 farmers: { label: "Petani", color: "#10B981" },
@@ -312,7 +312,7 @@ const Occupations = () => {
                 artisans: { label: "Tukang", color: "#EF4444" },
                 others: { label: "Lainnya", color: "#6B7280" },
               }}
-              className="h-[400px]"
+              className="h-[250px] md:h-[400px]"
             >
               <PieChart>
                 <Pie
@@ -362,10 +362,10 @@ const Occupations = () => {
               </PieChart>
             </ChartContainer>
 
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               {occupationData.map((occupation) => (
-                <div key={occupation.name} className="space-y-2">
-                  <div className="flex justify-between items-center">
+                <div key={occupation.name} className="space-y-1 md:space-y-2">
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-2">
                     <span className="text-sm font-medium text-gray-700">
                       {occupation.name}
                     </span>
@@ -378,9 +378,9 @@ const Occupations = () => {
                       </span>
                     </div>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-3">
+                  <div className="w-full bg-gray-200 rounded-full h-2 md:h-3">
                     <div
-                      className="h-3 rounded-full transition-all duration-700"
+                      className="h-2 md:h-3 rounded-full transition-all duration-700"
                       style={{
                         width: `${occupation.percentage}%`,
                         backgroundColor: occupation.color,
@@ -390,8 +390,8 @@ const Occupations = () => {
                 </div>
               ))}
 
-              <div className="pt-4 border-t">
-                <div className="flex justify-between items-center">
+              <div className="pt-3 md:pt-4 border-t">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-2">
                   <span className="text-sm font-semibold text-gray-800">
                     Total yang Bekerja
                   </span>

@@ -1546,8 +1546,8 @@ const LayananSurat = () => {
       {/* Navigation */}
       <nav className="bg-white/90 backdrop-blur-[2px] fixed w-full z-50 shadow-xl top-0 left-0">
         <div className="container mx-auto px-6 py-4">
-          <div className="grid grid-cols-3 items-center">
-            <div className="flex justify-start">
+          <div className="grid grid-cols-5 items-center">
+            <div className="flex justify-start col-span-1">
               <Link
                 to="/"
                 className="flex items-center space-x-2 text-green-800 hover:text-green-900"
@@ -1556,7 +1556,7 @@ const LayananSurat = () => {
                 <span className="font-semibold">Kembali ke Beranda</span>
               </Link>
             </div>
-            <div className="flex flex-col items-center justify-center col-span-1">
+            <div className="flex flex-col items-center justify-center col-span-3">
               <div className="flex items-center">
                 <div className="bg-gradient-to-r from-green-600 to-emerald-600 p-2 rounded-md mr-2">
                   <FileText className="w-6 h-6 text-white" />
@@ -1565,11 +1565,11 @@ const LayananSurat = () => {
                   Layanan Surat Desa
                 </h1>
               </div>
-              <p className="text-md text-gray-600 mt-1 max-w-md text-center">
+              <p className="text-md text-gray-600 mt-1 text-center whitespace-nowrap">
                 Template Siap Pakai untuk Administrasi Desa Kepohkencono
               </p>
             </div>
-            <div className="flex justify-end">
+            <div className="flex justify-end col-span-1">
               {loading ? (
                 <Button
                   variant="outline"

@@ -141,27 +141,27 @@ const Education = () => {
   }, []);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 md:space-y-8">
       {/* Education Level Distribution - Pie Chart */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <GraduationCap className="h-5 w-5 text-purple-600" />
+        <CardHeader className="pb-3 md:pb-6">
+          <CardTitle className="flex items-center gap-2 text-base md:text-lg">
+            <GraduationCap className="h-4 w-4 md:h-5 md:w-5 text-purple-600" />
             Distribusi Tingkat Pendidikan
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-sm md:text-base">
             Distribusi tingkat pendidikan masyarakat secara keseluruhan
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="grid md:grid-cols-2 gap-8">
-            <ChartContainer config={{}} className="h-[300px]">
+        <CardContent className="px-3 md:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
+            <ChartContainer config={{}} className="h-[200px] md:h-[300px]">
               <PieChart>
                 <Pie
                   data={educationData}
                   cx="50%"
                   cy="50%"
-                  outerRadius={100}
+                  outerRadius={80}
                   fill="#8884d8"
                   dataKey="total"
                   label={({ name, percentage }) => `${name}: ${percentage}%`}
@@ -174,10 +174,10 @@ const Education = () => {
               </PieChart>
             </ChartContainer>
 
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               {educationData.map((education) => (
-                <div key={education.name} className="space-y-2">
-                  <div className="flex justify-between items-center">
+                <div key={education.name} className="space-y-1 md:space-y-2">
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-2">
                     <span className="text-sm font-medium text-gray-700">
                       {education.name}
                     </span>
@@ -190,9 +190,9 @@ const Education = () => {
                       </span>
                     </div>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-3">
+                  <div className="w-full bg-gray-200 rounded-full h-2 md:h-3">
                     <div
-                      className="h-3 rounded-full transition-all duration-700"
+                      className="h-2 md:h-3 rounded-full transition-all duration-700"
                       style={{
                         width: `${education.percentage}%`,
                         backgroundColor: education.color,
@@ -208,27 +208,34 @@ const Education = () => {
 
       {/* Education Levels by Gender - Bar Chart */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <GraduationCap className="h-5 w-5 text-teal-600" />
+        <CardHeader className="pb-3 md:pb-6">
+          <CardTitle className="flex items-center gap-2 text-base md:text-lg">
+            <GraduationCap className="h-4 w-4 md:h-5 md:w-5 text-teal-600" />
             Tingkat Pendidikan berdasarkan Jenis Kelamin
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-sm md:text-base">
             Rincian tingkat pendidikan berdasarkan jenis kelamin di masyarakat
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-3 md:px-6">
           <ChartContainer
             config={{
               male: { label: "Laki-laki", color: "#3b82f6" },
               female: { label: "Perempuan", color: "#ec4899" },
             }}
-            className="h-[400px] w-full"
+            className="h-[300px] md:h-[400px] w-full"
           >
             <BarChart data={educationData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} />
-              <YAxis />
+              <XAxis 
+                dataKey="name" 
+                angle={-45} 
+                textAnchor="end" 
+                height={80}
+                fontSize={12}
+                className="text-xs md:text-sm"
+              />
+              <YAxis fontSize={12} className="text-xs md:text-sm" />
               <ChartTooltip content={<ChartTooltipContent />} />
               <Bar dataKey="male" fill="#3b82f6" />
               <Bar dataKey="female" fill="#ec4899" />

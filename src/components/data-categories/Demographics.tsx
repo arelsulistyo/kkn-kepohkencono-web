@@ -346,21 +346,21 @@ const Demographics = () => {
   }, []);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4 md:space-y-8">
       {/* Age Distribution by Gender */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-orange-600" />
+        <CardHeader className="pb-3 md:pb-6">
+          <CardTitle className="flex items-center gap-2 text-base md:text-lg">
+            <Users className="h-4 w-4 md:h-5 md:w-5 text-orange-600" />
             Distribusi Usia berdasarkan Jenis Kelamin
           </CardTitle>
-          <CardDescription>Rincian populasi berdasarkan kelompok usia dengan analisis jenis kelamin</CardDescription>
+          <CardDescription className="text-sm md:text-base">Rincian populasi berdasarkan kelompok usia dengan analisis jenis kelamin</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-6">
+        <CardContent className="px-3 md:px-6">
+          <div className="space-y-4 md:space-y-6">
             {ageGroupData.map((group) => (
-              <div key={group.group} className="space-y-3">
-                <div className="flex justify-between items-center">
+              <div key={group.group} className="space-y-2 md:space-y-3">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-2">
                   <span className="text-sm font-medium text-gray-700">Usia {group.group}</span>
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-gray-600">{group.count} orang</span>
@@ -369,20 +369,20 @@ const Demographics = () => {
                 </div>
                 
                 {/* Total Age Group Bar */}
-                <div className="w-full bg-gray-200 rounded-full h-3">
+                <div className="w-full bg-gray-200 rounded-full h-2 md:h-3">
                   <div
-                    className="h-3 bg-gradient-to-r from-orange-500 to-orange-400 rounded-full transition-all duration-700"
+                    className="h-2 md:h-3 bg-gradient-to-r from-orange-500 to-orange-400 rounded-full transition-all duration-700"
                     style={{ width: `${group.percentage}%` }}
                   ></div>
                 </div>
                 
                 {/* Gender Breakdown */}
-                <div className="grid grid-cols-2 gap-4 mt-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mt-2 md:mt-3">
                   {/* Male */}
-                  <div className="space-y-2">
+                  <div className="space-y-1 md:space-y-2">
                     <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                      <div className="flex items-center gap-1 md:gap-2">
+                        <div className="w-2 h-2 md:w-3 md:h-3 bg-blue-500 rounded-full"></div>
                         <span className="text-xs font-medium">Laki-laki</span>
                       </div>
                       <div className="flex items-center gap-1">
@@ -390,19 +390,19 @@ const Demographics = () => {
                         <span className="text-xs text-gray-500">({group.malePercentage}%)</span>
                       </div>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="w-full bg-gray-200 rounded-full h-1.5 md:h-2">
                       <div
-                        className="h-2 bg-blue-500 rounded-full transition-all duration-700"
+                        className="h-1.5 md:h-2 bg-blue-500 rounded-full transition-all duration-700"
                         style={{ width: `${group.malePercentage}%` }}
                       ></div>
                     </div>
                   </div>
                   
                   {/* Female */}
-                  <div className="space-y-2">
+                  <div className="space-y-1 md:space-y-2">
                     <div className="flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-pink-500 rounded-full"></div>
+                      <div className="flex items-center gap-1 md:gap-2">
+                        <div className="w-2 h-2 md:w-3 md:h-3 bg-pink-500 rounded-full"></div>
                         <span className="text-xs font-medium">Perempuan</span>
                       </div>
                       <div className="flex items-center gap-1">
@@ -410,9 +410,9 @@ const Demographics = () => {
                         <span className="text-xs text-gray-500">({group.femalePercentage}%)</span>
                       </div>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="w-full bg-gray-200 rounded-full h-1.5 md:h-2">
                       <div
-                        className="h-2 bg-pink-500 rounded-full transition-all duration-700"
+                        className="h-1.5 md:h-2 bg-pink-500 rounded-full transition-all duration-700"
                         style={{ width: `${group.femalePercentage}%` }}
                       ></div>
                     </div>
@@ -426,21 +426,21 @@ const Demographics = () => {
 
       {/* Gender Distribution */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-purple-600" />
+        <CardHeader className="pb-3 md:pb-6">
+          <CardTitle className="flex items-center gap-2 text-base md:text-lg">
+            <Users className="h-4 w-4 md:h-5 md:w-5 text-purple-600" />
             Distribusi Jenis Kelamin
           </CardTitle>
-          <CardDescription>Rincian populasi berdasarkan jenis kelamin</CardDescription>
+          <CardDescription className="text-sm md:text-base">Rincian populasi berdasarkan jenis kelamin</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="grid md:grid-cols-2 gap-8">
+        <CardContent className="px-3 md:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
             <ChartContainer
               config={{
                 male: { label: "Male", color: "#3B82F6" },
                 female: { label: "Female", color: "#EC4899" },
               }}
-              className="h-[300px]"
+              className="h-[200px] md:h-[300px]"
             >
               <PieChart>
                 <Pie
@@ -466,39 +466,39 @@ const Demographics = () => {
               </PieChart>
             </ChartContainer>
 
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
+            <div className="space-y-3 md:space-y-4">
+              <div className="space-y-1 md:space-y-2">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-2">
                   <span className="text-sm font-medium text-gray-700">Laki-laki</span>
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-gray-600">{totalMale.toLocaleString()}</span>
                     <span className="text-xs text-gray-500">({totalPopulation > 0 ? Math.round((totalMale / totalPopulation) * 100) : 0}%)</span>
                   </div>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-3">
+                <div className="w-full bg-gray-200 rounded-full h-2 md:h-3">
                   <div
-                    className="h-3 bg-blue-500 rounded-full transition-all duration-700"
+                    className="h-2 md:h-3 bg-blue-500 rounded-full transition-all duration-700"
                     style={{ width: `${totalPopulation > 0 ? Math.round((totalMale / totalPopulation) * 100) : 0}%` }}
                   ></div>
                 </div>
               </div>
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
+              <div className="space-y-1 md:space-y-2">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-2">
                   <span className="text-sm font-medium text-gray-700">Perempuan</span>
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-gray-600">{totalFemale.toLocaleString()}</span>
                     <span className="text-xs text-gray-500">({totalPopulation > 0 ? Math.round((totalFemale / totalPopulation) * 100) : 0}%)</span>
                   </div>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-3">
+                <div className="w-full bg-gray-200 rounded-full h-2 md:h-3">
                   <div
-                    className="h-3 bg-pink-500 rounded-full transition-all duration-700"
+                    className="h-2 md:h-3 bg-pink-500 rounded-full transition-all duration-700"
                     style={{ width: `${totalPopulation > 0 ? Math.round((totalFemale / totalPopulation) * 100) : 0}%` }}
                   ></div>
                 </div>
               </div>
               <div className="pt-2 border-t">
-                <div className="flex justify-between items-center">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-2">
                   <span className="text-sm font-semibold text-gray-800">Total Populasi</span>
                   <span className="text-sm font-semibold text-gray-800">{totalPopulation.toLocaleString()} orang</span>
                 </div>
@@ -510,15 +510,15 @@ const Demographics = () => {
 
       {/* Religion Distribution */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-green-600" />
+        <CardHeader className="pb-3 md:pb-6">
+          <CardTitle className="flex items-center gap-2 text-base md:text-lg">
+            <Users className="h-4 w-4 md:h-5 md:w-5 text-green-600" />
             Distribusi Agama
           </CardTitle>
-          <CardDescription>Komposisi penduduk berdasarkan agama yang dianut</CardDescription>
+          <CardDescription className="text-sm md:text-base">Komposisi penduduk berdasarkan agama yang dianut</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="grid md:grid-cols-2 gap-8">
+        <CardContent className="px-3 md:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
             <ChartContainer
               config={{
                 islam: { label: "Islam", color: "#22c55e" },
@@ -529,7 +529,7 @@ const Demographics = () => {
                 khonghucu: { label: "Khonghucu", color: "#ef4444" },
                 kepercayaan: { label: "Kepercayaan", color: "#06b6d4" },
               }}
-              className="h-[300px]"
+              className="h-[200px] md:h-[300px]"
             >
               <PieChart>
                 <Pie
@@ -549,19 +549,19 @@ const Demographics = () => {
               </PieChart>
             </ChartContainer>
 
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               {religionData.map((religion) => (
-                <div key={religion.name} className="space-y-2">
-                  <div className="flex justify-between items-center">
+                <div key={religion.name} className="space-y-1 md:space-y-2">
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-2">
                     <span className="text-sm font-medium text-gray-700">{religion.name}</span>
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-gray-600">{religion.value}</span>
                       <span className="text-xs text-gray-500">({religion.percentage}%)</span>
                     </div>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-3">
+                  <div className="w-full bg-gray-200 rounded-full h-2 md:h-3">
                     <div
-                      className="h-3 rounded-full transition-all duration-700"
+                      className="h-2 md:h-3 rounded-full transition-all duration-700"
                       style={{
                         width: `${religion.percentage}%`,
                         backgroundColor: religion.color,
@@ -577,15 +577,15 @@ const Demographics = () => {
 
       {/* Family Relationship Distribution */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-blue-600" />
+        <CardHeader className="pb-3 md:pb-6">
+          <CardTitle className="flex items-center gap-2 text-base md:text-lg">
+            <Users className="h-4 w-4 md:h-5 md:w-5 text-blue-600" />
             Distribusi Hubungan Keluarga
           </CardTitle>
-          <CardDescription>Komposisi penduduk berdasarkan hubungan dalam keluarga</CardDescription>
+          <CardDescription className="text-sm md:text-base">Komposisi penduduk berdasarkan hubungan dalam keluarga</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="grid md:grid-cols-2 gap-8">
+        <CardContent className="px-3 md:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
             <ChartContainer
               config={{
                 kepalaKeluarga: { label: "Kepala Keluarga", color: "#059669" },
@@ -597,7 +597,7 @@ const Demographics = () => {
                 familiLain: { label: "Famili Lain", color: "#ef4444" },
                 lainnya: { label: "Lainnya", color: "#06b6d4" },
               }}
-              className="h-[300px]"
+              className="h-[200px] md:h-[300px]"
             >
               <PieChart>
                 <Pie
@@ -617,19 +617,19 @@ const Demographics = () => {
               </PieChart>
             </ChartContainer>
 
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               {hubunganKeluargaData.map((hubungan) => (
-                <div key={hubungan.name} className="space-y-2">
-                  <div className="flex justify-between items-center">
+                <div key={hubungan.name} className="space-y-1 md:space-y-2">
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-2">
                     <span className="text-sm font-medium text-gray-700">{hubungan.name}</span>
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-gray-600">{hubungan.value}</span>
                       <span className="text-xs text-gray-500">({hubungan.percentage}%)</span>
                     </div>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-3">
+                  <div className="w-full bg-gray-200 rounded-full h-2 md:h-3">
                     <div
-                      className="h-3 rounded-full transition-all duration-700"
+                      className="h-2 md:h-3 rounded-full transition-all duration-700"
                       style={{
                         width: `${hubungan.percentage}%`,
                         backgroundColor: hubungan.color,
@@ -638,7 +638,7 @@ const Demographics = () => {
                   </div>
                   
                   {/* Gender Breakdown */}
-                  <div className="grid grid-cols-2 gap-2 mt-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1 md:mt-2">
                     <div className="space-y-1">
                       <div className="flex justify-between items-center text-xs">
                         <div className="flex items-center gap-1">
@@ -647,9 +647,9 @@ const Demographics = () => {
                         </div>
                         <span className="text-gray-600">{hubungan.male}</span>
                       </div>
-                      <div className="w-full bg-gray-200 rounded-full h-1.5">
+                      <div className="w-full bg-gray-200 rounded-full h-1 md:h-1.5">
                         <div
-                          className="h-1.5 bg-blue-400 rounded-full transition-all duration-700"
+                          className="h-1 md:h-1.5 bg-blue-400 rounded-full transition-all duration-700"
                           style={{ width: `${hubungan.value > 0 ? (hubungan.male / hubungan.value) * 100 : 0}%` }}
                         ></div>
                       </div>
@@ -662,9 +662,9 @@ const Demographics = () => {
                         </div>
                         <span className="text-gray-600">{hubungan.female}</span>
                       </div>
-                      <div className="w-full bg-gray-200 rounded-full h-1.5">
+                      <div className="w-full bg-gray-200 rounded-full h-1 md:h-1.5">
                         <div
-                          className="h-1.5 bg-pink-400 rounded-full transition-all duration-700"
+                          className="h-1 md:h-1.5 bg-pink-400 rounded-full transition-all duration-700"
                           style={{ width: `${hubungan.value > 0 ? (hubungan.female / hubungan.value) * 100 : 0}%` }}
                         ></div>
                       </div>
@@ -673,7 +673,7 @@ const Demographics = () => {
                 </div>
               ))}
               <div className="pt-2 border-t">
-                <div className="flex justify-between items-center">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-2">
                   <span className="text-sm font-semibold text-gray-800">Total Kepala Keluarga</span>
                   <span className="text-sm font-semibold text-gray-800">{totalHubunganKeluarga.toLocaleString()} orang</span>
                 </div>

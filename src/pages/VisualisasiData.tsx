@@ -60,31 +60,31 @@ const VisualisasiData = () => {
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-green-50">
       {/* Navigation */}
       <nav className="bg-white/90 backdrop-blur-[2px] fixed w-full z-50 shadow-xl top-0 left-0">
-        <div className="container mx-auto px-6 py-4">
-          <div className="grid grid-cols-3 items-center">
-            <div className="flex justify-start">
+        <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4">
+          <div className="flex flex-col sm:grid sm:grid-cols-3 items-center gap-3 sm:gap-0">
+            <div className="flex justify-start w-full sm:w-auto">
               <Link
                 to="/"
                 className="flex items-center space-x-2 text-green-800 hover:text-green-900"
               >
-                <ArrowLeft className="w-5 h-5" />
-                <span className="font-semibold">Kembali ke Beranda</span>
+                <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="font-semibold text-sm sm:text-base">Kembali ke Beranda</span>
               </Link>
             </div>
             <div className="flex flex-col items-center justify-center col-span-1">
               <div className="flex items-center">
-                <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-2 rounded-md mr-2">
-                  <BarChart3 className="w-6 h-6 text-white" />
+                <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-1.5 sm:p-2 rounded-md mr-2">
+                  <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent font-poppins">
+                <h1 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent font-poppins">
                   Visualisasi Data
                 </h1>
               </div>
-              <p className="text-md text-gray-600 mt-1 max-w-md text-center">
+              <p className="text-xs sm:text-md text-gray-600 mt-1 max-w-md text-center px-2">
                 Data Insights dan Statistik Desa Kepohkencono
               </p>
             </div>
-            <div className="flex justify-end">
+            <div className="hidden sm:flex justify-end">
               {/* Empty space - no login/logout buttons as requested */}
             </div>
           </div>
@@ -92,8 +92,8 @@ const VisualisasiData = () => {
       </nav>
 
       {/* Main Content */}
-      <div className="pt-40 pb-12">
-        <div className="container mx-auto px-6">
+      <div className="pt-32 sm:pt-40 pb-8 sm:pb-12">
+        <div className="container mx-auto px-4 sm:px-6">
           {/* Header Section */}
           {/* <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -106,7 +106,7 @@ const VisualisasiData = () => {
           </div> */}
 
           {/* Key Statistics */}
-          <div className="grid md:grid-cols-4 gap-6 mb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-12">
             <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
@@ -201,8 +201,8 @@ const VisualisasiData = () => {
           </div>
 
           {/* Category Navigation */}
-          <div className="mb-8">
-            <div className="flex flex-wrap gap-2">
+          <div className="mb-6 sm:mb-8">
+            <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2">
               {categories.map((category) => (
                 <Button
                   key={category.id}
@@ -211,14 +211,15 @@ const VisualisasiData = () => {
                   }
                   size="sm"
                   onClick={() => setSelectedCategory(category.id)}
-                  className={`flex items-center gap-2 ${
+                  className={`flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 py-2 ${
                     selectedCategory === category.id
                       ? "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
                       : "hover:bg-blue-50 border-blue-200"
                   }`}
                 >
-                  {category.icon}
-                  {category.name}
+                  <span className="w-3 h-3 sm:w-4 sm:h-4">{category.icon}</span>
+                  <span className="hidden sm:inline">{category.name}</span>
+                  <span className="sm:hidden text-xs">{category.name.slice(0, 4)}</span>
                 </Button>
               ))}
             </div>

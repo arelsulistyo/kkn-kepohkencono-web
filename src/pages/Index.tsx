@@ -7,24 +7,51 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  MapPin,
   Users,
   Briefcase,
   Camera,
   ArrowRight,
   Play,
   Heart,
-  Mountain,
+  Leaf,
+  FileText,
+  BarChart3,
+  MapPin,
+  Instagram,
+  Phone,
+  Mail,
 } from "lucide-react";
+import { FaTiktok } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 const Index = () => {
   const [activeSection, setActiveSection] = useState("");
+  const [isVisible, setIsVisible] = useState(false);
+  const [showNavbar, setShowNavbar] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
 
+  const scrollToContent = () => {
+    const aboutSection = document.getElementById("about");
+    if (aboutSection) {
+      aboutSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   useEffect(() => {
+    setIsVisible(true);
     const handleScroll = () => {
+      setScrollY(window.scrollY);
+
+      // Show navbar when scrolled past the about section
+      const aboutSection = document.getElementById("about");
+      if (aboutSection) {
+        const rect = aboutSection.getBoundingClientRect();
+        setShowNavbar(rect.top <= 0);
+      }
+
       const sections = ["budaya", "gallery"];
       const scrollPosition = window.scrollY;
 
@@ -53,96 +80,244 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-blue-50">
-      {/* Navigation */}
-      <nav className="bg-white/90 fixed w-full z-50 shadow-xl backdrop-blur-[2px]">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-green-900 font-poppins">
-              Desa Kepohkencono
-            </h1>
-            <div className="hidden md:flex space-x-8 items-center font-poppins">
+      {/* Navbar */}
+      <nav
+        className={`fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md shadow-lg transition-transform duration-300 ${
+          showNavbar ? "translate-y-0" : "-translate-y-full"
+        }`}
+      >
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center gap-2">
+              <Leaf className="h-6 w-6 text-green-600" />
+              <span className="text-xl font-bold text-gray-900 font-sans">
+                Kepohkencono
+              </span>
+            </div>
+
+            <div className="hidden xl:flex items-center space-x-8">
               <a
-                href="#"
-                className={`text-green-900 hover:text-green-900 relative group py-1 ${
-                  activeSection === "home" ? "font-semibold" : ""
-                }`}
+                href="#about"
+                className="text-gray-700 hover:text-green-600 transition-colors font-medium font-sans"
               >
                 Beranda
-                <span
-                  className={`absolute -bottom-[2px] left-0 w-full h-0.5 bg-green-900 transform transition-transform duration-200 ease-out ${
-                    activeSection === "home"
-                      ? "scale-x-100"
-                      : "scale-x-0 group-hover:scale-x-100"
-                  }`}
-                ></span>
               </a>
               <a
                 href="#budaya"
-                className={`text-green-900 hover:text-green-900 relative group py-1 ${
-                  activeSection === "budaya" ? "font-semibold" : ""
-                }`}
+                className="text-gray-700 hover:text-green-600 transition-colors font-medium font-sans"
               >
                 Budaya
-                <span
-                  className={`absolute -bottom-[2px] left-0 w-full h-0.5 bg-green-900 transform transition-transform duration-200 ease-out ${
-                    activeSection === "budaya"
-                      ? "scale-x-100"
-                      : "scale-x-0 group-hover:scale-x-100"
-                  }`}
-                ></span>
               </a>
               <a
                 href="#gallery"
-                className={`text-green-900 hover:text-green-900 relative group py-1 ${
-                  activeSection === "gallery" ? "font-semibold" : ""
-                }`}
+                className="text-gray-700 hover:text-green-600 transition-colors font-medium font-sans"
               >
                 Galeri
-                <span
-                  className={`absolute -bottom-[2px] left-0 w-full h-0.5 bg-green-900 transform transition-transform duration-200 ease-out ${
-                    activeSection === "gallery"
-                      ? "scale-x-100"
-                      : "scale-x-0 group-hover:scale-x-100"
-                  }`}
-                ></span>
               </a>
               <Link
                 to="/team"
-                className={`text-green-900 hover:text-green-900 relative group py-1 ${
-                  location.pathname === "/team" ? "font-semibold" : ""
-                }`}
+                className="text-gray-700 hover:text-green-600 transition-colors font-medium font-sans"
               >
-                Tentang Tim Kami
-                <span
-                  className={`absolute -bottom-[2px] left-0 w-full h-0.5 bg-green-900 transform transition-transform duration-200 ease-out ${
-                    location.pathname === "/team"
-                      ? "scale-x-100"
-                      : "scale-x-0 group-hover:scale-x-100"
-                  }`}
-                ></span>
+                Tentang Kami
               </Link>
-              <Link to="/layanan-surat">
-                <Button className="bg-green-900 hover:bg-green-900">
-                  Layanan Surat
-                </Button>
+
+              {/* Special Letter Templates Navigation */}
+              <Link
+                to="/layanan-surat"
+                className="relative group flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-full font-medium hover:from-green-600 hover:to-emerald-700 transition-all duration-300 transform hover:scale-105 shadow-lg font-sans"
+              >
+                <FileText className="h-4 w-4" />
+                Layanan Surat
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
               </Link>
-              <Link to="/visualisasi-data">
-                <Button className="bg-blue-900 hover:bg-blue-900">
-                  Visualisasi Data
-                </Button>
+
+              {/* Special Data Visualization Navigation */}
+              <Link
+                to="/visualisasi-data"
+                className="relative group flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full font-medium hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-lg font-sans"
+              >
+                <BarChart3 className="h-4 w-4" />
+                Visualisasi Data
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-orange-500 rounded-full animate-pulse"></div>
               </Link>
+            </div>
+
+            <div className="xl:hidden">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              >
+                <svg
+                  className="h-6 w-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d={
+                      isMobileMenuOpen
+                        ? "M6 18L18 6M6 6l12 12"
+                        : "M4 6h16M4 12h16M4 18h16"
+                    }
+                  />
+                </svg>
+              </Button>
             </div>
           </div>
         </div>
+
+        {/* Mobile Menu */}
+        {isMobileMenuOpen && (
+          <div className="xl:hidden bg-white/95 backdrop-blur-md border-t border-gray-200">
+            <div className="px-4 py-4 space-y-4">
+              <a
+                href="#about"
+                className="block text-gray-700 hover:text-green-600 transition-colors font-medium font-sans py-2"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Beranda
+              </a>
+              <a
+                href="#budaya"
+                className="block text-gray-700 hover:text-green-600 transition-colors font-medium font-sans py-2"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Budaya
+              </a>
+              <a
+                href="#gallery"
+                className="block text-gray-700 hover:text-green-600 transition-colors font-medium font-sans py-2"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Galeri
+              </a>
+              <Link
+                to="/team"
+                className="block text-gray-700 hover:text-green-600 transition-colors font-medium font-sans py-2"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Tentang Kami
+              </Link>
+
+              <div className="pt-4 space-y-3">
+                <Link
+                  to="/layanan-surat"
+                  className="block w-full text-center px-4 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg font-medium hover:from-green-600 hover:to-emerald-700 transition-all duration-300 font-sans"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <FileText className="h-4 w-4" />
+                    Layanan Surat
+                  </div>
+                </Link>
+
+                <Link
+                  to="/visualisasi-data"
+                  className="block w-full text-center px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-sans"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    <BarChart3 className="h-4 w-4" />
+                    Visualisasi Data
+                  </div>
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden pt-16">
-        <img
-          src="/kepoh_gate.jpeg"
-          alt="Gerbang Desa"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
+      <section className="relative min-h-screen overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <img
+            src="/images/sunset_kepohkencono_centered.jpg"
+            alt="Sunset over Desa Kepohkencono fields"
+            className="w-full h-full object-cover object-center"
+          />
+          {/* Gradient overlay - darker at bottom, lighter at top to work with sunset */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-black/20"></div>
+        </div>
+
+        {/* Main Content - Structured to frame the sun */}
+        <div className="relative z-10 min-h-screen flex flex-col justify-center px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+          <div
+            className={`transition-all duration-1000 ${
+              isVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-10"
+            }`}
+          >
+            {/* Top Section - Badge */}
+            <div className="text-center mb-6 sm:mb-8">
+              <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-3 sm:px-4 py-2 shadow-lg border border-white/20">
+                <Leaf className="h-4 w-4 text-green-300" />
+                <span className="text-xs sm:text-sm font-medium text-white font-sans">
+                  Jelajahi Warisan Kami
+                </span>
+              </div>
+            </div>
+
+            {/* Upper Text - Headline positioned above the sun */}
+            <div className="text-center mb-6 sm:mb-8 md:mb-10 lg:mb-12">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-tight font-sans px-2">
+                <span className="drop-shadow-2xl block">Selamat Datang di</span>
+                <span className="bg-gradient-to-r from-green-300 via-emerald-300 to-green-400 bg-clip-text text-transparent drop-shadow-2xl font-extrabold block mt-1 sm:mt-2">
+                  Desa Kepohkencono
+                </span>
+              </h1>
+            </div>
+
+            {/* Sun Space - Larger space for mobile to show sun between text elements */}
+            <div className="h-16 sm:h-12 md:h-16 lg:h-36 xl:h-40"></div>
+
+            {/* Lower Text - Description positioned below the sun */}
+            <div className="text-center mb-8 sm:mb-12 md:mb-12">
+              <p className="text-base sm:text-lg md:text-xl text-white/90 leading-relaxed drop-shadow-lg font-medium max-w-4xl mx-auto font-sans px-4">
+                Sebuah desa di mana waktu mengalir perlahan, kehidupan tumbuh
+                bersama, dan senja bercerita di antara hamparan rumput dan sawah
+                yang membentang.
+              </p>
+            </div>
+
+            {/* Button Section - Hidden on mobile and tablet, visible on larger screens */}
+            <div className="hidden lg:flex flex-row gap-4 justify-center mb-8 sm:mb-12 px-4">
+              <Button
+                size="lg"
+                className="bg-white text-green-600 border-2 border-green-600 hover:bg-green-50 hover:text-green-700 hover:border-green-700 px-8 py-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 text-lg"
+                onClick={scrollToContent}
+              >
+                Jelajahi Desa Kami
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+
+              <a href="/layanan-surat">
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-8 py-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2 border border-white/20 text-lg"
+                >
+                  <FileText className="h-5 w-5" />
+                  Layanan Surat
+                </Button>
+              </a>
+
+              <a href="/visualisasi-data">
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2 border border-white/20 text-lg"
+                >
+                  <BarChart3 className="h-5 w-5" />
+                  Visualisasi Data
+                </Button>
+              </a>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* About Section */}
@@ -309,7 +484,7 @@ const Index = () => {
             <Card className="hover:shadow-lg transition-shadow duration-300 border-0 shadow-md">
               <CardHeader className="text-center pb-4">
                 <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <MapPin className="w-8 h-8 text-blue-600" />
+                  {/* <MapPin className="w-8 h-8 text-blue-600" /> */}
                 </div>
                 <CardTitle className="text-green-900">
                   Wisata & Destinasi
@@ -420,70 +595,89 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-green-900 text-white py-12">
-        <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-3 gap-8">
-            <div>
-              <h3 className="text-2xl font-bold mb-4 text-white">
-                Desa Makmur
-              </h3>
-              <p className="text-green-200 leading-relaxed">
-                Membangun masa depan yang berkelanjutan dengan memadukan
-                kearifan lokal dan teknologi modern untuk kesejahteraan
-                masyarakat.
+      <footer id="contact" className="bg-gray-900 text-white py-16">
+        <div className="container px-4 md:px-6">
+          <div className="grid gap-8 md:grid-cols-3 lg:grid-cols-3">
+            {/* Column 1: Village Title and Social Media */}
+            <div className="space-y-4 text-center md:text-left">
+              <div className="flex items-center justify-center md:justify-start gap-3">
+                 <Leaf className="h-7 w-7 text-emerald-500" />
+                 <span className="text-3xl font-bold bg-gradient-to-r from-green-300 via-emerald-300 to-green-400 bg-clip-text text-transparent">
+                   Kepohkencono
+                 </span>
+               </div>
+              <p className="text-gray-400 text-lg leading-relaxed">
+                Menjaga tradisi, merangkul masa depan. Sebuah komunitas yang harmonis di tengah keindahan alam.
               </p>
+              <div className="flex justify-center md:justify-start space-x-6 pt-4">
+                 <a href="#" className="text-gray-400 hover:text-emerald-400 transition-colors">
+                   <Instagram className="h-6 w-6" />
+                 </a>
+                 <a href="#" className="text-gray-400 hover:text-emerald-400 transition-colors">
+                   <FaTiktok className="h-6 w-6" />
+                 </a>
+               </div>
             </div>
-            <div>
-              <h4 className="text-lg font-semibold mb-4 text-white">
-                Tautan Cepat
-              </h4>
-              <ul className="space-y-2 text-green-200">
-                <li>
-                  <a
-                    href="#about"
-                    className="hover:text-white transition-colors"
-                  >
-                    Tentang Desa
-                  </a>
-                </li>
-                <li>
-                  <Link
-                    to="/team"
-                    className="hover:text-white transition-colors"
-                  >
-                    Tim KKN
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/layanan-surat"
-                    className="hover:text-white transition-colors"
-                  >
-                    Layanan Surat
-                  </Link>
-                </li>
-                <li>
-                  <a
-                    href="#gallery"
-                    className="hover:text-white transition-colors"
-                  >
-                    Galeri
-                  </a>
-                </li>
-              </ul>
+
+            {/* Column 2: Tautan Cepat (Quick Links) */}
+            <div className="space-y-4 text-center md:text-left">
+              <h3 className="text-xl font-semibold mb-4 text-white">Tautan Cepat</h3>
+              <ul className="space-y-2 text-gray-400">
+                 <li>
+                   <a href="#about" className="hover:text-emerald-400 transition-colors">
+                     Beranda
+                   </a>
+                 </li>
+                 <li>
+                   <a href="#budaya" className="hover:text-emerald-400 transition-colors">
+                     Budaya
+                   </a>
+                 </li>
+                 <li>
+                   <a href="#gallery" className="hover:text-emerald-400 transition-colors">
+                     Galeri
+                   </a>
+                 </li>
+                 <li>
+                   <Link to="/team" className="hover:text-emerald-400 transition-colors">
+                     Tentang Kami
+                   </Link>
+                 </li>
+                 <li>
+                   <Link to="/layanan-surat" className="hover:text-emerald-400 transition-colors">
+                     Layanan Surat
+                   </Link>
+                 </li>
+                 <li>
+                   <Link to="/visualisasi-data" className="hover:text-emerald-400 transition-colors">
+                     Visualisasi Data
+                   </Link>
+                 </li>
+               </ul>
             </div>
-            <div>
-              <h4 className="text-lg font-semibold mb-4 text-white">Kontak</h4>
-              <div className="text-green-200 space-y-2">
-                <p>Jl. Desa Makmur No. 123</p>
-                <p>Kecamatan Sejahtera</p>
-                <p>Kabupaten Bahagia</p>
-                <p>Email: info@desamakmur.id</p>
+
+            {/* Column 3: Contact Information */}
+            <div className="space-y-4 text-center md:text-left">
+              <h3 className="text-xl font-semibold mb-4 text-white">Punya Pertanyaan?</h3>
+              <div className="space-y-3">
+                <div className="flex items-center justify-center md:justify-start gap-3 text-gray-400">
+                  <MapPin className="h-5 w-5 text-emerald-500" />
+                  <span>Desa Kepohkencono, Kec. Pucakwangi</span>
+                </div>
+                <div className="flex items-center justify-center md:justify-start gap-3 text-gray-400">
+                  <Phone className="h-5 w-5 text-emerald-500" />
+                  <span>+62 812-3456-7890</span>
+                </div>
+                <div className="flex items-center justify-center md:justify-start gap-3 text-gray-400">
+                  <Mail className="h-5 w-5 text-emerald-500" />
+                  <span>info@kepohkencono.desa.id</span>
+                </div>
               </div>
             </div>
           </div>
-          <div className="border-t border-green-700 mt-8 pt-8 text-center text-green-200">
-            <p>&copy; 2025 Dikembangkan oleh Tim KKN Jelajah Pucakwangi</p>
+
+          <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
+            <p>&copy; {new Date().getFullYear()} Desa Kepohkencono. Dikembangkan oleh Tim KKN Jelajah Pucakwangi</p>
           </div>
         </div>
       </footer>
