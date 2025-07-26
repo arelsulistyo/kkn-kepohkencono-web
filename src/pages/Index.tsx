@@ -296,7 +296,7 @@ const Index = () => {
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
 
-              <a href="/layanan-surat">
+              <Link to="/layanan-surat">
                 <Button
                   size="lg"
                   className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-8 py-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2 border border-white/20 text-lg"
@@ -304,9 +304,9 @@ const Index = () => {
                   <FileText className="h-5 w-5" />
                   Layanan Surat
                 </Button>
-              </a>
+              </Link>
 
-              <a href="/visualisasi-data">
+              <Link to="/visualisasi-data">
                 <Button
                   size="lg"
                   className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2 border border-white/20 text-lg"
@@ -314,7 +314,7 @@ const Index = () => {
                   <BarChart3 className="h-5 w-5" />
                   Visualisasi Data
                 </Button>
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -601,64 +601,93 @@ const Index = () => {
             {/* Column 1: Village Title and Social Media */}
             <div className="space-y-4 text-center md:text-left">
               <div className="flex items-center justify-center md:justify-start gap-3">
-                 <Leaf className="h-7 w-7 text-emerald-500" />
-                 <span className="text-3xl font-bold bg-gradient-to-r from-green-300 via-emerald-300 to-green-400 bg-clip-text text-transparent">
-                   Kepohkencono
-                 </span>
-               </div>
+                <Leaf className="h-7 w-7 text-emerald-500" />
+                <span className="text-3xl font-bold bg-gradient-to-r from-green-300 via-emerald-300 to-green-400 bg-clip-text text-transparent">
+                  Kepohkencono
+                </span>
+              </div>
               <p className="text-gray-400 text-lg leading-relaxed">
-                Menjaga tradisi, merangkul masa depan. Sebuah komunitas yang harmonis di tengah keindahan alam.
+                Menjaga tradisi, merangkul masa depan. Sebuah komunitas yang
+                harmonis di tengah keindahan alam.
               </p>
               <div className="flex justify-center md:justify-start space-x-6 pt-4">
-                 <a href="#" className="text-gray-400 hover:text-emerald-400 transition-colors">
-                   <Instagram className="h-6 w-6" />
-                 </a>
-                 <a href="#" className="text-gray-400 hover:text-emerald-400 transition-colors">
-                   <FaTiktok className="h-6 w-6" />
-                 </a>
-               </div>
+                <a
+                  href="#"
+                  className="text-gray-400 hover:text-emerald-400 transition-colors"
+                >
+                  <Instagram className="h-6 w-6" />
+                </a>
+                <a
+                  href="#"
+                  className="text-gray-400 hover:text-emerald-400 transition-colors"
+                >
+                  <FaTiktok className="h-6 w-6" />
+                </a>
+              </div>
             </div>
 
             {/* Column 2: Tautan Cepat (Quick Links) */}
             <div className="space-y-4 text-center md:text-left">
-              <h3 className="text-xl font-semibold mb-4 text-white">Tautan Cepat</h3>
+              <h3 className="text-xl font-semibold mb-4 text-white">
+                Tautan Cepat
+              </h3>
               <ul className="space-y-2 text-gray-400">
-                 <li>
-                   <a href="#about" className="hover:text-emerald-400 transition-colors">
-                     Beranda
-                   </a>
-                 </li>
-                 <li>
-                   <a href="#budaya" className="hover:text-emerald-400 transition-colors">
-                     Budaya
-                   </a>
-                 </li>
-                 <li>
-                   <a href="#gallery" className="hover:text-emerald-400 transition-colors">
-                     Galeri
-                   </a>
-                 </li>
-                 <li>
-                   <Link to="/team" className="hover:text-emerald-400 transition-colors">
-                     Tentang Kami
-                   </Link>
-                 </li>
-                 <li>
-                   <Link to="/layanan-surat" className="hover:text-emerald-400 transition-colors">
-                     Layanan Surat
-                   </Link>
-                 </li>
-                 <li>
-                   <Link to="/visualisasi-data" className="hover:text-emerald-400 transition-colors">
-                     Visualisasi Data
-                   </Link>
-                 </li>
-               </ul>
+                <li>
+                  <a
+                    href="#about"
+                    className="hover:text-emerald-400 transition-colors"
+                  >
+                    Beranda
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#budaya"
+                    className="hover:text-emerald-400 transition-colors"
+                  >
+                    Budaya
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="#gallery"
+                    className="hover:text-emerald-400 transition-colors"
+                  >
+                    Galeri
+                  </a>
+                </li>
+                <li>
+                  <Link
+                    to="/team"
+                    className="hover:text-emerald-400 transition-colors"
+                  >
+                    Tentang Kami
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/layanan-surat"
+                    className="hover:text-emerald-400 transition-colors"
+                  >
+                    Layanan Surat
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/visualisasi-data"
+                    className="hover:text-emerald-400 transition-colors"
+                  >
+                    Visualisasi Data
+                  </Link>
+                </li>
+              </ul>
             </div>
 
             {/* Column 3: Contact Information */}
             <div className="space-y-4 text-center md:text-left">
-              <h3 className="text-xl font-semibold mb-4 text-white">Punya Pertanyaan?</h3>
+              <h3 className="text-xl font-semibold mb-4 text-white">
+                Punya Pertanyaan?
+              </h3>
               <div className="space-y-3">
                 <div className="flex items-center justify-center md:justify-start gap-3 text-gray-400">
                   <MapPin className="h-5 w-5 text-emerald-500" />
@@ -677,7 +706,10 @@ const Index = () => {
           </div>
 
           <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
-            <p>&copy; {new Date().getFullYear()} Desa Kepohkencono. Dikembangkan oleh Tim KKN Jelajah Pucakwangi</p>
+            <p>
+              &copy; {new Date().getFullYear()} Desa Kepohkencono. Dikembangkan
+              oleh Tim KKN Jelajah Pucakwangi
+            </p>
           </div>
         </div>
       </footer>
