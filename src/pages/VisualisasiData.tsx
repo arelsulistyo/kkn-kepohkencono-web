@@ -73,10 +73,10 @@ const VisualisasiData = () => {
             </div>
             <div className="flex flex-col items-center justify-center col-span-1">
               <div className="flex items-center">
-                <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-1.5 sm:p-2 rounded-md mr-2">
+                <div className="bg-gradient-to-r from-teal-600 to-cyan-600 p-1.5 sm:p-2 rounded-md mr-2">
                   <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
-                <h1 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent font-poppins">
+                <h1 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent font-poppins">
                   Visualisasi Data
                 </h1>
               </div>
@@ -213,8 +213,8 @@ const VisualisasiData = () => {
                   onClick={() => setSelectedCategory(category.id)}
                   className={`flex items-center justify-center gap-1 sm:gap-2 text-xs sm:text-sm px-2 sm:px-3 py-2 ${
                     selectedCategory === category.id
-                      ? "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white"
-                      : "hover:bg-blue-50 border-blue-200"
+                      ? "bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white"
+                      : "hover:bg-teal-50 border-teal-200"
                   }`}
                 >
                   <span className="w-3 h-3 sm:w-4 sm:h-4">{category.icon}</span>

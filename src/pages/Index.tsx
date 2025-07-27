@@ -13,25 +13,53 @@ import {
   ArrowRight,
   Play,
   Heart,
-  Leaf,
-  FileText,
-  BarChart3,
   MapPin,
   Instagram,
   Phone,
   Mail,
+  Home,
+  GraduationCap,
+  BarChart3,
+  Leaf,
+  FileText,
 } from "lucide-react";
 import { FaTiktok } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
+import Navbar from "../components/Navbar";
+import ImagePreloader from "../components/ImagePreloader";
+import { useImagePreloader } from "../hooks/use-image-preloader";
 
 const Index = () => {
   const [activeSection, setActiveSection] = useState("");
   const [isVisible, setIsVisible] = useState(false);
   const [showNavbar, setShowNavbar] = useState(false);
   const [scrollY, setScrollY] = useState(0);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [populationData, setPopulationData] = useState({
+    total: 0,
+    households: 0,
+  });
   const location = useLocation();
+
+  // Collect all image URLs used in this page
+  const imageUrls = [
+    "/images/sunset_kepohkencono_centered.jpg",
+    "/images/baldes_kepohkencono.jpg",
+    "https://images.unsplash.com/photo-1615729947596-a598e5de0ab3?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+    "https://images.unsplash.com/photo-1482938289607-e9573fc25ebb?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+    "https://images.unsplash.com/photo-1433086966358-54859d0ed716?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+    "https://images.unsplash.com/photo-1500673922987-e212871fec22?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+    "https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80",
+  ];
+
+  // Use image preloader hook
+  const { isLoading, loadProgress } = useImagePreloader({ 
+    imageUrls,
+    onAllImagesLoaded: () => {
+      // Optional: Add any additional logic when images are loaded
+      console.log('All images loaded successfully!');
+    }
+  });
 
   const scrollToContent = () => {
     const aboutSection = document.getElementById("about");
@@ -42,6 +70,71 @@ const Index = () => {
 
   useEffect(() => {
     setIsVisible(true);
+
+    // Load population data
+    const loadPopulationData = async () => {
+      try {
+        // Load demographic data for total population
+        const demographicResponse = await fetch(
+          "/visualization_data/Demografi_Umur.json"
+        );
+        const demographicData = await demographicResponse.json();
+
+        // Load household data
+        const householdResponse = await fetch(
+          "/visualization_data/Kepala_Keluarga.json"
+        );
+        const householdData = await householdResponse.json();
+
+        if (demographicData && demographicData.length > 0) {
+          const data = demographicData[0];
+
+          // Calculate total population by summing all age groups
+          let totalPopulation = 0;
+          const ageRanges = [
+            "00-04",
+            "05-09",
+            "10-14",
+            "15-19",
+            "20-24",
+            "25-29",
+            "30-34",
+            "35-39",
+            "40-44",
+            "45-49",
+            "50-54",
+            "55-59",
+            "60-64",
+            "65-69",
+            "70-74",
+            ">75",
+          ];
+
+          ageRanges.forEach((range) => {
+            totalPopulation +=
+              (data[`${range} L`] || 0) + (data[`${range} P`] || 0);
+          });
+
+          // Get household data
+          const totalHouseholds =
+            householdData && householdData.length > 0
+              ? householdData[0]["KEPALA KELUARGA JML"] || 0
+              : 0;
+
+          setPopulationData({
+            total: totalPopulation,
+            households: totalHouseholds,
+          });
+        }
+      } catch (error) {
+        console.error("Error loading population data:", error);
+        // Fallback to hardcoded values if data loading fails
+        setPopulationData({ total: 4212, households: 1593 });
+      }
+    };
+
+    loadPopulationData();
+
     const handleScroll = () => {
       setScrollY(window.scrollY);
 
@@ -79,157 +172,10 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-blue-50">
+    <ImagePreloader isLoading={isLoading} loadProgress={loadProgress}>
+      <div className="min-h-screen bg-gradient-to-b from-green-50 to-blue-50">
       {/* Navbar */}
-      <nav
-        className={`fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md shadow-lg transition-transform duration-300 ${
-          showNavbar ? "translate-y-0" : "-translate-y-full"
-        }`}
-      >
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-2">
-              <Leaf className="h-6 w-6 text-green-600" />
-              <span className="text-xl font-bold text-gray-900 font-sans">
-                Kepohkencono
-              </span>
-            </div>
-
-            <div className="hidden xl:flex items-center space-x-8">
-              <a
-                href="#about"
-                className="text-gray-700 hover:text-green-600 transition-colors font-medium font-sans"
-              >
-                Beranda
-              </a>
-              <a
-                href="#budaya"
-                className="text-gray-700 hover:text-green-600 transition-colors font-medium font-sans"
-              >
-                Budaya
-              </a>
-              <a
-                href="#gallery"
-                className="text-gray-700 hover:text-green-600 transition-colors font-medium font-sans"
-              >
-                Galeri
-              </a>
-              <Link
-                to="/team"
-                className="text-gray-700 hover:text-green-600 transition-colors font-medium font-sans"
-              >
-                Tentang Kami
-              </Link>
-
-              {/* Special Letter Templates Navigation */}
-              <Link
-                to="/layanan-surat"
-                className="relative group flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-full font-medium hover:from-green-600 hover:to-emerald-700 transition-all duration-300 transform hover:scale-105 shadow-lg font-sans"
-              >
-                <FileText className="h-4 w-4" />
-                Layanan Surat
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-              </Link>
-
-              {/* Special Data Visualization Navigation */}
-              <Link
-                to="/visualisasi-data"
-                className="relative group flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full font-medium hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-lg font-sans"
-              >
-                <BarChart3 className="h-4 w-4" />
-                Visualisasi Data
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-orange-500 rounded-full animate-pulse"></div>
-              </Link>
-            </div>
-
-            <div className="xl:hidden">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              >
-                <svg
-                  className="h-6 w-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d={
-                      isMobileMenuOpen
-                        ? "M6 18L18 6M6 6l12 12"
-                        : "M4 6h16M4 12h16M4 18h16"
-                    }
-                  />
-                </svg>
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <div className="xl:hidden bg-white/95 backdrop-blur-md border-t border-gray-200">
-            <div className="px-4 py-4 space-y-4">
-              <a
-                href="#about"
-                className="block text-gray-700 hover:text-green-600 transition-colors font-medium font-sans py-2"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Beranda
-              </a>
-              <a
-                href="#budaya"
-                className="block text-gray-700 hover:text-green-600 transition-colors font-medium font-sans py-2"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Budaya
-              </a>
-              <a
-                href="#gallery"
-                className="block text-gray-700 hover:text-green-600 transition-colors font-medium font-sans py-2"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Galeri
-              </a>
-              <Link
-                to="/team"
-                className="block text-gray-700 hover:text-green-600 transition-colors font-medium font-sans py-2"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Tentang Kami
-              </Link>
-
-              <div className="pt-4 space-y-3">
-                <Link
-                  to="/layanan-surat"
-                  className="block w-full text-center px-4 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg font-medium hover:from-green-600 hover:to-emerald-700 transition-all duration-300 font-sans"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <FileText className="h-4 w-4" />
-                    Layanan Surat
-                  </div>
-                </Link>
-
-                <Link
-                  to="/visualisasi-data"
-                  className="block w-full text-center px-4 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg font-medium hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 font-sans"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <BarChart3 className="h-4 w-4" />
-                    Visualisasi Data
-                  </div>
-                </Link>
-              </div>
-            </div>
-          </div>
-        )}
-      </nav>
+      <Navbar currentPage="home" showNavbar={showNavbar} />
 
       {/* Hero Section */}
       <section className="relative min-h-screen overflow-hidden">
@@ -309,7 +255,7 @@ const Index = () => {
               <Link to="/visualisasi-data">
                 <Button
                   size="lg"
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2 border border-white/20 text-lg"
+                  className="bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white px-8 py-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2 border border-white/20 text-lg"
                 >
                   <BarChart3 className="h-5 w-5" />
                   Visualisasi Data
@@ -328,42 +274,156 @@ const Index = () => {
               <h2 className="text-4xl font-bold text-green-900 mb-6">
                 Tentang Desa Kepohkencono
               </h2>
-              <p className="text-lg text-gray-700 mb-6 leading-relaxed">
+              <p className="text-lg text-gray-700 mb-6 leading-relaxed text-justify">
                 Desa Kepohkencono adalah permata tersembunyi yang terletak di
                 antara perbukitan hijau dan aliran sungai jernih. Dengan sejarah
                 yang kaya dan tradisi yang dilestarikan turun-temurun, desa ini
                 kini mengembangkan diri dengan teknologi modern untuk memberikan
                 pelayanan terbaik bagi warganya.
               </p>
-              <p className="text-lg text-gray-700 mb-8 leading-relaxed">
+              <p className="text-lg text-gray-700 mb-8 leading-relaxed text-justify">
                 Melalui program KKN yang inovatif, kami berkomitmen untuk
                 membangun jembatan antara kearifan lokal dan kemajuan digital,
                 menciptakan harmoni yang berkelanjutan untuk generasi mendatang.
               </p>
-              <Button className="bg-green-900 hover:bg-green-900">
-                Pelajari Lebih Lanjut
-                <ArrowRight className="ml-2 w-4 h-4" />
-              </Button>
+
+              {/* Key Features Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
+                <div className="flex items-center gap-3 p-4 bg-green-50 rounded-lg border border-green-100">
+                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                    <Leaf className="h-5 w-5 text-green-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-green-900">
+                      Lingkungan Asri
+                    </h4>
+                    <p className="text-sm text-gray-600">
+                      Udara segar & pemandangan hijau
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg border border-blue-100">
+                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                    <Users className="h-5 w-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-blue-900">
+                      Komunitas Solid
+                    </h4>
+                    <p className="text-sm text-gray-600">
+                      Gotong royong & kekeluargaan
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
             <div className="relative">
               <img
-                src="https://images.unsplash.com/photo-1501854140801-50d01698950b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-                alt="Pemandangan Desa dari Atas"
+                src="/images/baldes_kepohkencono.jpg"
+                alt="Baldes Kepohkencono"
                 className="rounded-lg shadow-2xl"
               />
-              <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-lg shadow-lg">
-                <p className="text-2xl font-bold text-green-900">500+</p>
-                <p className="text-gray-600">Kepala Keluarga</p>
+              <div className="absolute -bottom-6 -left-6 bg-white p-4 rounded-lg shadow-lg">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="text-center">
+                    <p className="text-xl font-bold text-emerald-600">
+                      {populationData.total.toLocaleString()}
+                    </p>
+                    <p className="text-gray-600 text-xs">Penduduk</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xl font-bold text-teal-600">
+                      {populationData.households.toLocaleString()}
+                    </p>
+                    <p className="text-gray-600 text-xs">Kepala Keluarga</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Budaya Section */}
-      <section id="budaya" className="py-20 bg-amber-50">
+      {/* Dukuh-dukuh Desa Section */}
+      <section className="py-12 bg-gray-50">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-green-900 mb-4">
+              Dukuh-dukuh Desa Kepohkencono
+            </h2>
+            <p className="text-xl text-gray-700 max-w-4xl mx-auto">
+              Desa Kepohkencono terdiri dari enam dukuh (dusun) yang
+              masing-masing memiliki karakteristik dan pesona unik, membentuk
+              mozaik kehidupan desa yang kaya.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+            {[
+              {
+                name: "Dukuh Manding",
+                kepalaDukuh: "Bapak Agus Sumanto",
+                mapLink: "https://maps.app.goo.gl/69K3brhnb2fCAeYG9",
+              },
+              {
+                name: "Dukuh Jatikebo",
+                kepalaDukuh: "Bapak Sutrisno",
+                mapLink: "https://maps.app.goo.gl/WgCyGsxMdCPLsSj29",
+              },
+              {
+                name: "Dukuh Dangklik",
+                kepalaDukuh: "Bapak Wahyudi",
+                mapLink: "https://maps.app.goo.gl/krLRQB5LBxvuKf489",
+              },
+              {
+                name: "Dukuh Prau",
+                kepalaDukuh: "Bapak Bambang",
+                mapLink: "https://maps.app.goo.gl/D4Zv955qhTAHaqLZ7",
+              },
+              {
+                name: "Dukuh Kepoh",
+                kepalaDukuh: "Bapak Zamzuri",
+                mapLink: "https://maps.app.goo.gl/965Cm1wVJyUFyQMVA",
+              },
+              {
+                name: "Dukuh Panggang",
+                kepalaDukuh: "Bapak Sugiarto",
+                mapLink: "https://maps.app.goo.gl/2dxwjwUrxk3MrXMDA",
+              },
+            ].map((dukuh, index) => (
+              <div
+                key={index}
+                className="text-center p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col items-center"
+              >
+                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Home className="h-8 w-8 text-green-600" />
+                </div>
+                <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                  {dukuh.name}
+                </h4>
+                <p className="text-gray-600 text-sm mb-4">
+                  Kepala Dukuh: {dukuh.kepalaDukuh}
+                </p>
+                <a
+                  href={dukuh.mapLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-full text-sm font-medium hover:bg-green-700 transition-colors shadow-md"
+                >
+                  <MapPin className="h-4 w-4" />
+                  Lihat di Peta
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Budaya Section */}
+      <section id="budaya" className="py-12 bg-amber-50">
+        <div className="container mx-auto px-6">
+          {/* <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-amber-800 mb-4">
               Budaya & Tradisi
             </h2>
@@ -371,7 +431,7 @@ const Index = () => {
               Kekayaan warisan budaya yang dilestarikan turun-temurun di Desa
               Makmur
             </p>
-          </div>
+          </div> */}
 
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
@@ -402,6 +462,15 @@ const Index = () => {
             </div>
 
             <div className="space-y-6">
+              <div className="text-left mb-16">
+                <h2 className="text-4xl font-bold text-amber-800 mb-4">
+                  Budaya & Tradisi
+                </h2>
+                <p className="text-xl text-gray-700 max-w-3xl mx-auto">
+                  Kekayaan warisan budaya yang dilestarikan turun-temurun di
+                  Desa Kepohkencono
+                </p>
+              </div>
               <div className="flex items-start space-x-4">
                 <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
                   <Heart className="w-6 h-6 text-amber-600" />
@@ -451,82 +520,161 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Data Visualization Preview Section */}
       <section id="features" className="py-20 bg-green-50">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-green-900 mb-4">
-              Keunggulan Desa Kami
+              Data Desa Terkini
             </h2>
             <p className="text-xl text-gray-700 max-w-3xl mx-auto">
-              Temukan berbagai aspek menarik yang membuat Desa Makmur istimewa
+              Jelajahi wawasan komprehensif tentang komunitas kami melalui
+              visualisasi data interaktif
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            <Card className="hover:shadow-lg transition-shadow duration-300 border-0 shadow-md">
-              <CardHeader className="text-center pb-4">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Users className="w-8 h-8 text-green-600" />
+            {/* Age Distribution Preview */}
+            <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
+              <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-3">
+                <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                  <Users className="h-4 w-4 text-orange-600" />
                 </div>
-                <CardTitle className="text-green-900">
-                  Budaya & Warisan
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-center text-gray-600 leading-relaxed">
-                  Kekayaan tradisi lokal yang dilestarikan melalui upacara adat,
-                  kerajinan tangan, dan seni budaya yang unik dan autentik.
-                </CardDescription>
-              </CardContent>
-            </Card>
+                Kelompok Usia
+              </h4>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">0-19 tahun</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-16 h-2 bg-gray-200 rounded-full">
+                      <div className="w-12 h-2 bg-orange-500 rounded-full"></div>
+                    </div>
+                    <span className="text-xs text-gray-500">24%</span>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">20-34 tahun</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-16 h-2 bg-gray-200 rounded-full">
+                      <div className="w-14 h-2 bg-orange-500 rounded-full"></div>
+                    </div>
+                    <span className="text-xs text-gray-500">19%</span>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">35-54 tahun</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-16 h-2 bg-gray-200 rounded-full">
+                      <div className="w-10 h-2 bg-orange-500 rounded-full"></div>
+                    </div>
+                    <span className="text-xs text-gray-500">31%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-            <Card className="hover:shadow-lg transition-shadow duration-300 border-0 shadow-md">
-              <CardHeader className="text-center pb-4">
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  {/* <MapPin className="w-8 h-8 text-blue-600" /> */}
+            {/* Occupation Distribution Preview */}
+            <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
+              <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-3">
+                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <Briefcase className="h-4 w-4 text-blue-600" />
                 </div>
-                <CardTitle className="text-green-900">
-                  Wisata & Destinasi
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-center text-gray-600 leading-relaxed">
-                  Air terjun yang memukau, sawah terasering yang indah, dan
-                  pemandangan alam yang menenangkan jiwa setiap pengunjung.
-                </CardDescription>
-              </CardContent>
-            </Card>
+                Pekerjaan Utama
+              </h4>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Petani</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-16 h-2 bg-gray-200 rounded-full">
+                      <div className="w-12 h-2 bg-green-500 rounded-full"></div>
+                    </div>
+                    <span className="text-xs text-gray-500">51%</span>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Wiraswasta</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-16 h-2 bg-gray-200 rounded-full">
+                      <div className="w-10 h-2 bg-blue-500 rounded-full"></div>
+                    </div>
+                    <span className="text-xs text-gray-500">35%</span>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">Karyawan Swasta</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-16 h-2 bg-gray-200 rounded-full">
+                      <div className="w-3 h-2 bg-purple-500 rounded-full"></div>
+                    </div>
+                    <span className="text-xs text-gray-500">7%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-            <Card className="hover:shadow-lg transition-shadow duration-300 border-0 shadow-md">
-              <CardHeader className="text-center pb-4">
-                <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Briefcase className="w-8 h-8 text-orange-600" />
+            {/* Education Level Preview */}
+            <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
+              <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-3">
+                <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                  <GraduationCap className="h-4 w-4 text-green-600" />
                 </div>
-                <CardTitle className="text-green-900">
-                  Produk Lokal UMKM
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription className="text-center text-gray-600 leading-relaxed">
-                  Kopi berkualitas tinggi, kerajinan bambu, dan produk olahan
-                  makanan tradisional yang mendukung ekonomi masyarakat lokal.
-                </CardDescription>
-              </CardContent>
-            </Card>
+                Tingkat Pendidikan
+              </h4>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">SD/Sederajat</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-16 h-2 bg-gray-200 rounded-full">
+                      <div className="w-12 h-2 bg-[#eab308] rounded-full"></div>
+                    </div>
+                    <span className="text-xs text-gray-500">28%</span>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">SLTP/Sederajat</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-16 h-2 bg-gray-200 rounded-full">
+                      <div className="w-10 h-2 bg-[#22c55e] rounded-full"></div>
+                    </div>
+                    <span className="text-xs text-gray-500">21%</span>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600">SLTA/Sederajat</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-16 h-2 bg-gray-200 rounded-full">
+                      <div className="w-8 h-2 bg-[#3b82f6] rounded-full"></div>
+                    </div>
+                    <span className="text-xs text-gray-500">16%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Dashboard Button */}
+          <div className="text-center mt-12">
+            <Button
+              size="lg"
+              className="bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              onClick={() => (window.location.href = "/visualisasi-data")}
+            >
+              <BarChart3 className="h-5 w-5 mr-2" />
+              Jelajahi Dashboard Data Lengkap
+            </Button>
           </div>
         </div>
       </section>
 
       {/* Gallery Preview */}
-      <section id="gallery" className="py-20 bg-white">
+      <section id="gallery" className="py-12 bg-white">
         <div className="container mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-green-900 mb-4">
               Galeri Desa
             </h2>
             <p className="text-xl text-gray-700 max-w-3xl mx-auto">
-              Saksikan keindahan dan kehidupan sehari-hari di Desa Makmur
+              Saksikan keindahan dan kehidupan sehari-hari di Desa Kepohkencono
             </p>
           </div>
 
@@ -581,7 +729,7 @@ const Index = () => {
             </div>
           </div>
 
-          <div className="text-center mt-12">
+          {/* <div className="text-center mt-12">
             <Button
               variant="outline"
               size="lg"
@@ -590,7 +738,7 @@ const Index = () => {
               <Camera className="mr-2" />
               Lihat Semua Foto
             </Button>
-          </div>
+          </div> */}
         </div>
       </section>
 
@@ -699,7 +847,7 @@ const Index = () => {
                 </div>
                 <div className="flex items-center justify-center md:justify-start gap-3 text-gray-400">
                   <Mail className="h-5 w-5 text-emerald-500" />
-                  <span>info@kepohkencono.desa.id</span>
+                  <span>jelajahpucakwangi@gmail.com</span>
                 </div>
               </div>
             </div>
@@ -714,6 +862,7 @@ const Index = () => {
         </div>
       </footer>
     </div>
+    </ImagePreloader>
   );
 };
 
