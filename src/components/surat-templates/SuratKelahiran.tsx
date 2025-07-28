@@ -274,10 +274,28 @@ const generateSuratKelahiran = async (
     doc.setFont("Bookman Old Style", "normal");
     doc.text("NIP. 197006051992031007", 133, nameY + 6);
 
-    // Save the PDF
-    doc.save(
-      "Surat_Keterangan_Kelahiran_" + namaAnak.replace(/ /g, "_") + ".pdf"
-    );
+    // Save the PDF with cross-platform compatibility
+    const filename = "Surat_Keterangan_Kelahiran_" + namaAnak.replace(/ /g, "_") + ".pdf";
+    
+    // Use blob approach for better cross-platform compatibility
+    const pdfBlob = doc.output('blob');
+    const url = URL.createObjectURL(pdfBlob);
+    
+    // Create a temporary download link
+    const downloadLink = document.createElement('a');
+    downloadLink.href = url;
+    downloadLink.download = filename;
+    downloadLink.style.display = 'none';
+    
+    // Add to DOM, click, and remove
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+    
+    // Clean up the URL object
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+    }, 100);
 
     // Return success
     return true;
