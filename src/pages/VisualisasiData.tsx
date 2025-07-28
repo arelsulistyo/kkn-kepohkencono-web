@@ -68,7 +68,9 @@ const VisualisasiData = () => {
                 className="flex items-center space-x-2 text-green-800 hover:text-green-900"
               >
                 <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span className="font-semibold text-sm sm:text-base">Kembali ke Beranda</span>
+                <span className="font-semibold text-sm sm:text-base">
+                  Kembali ke Beranda
+                </span>
               </Link>
             </div>
             <div className="flex flex-col items-center justify-center col-span-1">
@@ -80,7 +82,7 @@ const VisualisasiData = () => {
                   Visualisasi Data
                 </h1>
               </div>
-              <p className="text-xs sm:text-md text-gray-600 mt-1 max-w-md text-center px-2">
+              <p className="text-md sm:text-md text-gray-600 mt-1 max-w-md text-center px-2">
                 Data Insights dan Statistik Desa Kepohkencono
               </p>
             </div>
@@ -94,17 +96,6 @@ const VisualisasiData = () => {
       {/* Main Content */}
       <div className="pt-32 sm:pt-40 pb-8 sm:pb-12">
         <div className="container mx-auto px-4 sm:px-6">
-          {/* Header Section */}
-          {/* <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Data Insights Desa Kepohkencono
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Visualisasi data dan statistik untuk memahami kondisi dan
-              perkembangan desa
-            </p>
-          </div> */}
-
           {/* Key Statistics */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-12">
             <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
@@ -219,7 +210,9 @@ const VisualisasiData = () => {
                 >
                   <span className="w-3 h-3 sm:w-4 sm:h-4">{category.icon}</span>
                   <span className="hidden sm:inline">{category.name}</span>
-                  <span className="sm:hidden text-xs">{category.name.slice(0, 4)}</span>
+                  <span className="sm:hidden text-xs">
+                    {category.name.slice(0, 4)}
+                  </span>
                 </Button>
               ))}
             </div>

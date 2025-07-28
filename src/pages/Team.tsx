@@ -39,11 +39,11 @@ const Team = () => {
   ];
 
   // Use image preloader hook
-  const { isLoading, loadProgress } = useImagePreloader({ 
+  const { isLoading, loadProgress } = useImagePreloader({
     imageUrls: teamMemberPhotos,
     onAllImagesLoaded: () => {
-      console.log('All team images loaded successfully!');
-    }
+      console.log("All team images loaded successfully!");
+    },
   });
 
   const divisions = [
@@ -177,123 +177,139 @@ const Team = () => {
   return (
     <ImagePreloader isLoading={isLoading} loadProgress={loadProgress}>
       <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
-      {/* Navbar */}
-      <Navbar currentPage="team" />
+        {/* Navbar */}
+        <Navbar currentPage="team" />
 
-      {/* Hero Section */}
-      <section className="relative py-20 md:py-32 text-center bg-gradient-to-r from-green-600 to-emerald-700 text-white">
-        <div className="container mx-auto px-4">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4 drop-shadow-lg">
-            Tim KKN Desa Kepohkencono
-          </h1>
-          <p className="text-lg md:text-xl max-w-3xl mx-auto opacity-90">
-            Dedikasi kami untuk membangun dan memberdayakan masyarakat Desa
-            Kepohkencono.
-          </p>
-        </div>
-      </section>
-
-      {/* Theme Section */}
-      <section id="theme" className="py-16 bg-white">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <div className="text-center mb-12">
-            <Lightbulb className="h-12 w-12 text-green-600 mx-auto mb-4" />
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Tema KKN Kami: Inovasi Digital untuk Kemandirian Desa
-            </h2>
-            <p className="text-lg text-gray-700 leading-relaxed">
-              Kami berfokus pada pemanfaatan teknologi digital untuk
-              meningkatkan potensi desa di berbagai sektor, mulai dari
-              pendidikan, ekonomi, hingga pengelolaan lingkungan. Tujuannya
-              adalah menciptakan desa yang mandiri, adaptif, dan berkelanjutan
-              di era digital.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Sub-units Section */}
-      <section id="sub-units" className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <div className="text-center mb-12">
-            <LayoutGrid className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Subunit Tim KKN Jelajah Pucakwangi
-            </h2>
-            <p className="text-lg text-gray-700 leading-relaxed mb-8">
-              Tim kami terbagi menjadi 2 subunit yang berfokus pada aspek-aspek
-              kunci pembangunan desa.
-            </p>
-          </div>
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="bg-white p-6 rounded-lg shadow-md text-center">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                Subunit Kepohkencono
-              </h3>
-              <p className="text-gray-600 text-sm">
-                Meningkatkan akses dan pemahaman masyarakat terhadap teknologi
-                informasi.
-              </p>
+        {/* Hero Section */}
+        <section
+          className="relative min-h-screen text-center text-white flex items-end"
+          style={{
+            backgroundImage: "url(/images/tim_kkn.jpg)",
+            backgroundSize: "cover",
+            backgroundPosition: "center 80%",
+          }}
+        >
+          <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+          <div className="container mx-auto px-4 relative z-10 pb-[12vh]">
+            <div className="mb-8 py-8 overflow-visible">
+              <h1 className="text-2xl md:text-4xl font-bold drop-shadow-lg mb-2">
+                Tim KKN-PPM UGM
+              </h1>
+              <h1 className="text-4xl md:text-6xl font-bold drop-shadow-lg bg-gradient-to-r from-emerald-400 to-emerald-600 bg-clip-text text-transparent leading-relaxed pb-4">
+                Jelajah Pucakwangi
+              </h1>
             </div>
-            <div className="bg-white p-6 rounded-lg shadow-md text-center">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                Subunit Karangwotan
-              </h3>
-              <p className="text-gray-600 text-sm">
-                Mendorong inovasi produk lokal dan pemasaran digital untuk UMKM.
+            {/* <p className="text-lg md:text-xl max-w-3xl mx-auto opacity-90">
+              Dedikasi kami untuk membangun dan memberdayakan masyarakat di
+              Kecamatan Pucakwangi terkhususnya di Desa Kepohkencono dan
+              Karangwotan.
+            </p> */}
+          </div>
+        </section>
+
+        {/* Theme Section */}
+        <section id="theme" className="py-20 bg-white">
+          <div className="container mx-auto px-4 max-w-4xl">
+            <div className="text-center mb-12">
+              <Lightbulb className="h-12 w-12 text-green-600 mx-auto mb-4" />
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                Tema KKN Kami:
+              </h2>
+              <p className="text-lg text-gray-700 leading-relaxed">
+                Optimalisasi Peran dan Pengembangan Kualitas Sumber Daya Manusia
+                melalui Peternakan dan Pertanian Berbasis Pendekatan One Health
+                untuk Mendukung Ketahanan Pangan Berkelanjutan dan Peningkatan
+                Kesehatan Masyarakat dalam Mencapai Sustainable Development
+                Goals (SDGs) di Desa Karangwotan dan Kepohkencono, Kecamatan
+                Pucakwangi, Kabupaten Pati.
               </p>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Program Kerja Examples Section */}
-      <section id="program-kerja" className="py-16 bg-white">
-        <div className="container mx-auto px-4 max-w-5xl">
-          <div className="text-center mb-12">
-            <CheckCircle className="h-12 w-12 text-teal-600 mx-auto mb-4" />
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Contoh Program Kerja yang Telah Selesai
-            </h2>
-            <p className="text-lg text-gray-700 leading-relaxed">
-              Beberapa inisiatif yang telah kami laksanakan untuk kemajuan Desa
-              Kepohkencono.
-            </p>
-          </div>
-          <div className="grid md:grid-cols-2 gap-8">
-            {programKerjaExamples.map((program, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-lg shadow-md overflow-hidden"
-              >
-                <img
-                  src={program.imageSrc || "/placeholder.svg"}
-                  alt={program.title}
-                  className="w-full h-64 object-cover"
-                />
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                    {program.title}
-                  </h3>
-                  <p className="text-gray-700 text-base leading-relaxed">
-                    {program.description}
-                  </p>
-                  <Button
-                    variant="link"
-                    className="mt-4 px-0 text-green-600 hover:text-green-700"
-                  >
-                    Lihat Detail
-                    <ArrowRight className="ml-2 w-4 h-4" />
-                  </Button>
-                </div>
+        {/* Sub-units Section */}
+        <section id="sub-units" className="py-20 bg-gray-200">
+          <div className="container mx-auto px-4 max-w-4xl">
+            <div className="text-center mb-12">
+              <LayoutGrid className="h-12 w-12 text-blue-600 mx-auto mb-4" />
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                Subunit Tim KKN Jelajah Pucakwangi
+              </h2>
+              <p className="text-lg text-gray-700 leading-relaxed mb-8">
+                Tim kami terbagi menjadi 2 subunit yang berfokus pada
+                aspek-aspek kunci pembangunan desa.
+              </p>
+            </div>
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="bg-white p-6 rounded-lg shadow-md border-2 border-gray-200 text-center">
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  Subunit Kepohkencono
+                </h3>
+                <p className="text-gray-600 text-sm">
+                  Meningkatkan akses dan pemahaman masyarakat terhadap teknologi
+                  informasi.
+                </p>
               </div>
-            ))}
+              <div className="bg-white p-6 rounded-lg shadow-md border-2 border-gray-200 text-center">
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                  Subunit Karangwotan
+                </h3>
+                <p className="text-gray-600 text-sm">
+                  Mendorong inovasi produk lokal dan pemasaran digital untuk
+                  UMKM.
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Filter Section */}
-      {/* <section className="py-8 bg-white border-b">
+        {/* Program Kerja Examples Section */}
+        <section id="program-kerja" className="py-20 bg-white">
+          <div className="container mx-auto px-4 max-w-5xl">
+            <div className="text-center mb-12">
+              <CheckCircle className="h-12 w-12 text-teal-600 mx-auto mb-4" />
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                Contoh Program Kerja yang Telah Selesai
+              </h2>
+              <p className="text-lg text-gray-700 leading-relaxed">
+                Beberapa inisiatif yang telah kami laksanakan untuk kemajuan
+                Desa Kepohkencono.
+              </p>
+            </div>
+            <div className="grid md:grid-cols-2 gap-8">
+              {programKerjaExamples.map((program, index) => (
+                <div
+                  key={index}
+                  className="bg-white rounded-lg shadow-md overflow-hidden"
+                >
+                  <img
+                    src={program.imageSrc || "/placeholder.svg"}
+                    alt={program.title}
+                    className="w-full h-64 object-cover"
+                  />
+                  <div className="p-6">
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                      {program.title}
+                    </h3>
+                    <p className="text-gray-700 text-base leading-relaxed">
+                      {program.description}
+                    </p>
+                    <Button
+                      variant="link"
+                      className="mt-4 px-0 text-green-600 hover:text-green-700"
+                    >
+                      Lihat Detail
+                      <ArrowRight className="ml-2 w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Filter Section */}
+        {/* <section className="py-8 bg-white border-b">
         <div className="container mx-auto px-6">
           <div className="flex flex-wrap gap-2 justify-center">
             {divisions.map((division) => (
@@ -314,8 +330,8 @@ const Team = () => {
         </div>
       </section> */}
 
-      {/* Team Members Grid */}
-      {/* <section className="py-16">
+        {/* Team Members Grid */}
+        {/* <section className="py-16">
         <div className="container mx-auto px-6">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredMembers.map((member, index) => (
@@ -364,8 +380,8 @@ const Team = () => {
         </div>
       </section> */}
 
-      {/* CTA Section */}
-      {/* <section className="py-16 bg-green-600 text-white">
+        {/* CTA Section */}
+        {/* <section className="py-16 bg-green-600 text-white">
         <div className="container mx-auto px-6 text-center">
           <h2 className="text-3xl font-bold mb-4">
             Bergabung dengan Misi Kami

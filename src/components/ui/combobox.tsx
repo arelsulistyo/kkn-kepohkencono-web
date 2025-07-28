@@ -19,8 +19,19 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
+interface ComboboxOption {
+  value: string;
+  label: string;
+}
+
+interface ComboboxGroup {
+  label: string;
+  options: ComboboxOption[];
+}
+
 interface ComboboxProps {
-  options: { value: string; label: string }[];
+  options?: ComboboxOption[];
+  groups?: ComboboxGroup[];
   value?: string;
   onValueChange?: (value: string) => void;
   placeholder?: string;
@@ -32,6 +43,7 @@ interface ComboboxProps {
 
 export function Combobox({
   options,
+  groups,
   value,
   onValueChange,
   placeholder = "Select an option",
@@ -41,6 +53,13 @@ export function Combobox({
   disabled = false,
 }: ComboboxProps) {
   const [open, setOpen] = React.useState(false);
+
+  // Flatten all options for finding selected value
+  const allOptions = React.useMemo(() => {
+    if (options) return options;
+    if (groups) return groups.flatMap(group => group.options);
+    return [];
+  }, [options, groups]);
 
   return (
     <Popover open={open} onOpenChange={setOpen} modal={true}>
@@ -56,7 +75,7 @@ export function Combobox({
           disabled={disabled}
         >
           {value ? (
-            options.find((option) => option.value === value)?.label
+            allOptions.find((option) => option.value === value)?.label
           ) : (
             <span className="text-muted-foreground font-normal">
               {placeholder}
@@ -73,26 +92,51 @@ export function Combobox({
           <CommandInput placeholder={searchPlaceholder} />
           <CommandList>
             <CommandEmpty>{emptyMessage}</CommandEmpty>
-            <CommandGroup>
-              {options.map((option) => (
-                <CommandItem
-                  key={option.value}
-                  value={option.value}
-                  onSelect={(currentValue) => {
-                    onValueChange?.(currentValue);
-                    setOpen(false);
-                  }}
-                >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      value === option.value ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                  {option.label}
-                </CommandItem>
-              ))}
-            </CommandGroup>
+            {groups ? (
+              groups.map((group) => (
+                <CommandGroup key={group.label} heading={group.label}>
+                  {group.options.map((option) => (
+                    <CommandItem
+                      key={option.value}
+                      value={option.value}
+                      onSelect={(currentValue) => {
+                        onValueChange?.(currentValue);
+                        setOpen(false);
+                      }}
+                    >
+                      <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          value === option.value ? "opacity-100" : "opacity-0"
+                        )}
+                      />
+                      {option.label}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              ))
+            ) : (
+              <CommandGroup>
+                {options?.map((option) => (
+                  <CommandItem
+                    key={option.value}
+                    value={option.value}
+                    onSelect={(currentValue) => {
+                      onValueChange?.(currentValue);
+                      setOpen(false);
+                    }}
+                  >
+                    <Check
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        value === option.value ? "opacity-100" : "opacity-0"
+                      )}
+                    />
+                    {option.label}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            )}
           </CommandList>
         </Command>
       </PopoverContent>

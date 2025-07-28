@@ -179,136 +179,138 @@ const TemplatePreviewDialog: React.FC<TemplatePreviewDialogProps> = ({
               </div>
 
               {/* Details Section (Right Side - 1/3) */}
-              <div className="w-1/3 pl-4">
-                <div className="bg-white rounded-lg border p-4 h-full">
-                  <h3 className="font-semibold text-lg mb-4">
-                    Detail Template
-                  </h3>
-
-                  {/* Status */}
-                  <div className="mb-4">
-                    <h4 className="text-sm text-gray-500 mb-1">Status:</h4>
-                    <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                      Tersedia
-                    </span>
+              <div className="w-1/3 pl-4 h-[70vh] max-h-[600px]">
+                <div className="bg-white rounded-lg border h-full flex flex-col">
+                  <div className="p-4 border-b flex-shrink-0">
+                    <h3 className="font-semibold text-lg">Detail Template</h3>
                   </div>
 
-                  {/* Format */}
-                  <div className="mb-4">
-                    <h4 className="text-sm text-gray-500 mb-1">Format:</h4>
-                    <p className="text-sm">PDF</p>
-                  </div>
+                  <div className="flex-1 overflow-y-auto p-4 pb-8 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                    {/* Status */}
+                    {/* <div className="mb-4">
+                      <h4 className="text-sm text-gray-500 mb-1">Status:</h4>
+                      <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                        Tersedia
+                      </span>
+                    </div> */}
 
-                  {/* Persyaratan Dokumen */}
-                  <div className="mb-4">
-                    <h4 className="text-sm text-gray-500 mb-1">
-                      Persyaratan Dokumen:
-                    </h4>
-                    <ul className="text-sm space-y-2 mt-2">
-                      {requirements.map((requirement, index) => (
-                        <li key={index} className="flex items-center gap-2">
-                          <svg
-                            className="h-4 w-4 text-green-500"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M5 13l4 4L19 7"
-                            ></path>
-                          </svg>
-                          <span>{requirement}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                    {/* Format */}
+                    <div className="mb-4">
+                      <h4 className="text-sm text-gray-500 mb-1">Format:</h4>
+                      <p className="text-sm">PDF</p>
+                    </div>
 
-                  {/* Tautan Cepat */}
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-3">
-                      Tautan Cepat
-                    </h4>
-                    <div className="space-y-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full justify-start border-orange-600 text-orange-600 hover:bg-orange-50 bg-transparent"
-                        onClick={() => window.open(googleDriveUrl, "_blank")}
-                      >
-                        <Pencil className="h-4 w-4 mr-2" />
-                        Edit Manual
-                        <ExternalLink className="h-3 w-3 ml-auto" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full justify-start border-blue-600 text-blue-600 hover:bg-blue-50 bg-transparent"
-                        onClick={() =>
-                          window.open(
-                            "https://drive.google.com/drive/u/1/folders/1-jAAhp4eszNutZZOBImcUCHhTN95q6d2",
-                            "_blank"
-                          )
-                        }
-                      >
-                        <Share2 className="h-4 w-4 mr-2" />
-                        Buka di Google Drive
-                        <ExternalLink className="h-3 w-3 ml-auto" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full justify-start border-gray-600 text-gray-600 hover:bg-gray-50 bg-transparent"
-                        onClick={() => {
-                          if (serviceId === "domisili") {
+                    {/* Persyaratan Dokumen */}
+                    <div className="mb-4">
+                      <h4 className="text-sm text-gray-500 mb-1">
+                        Persyaratan Dokumen:
+                      </h4>
+                      <ul className="text-sm space-y-2 mt-2">
+                        {requirements.map((requirement, index) => (
+                          <li key={index} className="flex items-center gap-2">
+                            <svg
+                              className="h-4 w-4 text-green-500"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M5 13l4 4L19 7"
+                              ></path>
+                            </svg>
+                            <span>{requirement}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Tautan Cepat */}
+                    <div>
+                      <h4 className="font-semibold text-gray-900 mb-3">
+                        Tautan Cepat
+                      </h4>
+                      <div className="space-y-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full justify-start border-orange-600 text-orange-600 hover:bg-orange-50 bg-transparent"
+                          onClick={() => window.open(googleDriveUrl, "_blank")}
+                        >
+                          <Pencil className="h-4 w-4 mr-2" />
+                          Edit Manual
+                          <ExternalLink className="h-3 w-3 ml-auto" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full justify-start border-blue-600 text-blue-600 hover:bg-blue-50 bg-transparent"
+                          onClick={() =>
                             window.open(
-                              "/pdf_preview/Surat_Keterangan_Domisili_Preview.pdf",
+                              "https://drive.google.com/drive/u/1/folders/1-jAAhp4eszNutZZOBImcUCHhTN95q6d2",
                               "_blank"
-                            );
-                          } else if (serviceId === "pengantar-desa") {
-                            window.open(
-                              "/pdf_preview/Surat_Keterangan_Pengantar_Desa_Preview.pdf",
-                              "_blank"
-                            );
-                          } else if (serviceId === "izin-keramaian") {
-                            window.open(
-                              "/pdf_preview/Surat_Permohonan_Izin_Keramaian_Preview.pdf",
-                              "_blank"
-                            );
-                          } else if (serviceId === "kelahiran") {
-                            window.open(
-                              "/pdf_preview/Surat_Keterangan_Kelahiran_Preview.pdf",
-                              "_blank"
-                            );
-                          } else if (serviceId === "kematian") {
-                            window.open(
-                              "/pdf_preview/Surat_Keterangan_Kematian_Preview.pdf",
-                              "_blank"
-                            );
-                          } else if (serviceId === "usaha") {
-                            window.open(
-                              "/pdf_preview/Surat_Keterangan_Usaha_Preview.pdf",
-                              "_blank"
-                            );
-                          } else {
-                            window.open(pdfUrl, "_blank");
+                            )
                           }
-                        }}
-                      >
-                        <Eye className="h-4 w-4 mr-2" />
-                        Lihat PDF Penuh
-                        <ExternalLink className="h-3 w-3 ml-auto" />
-                      </Button>
+                        >
+                          <Share2 className="h-4 w-4 mr-2" />
+                          Buka di Google Drive
+                          <ExternalLink className="h-3 w-3 ml-auto" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full justify-start border-gray-600 text-gray-600 hover:bg-gray-50 bg-transparent"
+                          onClick={() => {
+                            if (serviceId === "domisili") {
+                              window.open(
+                                "/pdf_preview/Surat_Keterangan_Domisili_Preview.pdf",
+                                "_blank"
+                              );
+                            } else if (serviceId === "pengantar-desa") {
+                              window.open(
+                                "/pdf_preview/Surat_Keterangan_Pengantar_Desa_Preview.pdf",
+                                "_blank"
+                              );
+                            } else if (serviceId === "izin-keramaian") {
+                              window.open(
+                                "/pdf_preview/Surat_Permohonan_Izin_Keramaian_Preview.pdf",
+                                "_blank"
+                              );
+                            } else if (serviceId === "kelahiran") {
+                              window.open(
+                                "/pdf_preview/Surat_Keterangan_Kelahiran_Preview.pdf",
+                                "_blank"
+                              );
+                            } else if (serviceId === "kematian") {
+                              window.open(
+                                "/pdf_preview/Surat_Keterangan_Kematian_Preview.pdf",
+                                "_blank"
+                              );
+                            } else if (serviceId === "usaha") {
+                              window.open(
+                                "/pdf_preview/Surat_Keterangan_Usaha_Preview.pdf",
+                                "_blank"
+                              );
+                            } else {
+                              window.open(pdfUrl, "_blank");
+                            }
+                          }}
+                        >
+                          <Eye className="h-4 w-4 mr-2" />
+                          Lihat PDF Penuh
+                          <ExternalLink className="h-3 w-3 ml-auto" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Footer Section */}
+            {/* Footer Section
             <DialogFooter className="p-6 border-t">
               <Button
                 variant="default"
@@ -317,7 +319,7 @@ const TemplatePreviewDialog: React.FC<TemplatePreviewDialogProps> = ({
               >
                 Gunakan Template
               </Button>
-            </DialogFooter>
+            </DialogFooter> */}
           </div>
         </DialogPrimitive.Content>
       </DialogPortal>
