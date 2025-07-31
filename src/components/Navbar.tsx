@@ -1,5 +1,8 @@
+"use client";
+
 import React, { useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Leaf, FileText, BarChart3 } from "lucide-react";
 import { Button } from "./ui/button";
 
@@ -13,8 +16,7 @@ const Navbar: React.FC<NavbarProps> = ({
   showNavbar = true,
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
+  const pathname = usePathname();
 
   const isActive = (page: string) => currentPage === page;
 
@@ -29,8 +31,8 @@ const Navbar: React.FC<NavbarProps> = ({
     };
 
     // If we're not on the home page, navigate to home first
-    if (location.pathname !== "/") {
-      navigate("/");
+    if (pathname !== "/") {
+      window.location.href = "/";
       // Wait for navigation to complete, then scroll
       setTimeout(() => {
         const element = document.getElementById(sectionId);
@@ -65,7 +67,7 @@ const Navbar: React.FC<NavbarProps> = ({
 
           <div className="hidden xl:flex items-center space-x-8">
             <Link
-              to="/#about"
+              href="/#about"
               className={`transition-colors font-medium font-sans ${
                 isActive("home")
                   ? "text-green-600 hover:text-green-700"
@@ -95,7 +97,7 @@ const Navbar: React.FC<NavbarProps> = ({
               Galeri
             </button>
             <Link
-              to="/team"
+              href="/team"
               className={`transition-colors font-medium font-sans ${
                 isActive("team")
                   ? "text-green-600 hover:text-green-700"
@@ -107,7 +109,7 @@ const Navbar: React.FC<NavbarProps> = ({
 
             {/* Special Letter Templates Navigation */}
             <Link
-              to="/layanan-surat"
+              href="/layanan-surat"
               className={`relative group flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 shadow-lg font-sans ${
                 isActive("layanan-surat")
                   ? "bg-gradient-to-r from-green-600 to-emerald-700 text-white"
@@ -121,7 +123,7 @@ const Navbar: React.FC<NavbarProps> = ({
 
             {/* Special Data Visualization Navigation */}
             <Link
-              to="/visualisasi-data"
+              href="/visualisasi-data"
               className={`relative group flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 shadow-lg font-sans ${
                 isActive("visualisasi-data")
                   ? "bg-gradient-to-r from-teal-700 to-cyan-700 text-white"
@@ -167,7 +169,7 @@ const Navbar: React.FC<NavbarProps> = ({
         <div className="xl:hidden bg-white/95 backdrop-blur-md border-t border-gray-200">
           <div className="px-4 py-4 space-y-4">
             <Link
-              to="/#about"
+              href="/#about"
               className={`block transition-colors font-medium font-sans py-2 ${
                 isActive("home")
                   ? "text-green-600 hover:text-green-700"
@@ -198,7 +200,7 @@ const Navbar: React.FC<NavbarProps> = ({
               Galeri
             </button>
             <Link
-              to="/team"
+              href="/team"
               className={`block transition-colors font-medium font-sans py-2 ${
                 isActive("team")
                   ? "text-green-600 hover:text-green-700"
@@ -211,7 +213,7 @@ const Navbar: React.FC<NavbarProps> = ({
 
             <div className="pt-4 space-y-3">
               <Link
-                to="/layanan-surat"
+                href="/layanan-surat"
                 className={`block w-full text-center px-4 py-3 rounded-lg font-medium transition-all duration-300 font-sans ${
                   isActive("layanan-surat")
                     ? "bg-gradient-to-r from-green-600 to-emerald-700 text-white"
@@ -226,7 +228,7 @@ const Navbar: React.FC<NavbarProps> = ({
               </Link>
 
               <Link
-                to="/visualisasi-data"
+                href="/visualisasi-data"
                 className={`block w-full text-center px-4 py-3 rounded-lg font-medium transition-all duration-300 font-sans ${
                   isActive("visualisasi-data")
                     ? "bg-gradient-to-r from-teal-700 to-cyan-700 text-white"

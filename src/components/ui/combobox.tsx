@@ -48,7 +48,7 @@ export function Combobox({
   onValueChange,
   placeholder = "Select an option",
   emptyMessage = "No results found.",
-  searchPlaceholder = "Search...",
+  searchPlaceholder = "Cari...",
   className,
   disabled = false,
 }: ComboboxProps) {
@@ -57,7 +57,7 @@ export function Combobox({
   // Flatten all options for finding selected value
   const allOptions = React.useMemo(() => {
     if (options) return options;
-    if (groups) return groups.flatMap(group => group.options);
+    if (groups) return groups.flatMap((group) => group.options);
     return [];
   }, [options, groups]);
 
@@ -69,7 +69,7 @@ export function Combobox({
           role="combobox"
           aria-expanded={open}
           className={cn(
-            "w-full justify-between h-12 px-4 py-3 rounded-md border border-input bg-background text-base ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:border-black disabled:cursor-not-allowed disabled:opacity-50",
+            "w-full justify-between h-12 px-4 py-3 rounded-md border border-input border-gray-600 bg-background text-base ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:border-black disabled:cursor-not-allowed disabled:opacity-50",
             className
           )}
           disabled={disabled}
@@ -94,7 +94,11 @@ export function Combobox({
             <CommandEmpty>{emptyMessage}</CommandEmpty>
             {groups ? (
               groups.map((group) => (
-                <CommandGroup key={group.label} heading={group.label}>
+                <CommandGroup
+                  key={group.label}
+                  heading={group.label}
+                  className="[&_[cmdk-group-heading]]:text-[#64748B]"
+                >
                   {group.options.map((option) => (
                     <CommandItem
                       key={option.value}

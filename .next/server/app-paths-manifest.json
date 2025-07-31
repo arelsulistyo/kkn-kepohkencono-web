@@ -1,3 +1,5 @@
 {
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/layanan-surat/page": "app/layanan-surat/page.js",
   "/page": "app/page.js"
 }
