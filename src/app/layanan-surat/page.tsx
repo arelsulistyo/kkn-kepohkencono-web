@@ -1,51 +1,12 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import "@/app/globals.css";
 import type { SuratTemplateType } from "@/components/layanan-surat/surat-templates";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import {
-  ArrowLeft,
-  FileText,
-  Clock,
-  Users,
-  Loader2,
-  CalendarIcon,
-  IdCard,
-  Handshake,
-  LogIn,
-  Download,
-} from "lucide-react";
-import Link from "next/link";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import { FileText } from "lucide-react";
 
-import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
-import { Combobox } from "@/components/ui/combobox";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { format } from "date-fns";
-import { id } from "date-fns/locale";
 import { TemplatePreviewDialog } from "@/components/layanan-surat/preview";
 import {
   SuratDomisiliForm,
@@ -59,14 +20,16 @@ import {
   type KematianFormData,
   type KelahiranFormData,
 } from "@/components/layanan-surat/surat-forms";
-import { services, type Service } from "@/app/layanan-surat/data/services";
-import SpecialNavbar, { type SpecialNavbarRef } from "@/components/layout/SpecialNavbar";
+import { services } from "@/app/layanan-surat/data/services";
+import SpecialNavbar, {
+  type SpecialNavbarRef,
+} from "@/components/layout/SpecialNavbar";
 import StepGuide from "@/components/layanan-surat/common/StepGuide";
 import ServicesGrid from "@/components/layanan-surat/common/ServicesGrid";
 
 const LayananSurat = () => {
   const navbarRef = useRef<SpecialNavbarRef>(null);
-  const { login, logout, user, loading } = useAuth();
+  const { user } = useAuth();
   const { toast } = useToast();
   const [selectedService, setSelectedService] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);

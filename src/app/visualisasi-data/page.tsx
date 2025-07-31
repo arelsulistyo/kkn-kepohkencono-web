@@ -2,29 +2,18 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  ArrowLeft,
   BarChart3,
-  TrendingUp,
   Users,
-  Building,
   PieChart,
   LineChart,
   Briefcase,
   GraduationCap,
   FileText,
   Home,
-  Badge,
 } from "lucide-react";
 import { Badge as BadgeComponent } from "@/components/ui/badge";
-import Link from "next/link";
 import {
   Demographics,
   Occupations,

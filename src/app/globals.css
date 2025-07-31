@@ -366,7 +366,7 @@ a,
 
 [data-card],
 .card-component {
-  border-color: rgb(156 163 175) !important; /* gray-400 */
+  border-color: rgb(229 231 235) !important; /* gray-200 */
 }
 
 /* Loading animations */

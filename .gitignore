@@ -2,6 +2,8 @@
 
 # dependencies
 .env
+.next
+.vercel
 /node_modules
 /.pnp
 .pnp.*

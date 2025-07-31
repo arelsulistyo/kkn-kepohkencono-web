@@ -15,7 +15,7 @@ import React, { useEffect, useState } from "react";
 import { PieChart, Pie, Cell } from "recharts";
 
 interface OccupationData {
-  [key: string]: any;
+  [key: string]: number | string;
 }
 
 interface ProcessedOccupation {
@@ -152,7 +152,7 @@ const Occupations = () => {
             let female = 0;
 
             category.keys.forEach((key) => {
-              const value = occupationData[key] || 0;
+              const value = Number(occupationData[key]) || 0;
               if (key.endsWith(" L")) {
                 male += value;
               } else if (key.endsWith(" P")) {

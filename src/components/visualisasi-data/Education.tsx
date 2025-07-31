@@ -24,7 +24,7 @@ import {
 } from "recharts";
 
 interface EducationData {
-  [key: string]: any;
+  [key: string]: number | string;
 }
 
 interface ProcessedEducation {

@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 import { PieChart, Pie, Cell } from "recharts";
 
 interface DemographicData {
-  [key: string]: any;
+  [key: string]: number | string;
 }
 
 interface AgeGroupData {
@@ -29,7 +29,7 @@ interface AgeGroupData {
 }
 
 interface ReligionData {
-  [key: string]: any;
+  [key: string]: number | string;
 }
 
 interface ProcessedReligion {
@@ -59,33 +59,7 @@ interface ProcessedKepalaKeluarga {
 }
 
 interface HubunganKeluargaData {
-  IDEM: number;
-  KABUPATEN: string;
-  KECAMATAN: string;
-  KODE: string;
-  WILAYAH: string;
-  "KEPALA KELUARGA L": number;
-  "KEPALA KELUARGA P": number;
-  "SUAMI L": number;
-  "SUAMI P": number;
-  "ISTERI L": number;
-  "ISTERI P": number;
-  "ANAK L": number;
-  "ANAK P": number;
-  "MENANTU L": number;
-  "MENANTU P": number;
-  "CUCU L": number;
-  "CUCU P": number;
-  "ORANG TUA L": number;
-  "ORANG TUA P": number;
-  "MERTUA L": number;
-  "MERTUA P": number;
-  "FAMILI LAIN L": number;
-  "FAMILI LAIN P": number;
-  "PEMBANTU L": number;
-  "PEMBANTU P": number;
-  "LAINNYA L": number;
-  "LAINNYA P": number;
+  [key: string]: number | string;
 }
 
 interface ProcessedHubunganKeluarga {
@@ -164,8 +138,8 @@ const Demographics = () => {
             ageRanges.forEach((range) => {
               const maleKey = `${range} L`;
               const femaleKey = `${range} P`;
-              male += demographicData[maleKey] || 0;
-              female += demographicData[femaleKey] || 0;
+              male += Number(demographicData[maleKey]) || 0;
+              female += Number(demographicData[femaleKey]) || 0;
             });
 
             const count = male + female;
@@ -317,9 +291,9 @@ const Demographics = () => {
 
           relationshipCategories.forEach((category) => {
             const male =
-              Number((hubunganKeluargaInfo as any)[category.maleKey]) || 0;
+              Number(hubunganKeluargaInfo[category.maleKey]) || 0;
             const female =
-              Number((hubunganKeluargaInfo as any)[category.femaleKey]) || 0;
+              Number(hubunganKeluargaInfo[category.femaleKey]) || 0;
             const categoryTotal = male + female;
 
             // Only include categories with non-zero values

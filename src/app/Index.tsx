@@ -2,16 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
   Users,
   Briefcase,
-  Camera,
   ArrowRight,
   Play,
   Heart,
@@ -19,7 +11,6 @@ import {
   Instagram,
   Phone,
   Mail,
-  Home,
   GraduationCap,
   BarChart3,
   Leaf,
