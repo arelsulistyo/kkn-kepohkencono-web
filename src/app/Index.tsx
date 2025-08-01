@@ -412,95 +412,263 @@ const Index = () => {
       {/* Budaya Section */}
       <section id="budaya" className="py-12 bg-amber-50">
         <div className="container mx-auto px-6">
-          {/* <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-amber-800 mb-4">
-              Budaya & Tradisi
-            </h2>
-            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
-              Kekayaan warisan budaya yang dilestarikan turun-temurun di Desa
-              Makmur
-            </p>
-          </div> */}
-
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-                <div className="relative aspect-video bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="w-20 h-20 bg-white/80 rounded-full flex items-center justify-center mx-auto mb-4 hover:bg-white transition-colors cursor-pointer">
-                      <Play className="w-8 h-8 text-amber-600 ml-1" />
+                <div className="relative aspect-video group">
+                  <video
+                    id="budaya-video"
+                    className="w-full h-full object-cover"
+                    poster="/images/home/baldes_kepohkencono.jpg"
+                  >
+                    <source
+                      src="/video/video_profil_kepohkencono.mp4"
+                      type="video/mp4"
+                    />
+                    Your browser does not support the video tag.
+                  </video>
+                  <div
+                    id="video-overlay"
+                    className="absolute inset-0 bg-black/30 flex items-center justify-center cursor-pointer group-hover:bg-black/50 transition-all duration-300 ease-in-out"
+                    onClick={(event) => {
+                      const video = document.getElementById(
+                        "budaya-video"
+                      ) as HTMLVideoElement;
+                      const overlay = document.getElementById(
+                        "video-overlay"
+                      ) as HTMLElement;
+                      if (video.paused) {
+                        video.play();
+                        video.controls = true;
+                        overlay.style.display = "none";
+                      }
+                    }}
+                  >
+                    <div className="text-center transform group-hover:scale-110 transition-transform duration-300 ease-in-out">
+                      <div className="w-20 h-20 bg-white/90 rounded-full flex items-center justify-center mx-auto mb-4 hover:bg-white hover:scale-105 transition-all duration-200 shadow-lg group-hover:shadow-xl">
+                        <Play className="w-8 h-8 text-amber-600 ml-1" />
+                      </div>
+                      <p className="text-white font-semibold text-lg group-hover:text-amber-100 transition-colors duration-300">
+                        Klik untuk Memutar
+                      </p>
                     </div>
-                    <p className="text-amber-800 font-semibold">
-                      Video Budaya Desa
-                    </p>
-                    <p className="text-amber-600 text-sm mt-1">
-                      Klik untuk memutar
-                    </p>
                   </div>
                 </div>
                 <div className="p-6">
                   <h3 className="text-xl font-bold text-amber-800 mb-2">
-                    Upacara Adat & Kesenian
+                    Video Profil Desa Kepohkencono
                   </h3>
                   <p className="text-gray-600">
-                    Saksikan keindahan upacara adat dan kesenian tradisional
-                    yang masih dilestarikan hingga kini.
+                    Saksikan keindahan dan kehidupan sehari-hari di Desa
+                    Kepohkencono melalui video profil ini.
                   </p>
                 </div>
               </div>
             </div>
 
             <div className="space-y-6">
-              <div className="text-left mb-16">
+              <div className="text-left mb-8">
                 <h2 className="text-4xl font-bold text-amber-800 mb-4">
                   Budaya & Tradisi
                 </h2>
-                <p className="text-xl text-gray-700 max-w-3xl mx-auto">
+                <p className="text-xl text-gray-700 mb-6">
                   Kekayaan warisan budaya yang dilestarikan turun-temurun di
                   Desa Kepohkencono
                 </p>
               </div>
-              <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Heart className="w-6 h-6 text-amber-600" />
-                </div>
-                <div>
-                  <h4 className="text-lg font-semibold text-amber-800 mb-2">
-                    Tarian Tradisional
+
+              <div className="space-y-4">
+                <p className="text-gray-700 text-justify leading-relaxed">
+                  Desa Kepohkencono memiliki kekayaan budaya dan tradisi yang
+                  telah diwariskan secara turun-temurun dari generasi ke
+                  generasi. Nilai-nilai luhur yang terkandung dalam setiap
+                  tradisi mencerminkan kearifan lokal masyarakat yang masih
+                  sangat dijaga dan dilestarikan hingga saat ini.
+                </p>
+
+                <p className="text-gray-700 text-justify leading-relaxed">
+                  Keberagaman tradisi yang ada di desa ini tidak hanya menjadi
+                  identitas budaya, tetapi juga menjadi perekat sosial yang
+                  memperkuat rasa kebersamaan dan gotong royong antarwarga.
+                  Setiap upacara dan kegiatan budaya selalu melibatkan
+                  partisipasi aktif seluruh masyarakat.
+                </p>
+
+                <p className="text-gray-700 text-justify leading-relaxed">
+                  Melalui berbagai kegiatan budaya dan tradisi, masyarakat
+                  Kepohkencono terus menjaga hubungan harmonis dengan alam,
+                  sesama, dan Sang Pencipta. Hal ini tercermin dalam setiap
+                  ritual dan upacara adat yang dilaksanakan dengan penuh khidmat
+                  dan kebersamaan.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Sedekah Bumi Section */}
+          <div className="mt-16 bg-amber-50 rounded-2xl p-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+              {/* Content */}
+              <div className="space-y-6">
+                <h3 className="text-2xl font-bold text-amber-900 mb-4">
+                  Sedekah Bumi
+                </h3>
+                <p className="text-gray-700 text-justify leading-relaxed">
+                  Sedekah Bumi adalah sebuah tradisi adat masyarakat yang
+                  dilakukan sebagai bentuk rasa syukur kepada Tuhan atas hasil
+                  panen dan rezeki yang diberikan melalui bumi. Dalam
+                  pelaksanaannya, warga desa biasanya membawa hasil bumi ke
+                  tempat sakral seperti punden atau balai desa, lalu menggelar
+                  doa bersama, makan bersama (banca'an), serta pertunjukan
+                  kesenian seperti ketoprak dan campursari. Tradisi ini juga
+                  menjadi ajang mempererat kebersamaan antarwarga dan menjaga
+                  warisan budaya yang telah ada secara turun-temurun.
+                </p>
+
+                {/* Three Events Decoration */}
+                <div className="bg-white rounded-lg p-4 border-l-4 border-amber-500">
+                  <h4 className="font-semibold text-amber-900 mb-3">
+                    Rangkaian Acara Sedekah Bumi:
                   </h4>
-                  <p className="text-gray-700">
-                    Tarian khas desa yang dipentaskan pada acara-acara penting
-                    dan perayaan tradisional.
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="flex items-center space-x-2 bg-amber-100 rounded-lg p-3">
+                      <div className="w-3 h-3 bg-amber-500 rounded-full"></div>
+                      <span className="text-sm font-medium text-amber-800">
+                        Banca'an
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-2 bg-amber-100 rounded-lg p-3">
+                      <div className="w-3 h-3 bg-amber-500 rounded-full"></div>
+                      <span className="text-sm font-medium text-amber-800">
+                        Ketoprak
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-2 bg-amber-100 rounded-lg p-3">
+                      <div className="w-3 h-3 bg-amber-500 rounded-full"></div>
+                      <span className="text-sm font-medium text-amber-800">
+                        Campursari
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Image */}
+              <div className="relative">
+                <img
+                  src="/images/sedekah-bumi.jpg"
+                  alt="Sedekah Bumi"
+                  className="w-full h-64 object-cover rounded-xl shadow-lg"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-xl"></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Traditional Events Section - 3 Grid */}
+          <div className="mt-16">
+            <div className="grid md:grid-cols-3 gap-8">
+              {/* Sedekah Bumi */}
+              <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div className="aspect-video bg-gradient-to-br from-amber-100 to-orange-100">
+                  <img
+                    src="/images/home/sedekah_bumi.jpg"
+                    alt="Sedekah Bumi"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = "none";
+                      (
+                        e.target as HTMLImageElement
+                      ).parentElement!.classList.add(
+                        "flex",
+                        "items-center",
+                        "justify-center"
+                      );
+                      (e.target as HTMLImageElement).parentElement!.innerHTML =
+                        '<div class="text-amber-600 text-center"><Heart class="w-12 h-12 mx-auto mb-2" /><p class="font-semibold">Sedekah Bumi</p></div>';
+                    }}
+                  />
+                </div>
+                <div className="p-6">
+                  <h3 className="text-xl font-bold text-amber-800 mb-3">
+                    Banca'an di Punden
+                  </h3>
+                  <p className="text-gray-700 text-justify leading-relaxed">
+                    Banca'an di punden melambangkan rasa syukur dan penghormatan
+                    kepada leluhur. Warga membawa hasil bumi dan makanan
+                    tradisional, berdoa bersama, lalu makan bersama. Ini
+                    mencerminkan nilai gotong royong, persatuan, dan penghargaan
+                    terhadap warisan spiritual desa.
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Users className="w-6 h-6 text-amber-600" />
+              {/* Banca'an di Punden */}
+              <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div className="aspect-video bg-gradient-to-br from-amber-100 to-orange-100">
+                  <img
+                    src="/images/home/bancaan_punden.jpg"
+                    alt="Banca'an di Punden"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = "none";
+                      (
+                        e.target as HTMLImageElement
+                      ).parentElement!.classList.add(
+                        "flex",
+                        "items-center",
+                        "justify-center"
+                      );
+                      (e.target as HTMLImageElement).parentElement!.innerHTML =
+                        '<div class="text-amber-600 text-center"><Users class="w-12 h-12 mx-auto mb-2" /><p class="font-semibold">Banca\'an di Punden</p></div>';
+                    }}
+                  />
                 </div>
-                <div>
-                  <h4 className="text-lg font-semibold text-amber-800 mb-2">
-                    Gotong Royong
-                  </h4>
-                  <p className="text-gray-700">
-                    Tradisi bergotong royong yang masih kuat dalam kehidupan
-                    sehari-hari masyarakat desa.
+                <div className="p-6">
+                  <h3 className="text-xl font-bold text-amber-800 mb-3">
+                    Kesenian Ketoprak
+                  </h3>
+                  <p className="text-gray-700 text-justify leading-relaxed">
+                    Ketoprak adalah seni pertunjukan rakyat yang menyampaikan
+                    nilai moral, sejarah, dan budaya melalui cerita dan dialog.
+                    Dalam Sedekah Bumi, ketoprak menjadi hiburan sekaligus
+                    sarana pendidikan budaya yang mempererat hubungan sosial
+                    antarwarga.
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Briefcase className="w-6 h-6 text-amber-600" />
+              {/* Kesenian Ketoprak */}
+              <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div className="aspect-video bg-gradient-to-br from-amber-100 to-orange-100">
+                  <img
+                    src="/images/home/ketoprak.jpg"
+                    alt="Kesenian Ketoprak"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = "none";
+                      (
+                        e.target as HTMLImageElement
+                      ).parentElement!.classList.add(
+                        "flex",
+                        "items-center",
+                        "justify-center"
+                      );
+                      (e.target as HTMLImageElement).parentElement!.innerHTML =
+                        '<div class="text-amber-600 text-center"><GraduationCap class="w-12 h-12 mx-auto mb-2" /><p class="font-semibold">Kesenian Ketoprak</p></div>';
+                    }}
+                  />
                 </div>
-                <div>
-                  <h4 className="text-lg font-semibold text-amber-800 mb-2">
-                    Kerajinan Lokal
-                  </h4>
-                  <p className="text-gray-700">
-                    Kerajinan tangan tradisional yang menjadi kebanggaan dan
-                    sumber penghasilan warga desa.
+                <div className="p-6">
+                  <h3 className="text-xl font-bold text-amber-800 mb-3">
+                    Campursari
+                  </h3>
+                  <p className="text-gray-700 text-justify leading-relaxed">
+                    Campursari adalah musik perpaduan tradisional dan modern
+                    yang digemari berbagai kalangan. Dalam Sedekah Bumi,
+                    campursari memperkuat suasana kebersamaan dan menjadi media
+                    pelestarian budaya lokal yang mudah diterima lintas
+                    generasi.
                   </p>
                 </div>
               </div>
