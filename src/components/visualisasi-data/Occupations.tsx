@@ -13,6 +13,7 @@ import {
 import { Briefcase, TrendingUp } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { PieChart, Pie, Cell } from "recharts";
+import { OccupationSkeleton } from "./skeletons/SkeletonComponents";
 
 interface OccupationData {
   [key: string]: number | string;
@@ -34,6 +35,7 @@ const Occupations = () => {
     []
   );
   const [totalEmployed, setTotalEmployed] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadOccupationData = async () => {
@@ -282,11 +284,17 @@ const Occupations = () => {
           },
         ]);
         setTotalEmployed(1494);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     loadOccupationData();
   }, []);
+
+  if (isLoading) {
+    return <OccupationSkeleton />;
+  }
 
   return (
     <div className="space-y-4 md:space-y-8">

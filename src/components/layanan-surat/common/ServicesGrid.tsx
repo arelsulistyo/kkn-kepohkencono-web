@@ -85,7 +85,7 @@ const ServicesGrid = ({
   };
 
   return (
-    <section className="pt-8 pb-16">
+    <section className="bg-gradient-to-r from-green-50 to-emerald-50 pt-8 pb-16">
       <div className="container mx-auto px-6">
         {/* Search and Filter Section */}
         <div className="mb-8">

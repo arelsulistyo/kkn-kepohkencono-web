@@ -10,6 +10,11 @@ import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { Sheet, SheetContent } from "@/components/ui/sheet"
 import { Skeleton } from "@/components/ui/skeleton"
+
+// Enhanced Skeleton component with darker gray for sidebar
+const EnhancedSkeleton = ({ className, ...props }: React.ComponentProps<typeof Skeleton>) => (
+  <Skeleton className={cn("bg-gray-300 animate-pulse", className)} {...props} />
+);
 import {
   Tooltip,
   TooltipContent,
@@ -661,12 +666,12 @@ const SidebarMenuSkeleton = React.forwardRef<
       {...props}
     >
       {showIcon && (
-        <Skeleton
+        <EnhancedSkeleton
           className="size-4 rounded-md"
           data-sidebar="menu-skeleton-icon"
         />
       )}
-      <Skeleton
+      <EnhancedSkeleton
         className="h-4 flex-1 max-w-[--skeleton-width]"
         data-sidebar="menu-skeleton-text"
         style={

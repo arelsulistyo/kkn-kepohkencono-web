@@ -10,6 +10,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { DemographicsSkeleton } from "./skeletons/SkeletonComponents";
 import { Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { PieChart, Pie, Cell } from "recharts";
@@ -81,6 +82,7 @@ const Demographics = () => {
     ProcessedHubunganKeluarga[]
   >([]);
   const [totalHubunganKeluarga, setTotalHubunganKeluarga] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadDemographicData = async () => {
@@ -290,8 +292,7 @@ const Demographics = () => {
           let totalHubunganPop = 0;
 
           relationshipCategories.forEach((category) => {
-            const male =
-              Number(hubunganKeluargaInfo[category.maleKey]) || 0;
+            const male = Number(hubunganKeluargaInfo[category.maleKey]) || 0;
             const female =
               Number(hubunganKeluargaInfo[category.femaleKey]) || 0;
             const categoryTotal = male + female;
@@ -380,11 +381,17 @@ const Demographics = () => {
         setTotalPopulation(2807);
         setTotalMale(1343);
         setTotalFemale(1464);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     loadDemographicData();
   }, []);
+
+  if (isLoading) {
+    return <DemographicsSkeleton />;
+  }
 
   return (
     <div className="space-y-4 md:space-y-8">

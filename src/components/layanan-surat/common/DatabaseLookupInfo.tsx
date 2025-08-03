@@ -43,7 +43,8 @@ const DatabaseLookupInfo: React.FC<DatabaseLookupInfoProps> = ({
     if (!user) {
       toast({
         title: "Login Diperlukan",
-        description: "Silakan login terlebih dahulu untuk menggunakan fitur upload Excel.",
+        description:
+          "Silakan login terlebih dahulu untuk menggunakan fitur upload Excel.",
         variant: "destructive",
         className: "border-0",
       });
@@ -55,7 +56,7 @@ const DatabaseLookupInfo: React.FC<DatabaseLookupInfoProps> = ({
   };
 
   return (
-    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 py-8">
+    <div className="bg-gradient-to-r from-green-50 to-emerald-50 py-8">
       <div className="container mx-auto px-4">
         <div className="max-w-5xl mx-auto">
           <div
@@ -314,10 +315,7 @@ const DatabaseLookupInfo: React.FC<DatabaseLookupInfoProps> = ({
           </div>
         </div>
       </div>
-      <ExcelUploadModal
-         isOpen={isModalOpen}
-         onOpenChange={setIsModalOpen}
-       />
+      <ExcelUploadModal isOpen={isModalOpen} onOpenChange={setIsModalOpen} />
     </div>
   );
 };

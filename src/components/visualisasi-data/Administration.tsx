@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { AdministrationSkeleton } from "./skeletons/SkeletonComponents";
 import {
   Card,
   CardContent,
@@ -54,6 +55,7 @@ const Administration = () => {
   const [memilikiAkta, setMemilikiAkta] = useState(0);
   const [belumMemilikiAkta, setBelumMemilikiAkta] = useState(0);
   const [totalAkta, setTotalAkta] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadData = async () => {
@@ -123,11 +125,17 @@ const Administration = () => {
         }
       } catch (error) {
         console.error("Error loading data:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     loadData();
   }, []);
+
+  if (isLoading) {
+    return <AdministrationSkeleton />;
+  }
 
   return (
     <div className="space-y-4 md:space-y-8">

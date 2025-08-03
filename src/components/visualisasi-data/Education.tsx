@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/chart";
 import { GraduationCap } from "lucide-react";
 import { useEffect, useState } from "react";
+import { EducationSkeleton } from "./skeletons/SkeletonComponents";
 import {
   PieChart,
   Pie,
@@ -39,6 +40,7 @@ interface ProcessedEducation {
 const Education = () => {
   const [educationData, setEducationData] = useState<ProcessedEducation[]>([]);
   const [totalPopulation, setTotalPopulation] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadEducationData = async () => {
@@ -134,11 +136,17 @@ const Education = () => {
         }
       } catch (error) {
         console.error("Error loading education data:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     loadEducationData();
   }, []);
+
+  if (isLoading) {
+    return <EducationSkeleton />;
+  }
 
   return (
     <div className="space-y-4 md:space-y-8">
