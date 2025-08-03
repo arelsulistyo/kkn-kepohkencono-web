@@ -7,6 +7,11 @@ const nextConfig: NextConfig = {
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
+  // SEO optimizations
+  trailingSlash: false,
+  generateEtags: true,
+  poweredByHeader: false,
+  compress: true,
 };
 
 export default nextConfig;
