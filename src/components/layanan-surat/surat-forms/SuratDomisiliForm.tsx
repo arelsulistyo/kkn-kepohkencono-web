@@ -16,6 +16,9 @@ import { Combobox } from "@/components/ui/combobox";
 import { Loader2, Download } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import type { SuratTemplateType } from "@/components/layanan-surat/surat-templates";
+import { alamatGroups } from "@/app/layanan-surat/data/alamatGroups";
+import PersonSearchBar from "@/components/layanan-surat/common/PersonSearchBar";
+import type { PersonData } from "@/components/ui/person-search";
 
 interface SuratDomisiliFormProps {
   isOpen: boolean;
@@ -61,94 +64,36 @@ const SuratDomisiliForm = ({
   const [signatureType, setSignatureType] = useState<"sekretaris" | "kepala">(
     "sekretaris"
   );
+  const [selectedPerson, setSelectedPerson] = useState<PersonData | null>(null);
 
   // Error state
   const [alamatDomisiliError, setAlamatDomisiliError] = useState("");
 
-  // Alamat groups data
-  const alamatGroups = [
-    {
-      label: "Manding (RW 01)",
-      options: [
-        {
-          value: "MANDING 01/01 KEPOHKENCONO PUCAKWANGI",
-          label: "RT 01/RW 01",
-        },
-        {
-          value: "MANDING 02/01 KEPOHKENCONO PUCAKWANGI",
-          label: "RT 02/RW 01",
-        },
-        {
-          value: "MANDING 03/01 KEPOHKENCONO PUCAKWANGI",
-          label: "RT 03/RW 01",
-        },
-        {
-          value: "MANDING 04/01 KEPOHKENCONO PUCAKWANGI",
-          label: "RT 04/RW 01",
-        },
-        {
-          value: "MANDING 05/01 KEPOHKENCONO PUCAKWANGI",
-          label: "RT 05/RW 01",
-        },
-      ],
-    },
-    {
-      label: "Manding (RW 02)",
-      options: [
-        {
-          value: "MANDING 01/02 KEPOHKENCONO PUCAKWANGI",
-          label: "RT 01/RW 02",
-        },
-        {
-          value: "MANDING 02/02 KEPOHKENCONO PUCAKWANGI",
-          label: "RT 02/RW 02",
-        },
-        {
-          value: "MANDING 03/02 KEPOHKENCONO PUCAKWANGI",
-          label: "RT 03/RW 02",
-        },
-        {
-          value: "MANDING 04/02 KEPOHKENCONO PUCAKWANGI",
-          label: "RT 04/RW 02",
-        },
-        {
-          value: "MANDING 05/02 KEPOHKENCONO PUCAKWANGI",
-          label: "RT 05/RW 02",
-        },
-      ],
-    },
-    {
-      label: "Kepohkencono (RW 03)",
-      options: [
-        {
-          value: "KEPOHKENCONO 01/03 KEPOHKENCONO PUCAKWANGI",
-          label: "RT 01/RW 03",
-        },
-        {
-          value: "KEPOHKENCONO 02/03 KEPOHKENCONO PUCAKWANGI",
-          label: "RT 02/RW 03",
-        },
-        {
-          value: "KEPOHKENCONO 03/03 KEPOHKENCONO PUCAKWANGI",
-          label: "RT 03/RW 03",
-        },
-        {
-          value: "KEPOHKENCONO 04/03 KEPOHKENCONO PUCAKWANGI",
-          label: "RT 04/RW 03",
-        },
-        {
-          value: "KEPOHKENCONO 05/03 KEPOHKENCONO PUCAKWANGI",
-          label: "RT 05/RW 03",
-        },
-      ],
-    },
-  ];
+  // Function to map RT/RW to simple alamat format
+  const mapRTRWToAlamat = (rt: string, rw: string): string => {
+    return `RT ${rt || ""}/RW ${rw || ""}, Desa Kepohkencono`;
+  };
+
+  // Handle person selection from search
+  const handlePersonSelect = (person: PersonData) => {
+    setSelectedPerson(person);
+    setNamaPeminta(person.NAMA);
+    
+    // Map RT/RW to alamat value
+    const alamatValue = mapRTRWToAlamat(person.RT, person.RW);
+    setAlamatDomisili(alamatValue);
+    
+    // Clear errors for auto-filled fields
+    setNamaPemintaError("");
+    setAlamatDomisiliError("");
+  };
 
   // Reset form function
   const resetForm = () => {
     setNamaPeminta("");
     setAlamatDomisili("");
     setSignatureType("sekretaris");
+    setSelectedPerson(null);
     setNamaPemintaError("");
     setAlamatDomisiliError("");
   };
@@ -248,92 +193,106 @@ const SuratDomisiliForm = ({
   return (
     <Dialog open={isOpen} onOpenChange={handleDialogClose}>
       <DialogContent className="sm:max-w-[650px] p-8 max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
+        <DialogHeader className="pb-0">
           <DialogTitle className="text-2xl font-bold">
             Formulir Surat Keterangan Domisili
           </DialogTitle>
-          <DialogDescription className="text-base mt-2">
+          <DialogDescription className="text-base mt-1 mb-0">
             Silakan lengkapi data berikut untuk pembuatan Surat Keterangan
             Domisili.
           </DialogDescription>
         </DialogHeader>
-        <form
-          onSubmit={handleSubmitForm}
-          className="space-y-6 mt-4"
-        >
-          <div className="space-y-3">
-            <Label htmlFor="namaPeminta" className="text-lg">
-              Nama Peminta Surat
-            </Label>
-            <Input
-              id="namaPeminta"
-              placeholder="Masukkan nama lengkap"
-              className={`text-base mt-3 ${
-                namaPemintaError ? "border-red-500" : "border-gray-400"
-              }`}
-              value={namaPeminta}
-              onChange={(e) => {
-                setNamaPeminta(e.target.value);
-                setNamaPemintaError("");
-              }}
+        <form onSubmit={handleSubmitForm} className="space-y-4 mt-0">
+          {/* Data Pemohon */}
+          <div className="pt-2 mt-1">
+            <h3 className="text-lg font-semibold mb-4">Data Pemohon</h3>
+            
+            <PersonSearchBar
+              selectedPerson={selectedPerson}
+              onPersonSelect={handlePersonSelect}
+              placeholder="Cari data pemohon..."
+              className="mb-4"
             />
-            {namaPemintaError && (
-              <p className="text-base text-red-500 mt-1">{namaPemintaError}</p>
-            )}
+
+            <div className="space-y-2">
+              <Label htmlFor="namaPeminta" className="text-base">
+                Nama
+              </Label>
+              <Input
+                id="namaPeminta"
+                placeholder="Masukkan nama lengkap"
+                className={`text-base mt-2 ${
+                  namaPemintaError ? "border-red-500" : "border-gray-400"
+                }`}
+                value={namaPeminta}
+                onChange={(e) => {
+                  setNamaPeminta(e.target.value);
+                  setNamaPemintaError("");
+                }}
+              />
+              {namaPemintaError && (
+                <p className="text-base text-red-500 mt-1">{namaPemintaError}</p>
+              )}
+            </div>
+
+            <div className="space-y-2 mt-3">
+              <Label htmlFor="alamatDomisili" className="text-base">
+                Alamat Domisili
+              </Label>
+              <Combobox
+                groups={alamatGroups}
+                value={alamatDomisili}
+                onValueChange={(value) => {
+                  setAlamatDomisili(value);
+                  setAlamatDomisiliError("");
+                }}
+                placeholder="Pilih alamat domisili"
+                className={`text-base mt-2 ${
+                  alamatDomisiliError ? "border-red-500" : "border-gray-400"
+                }`}
+              />
+              {alamatDomisiliError && (
+                <p className="text-base text-red-500 mt-1">
+                  {alamatDomisiliError}
+                </p>
+              )}
           </div>
-          <div className="space-y-3">
-            <Label htmlFor="alamatDomisili" className="text-lg">
-              Alamat Domisili
-            </Label>
-            <Combobox
-              groups={alamatGroups}
-              value={alamatDomisili}
-              onValueChange={(value) => {
-                setAlamatDomisili(value);
-                setAlamatDomisiliError("");
-              }}
-              placeholder="Pilih alamat domisili"
-              className={`text-base mt-3 ${
-                alamatDomisiliError ? "border-red-500" : "border-gray-400"
-              }`}
-            />
-            {alamatDomisiliError && (
-              <p className="text-base text-red-500 mt-1">
-                {alamatDomisiliError}
-              </p>
-            )}
           </div>
 
-          <div className="space-y-3">
-            <Label htmlFor="signatureType" className="text-lg">
-              Pilih Tanda Tangan
-            </Label>
-            <div className="flex flex-col space-y-2 mt-3">
-              <div className="flex items-center">
-                <input
-                  type="radio"
-                  id="sekretaris"
-                  name="signatureType"
-                  value="sekretaris"
-                  checked={signatureType === "sekretaris"}
-                  onChange={() => setSignatureType("sekretaris")}
-                  className="mr-2"
-                />
-                <Label htmlFor="sekretaris">
-                  Plt.Sekretaris Desa - AGUS SUMANTO
-                </Label>
-              </div>
-              <div className="flex items-center">
-                <input
-                  type="radio"
-                  id="kepala"
-                  name="signatureType"
-                  value="kepala"
-                  checked={signatureType === "kepala"}
-                  onChange={() => setSignatureType("kepala")}
-                  className="mr-2"
-                />
-                <Label htmlFor="kepala">Pj.Kepala Desa - NGASIMAN S.H.</Label>
+          {/* Tanda Tangan */}
+          <div className="pt-2">
+            <h3 className="text-lg font-semibold mb-4">Tanda Tangan</h3>
+            <div className="space-y-2">
+              <Label className="text-base">
+                Pilih Penandatangan
+              </Label>
+              <div className="flex flex-col space-y-2 mt-2">
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="sekretaris"
+                    name="signatureType"
+                    value="sekretaris"
+                    checked={signatureType === "sekretaris"}
+                    onChange={() => setSignatureType("sekretaris")}
+                    className="mr-2"
+                  />
+                  <Label htmlFor="sekretaris" className="text-base">
+                    Plt.Sekretaris Desa - AGUS SUMANTO
+                  </Label>
+                </div>
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="kepala"
+                    name="signatureType"
+                    value="kepala"
+                    checked={signatureType === "kepala"}
+                    onChange={() => setSignatureType("kepala")}
+                    className="mr-2"
+                  />
+                  <Label htmlFor="kepala" className="text-base">Pj.Kepala Desa - NGASIMAN S.H.</Label>
+                </div>
               </div>
             </div>
           </div>

@@ -23,6 +23,13 @@ import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import type { SuratTemplateType } from "@/components/layanan-surat/surat-templates";
+import {
+  type PersonData,
+  getReligionText,
+  getGenderText,
+  convertTimestampToDate,
+} from "@/components/ui/person-search";
+import PersonSearchBar from "@/components/layanan-surat/common/PersonSearchBar";
 
 export interface PengantarDesaFormData {
   nama: string;
@@ -86,6 +93,7 @@ const SuratPengantarDesaForm = ({
     undefined
   );
   const [keteranganLain, setKeteranganLain] = useState("");
+  const [selectedPerson, setSelectedPerson] = useState<PersonData | null>(null);
 
   // Error state
   const [namaError, setNamaError] = useState("");
@@ -99,6 +107,32 @@ const SuratPengantarDesaForm = ({
   const [keperluanError, setKeperluanError] = useState("");
   const [berlakuMulaiError, setBerlakuMulaiError] = useState("");
   const [berlakuSampaiError, setBerlakuSampaiError] = useState("");
+
+  // Handle person selection from search
+  const handlePersonSelect = (person: PersonData) => {
+    setSelectedPerson(person);
+    setNama(person.NAMA);
+    setKtpNomor(person.NIK);
+    setKkNomor(person.NO_KK);
+    setAgama(getReligionText(person.AGAMA));
+    setPekerjaan(person.PEKERJAAN);
+    setRt(person.RT);
+    setRw(person.RW);
+    setJenisKelamin(person.JK === "L" ? "Lk" : "Pr");
+    setTempatLahir(person.TMPT_LHR);
+    if (person.TGL_LHR) {
+      setTanggalLahir(convertTimestampToDate(person.TGL_LHR));
+    }
+
+    // Clear errors for auto-filled fields
+    setNamaError("");
+    setKtpNomorError("");
+    setKkNomorError("");
+    setAgamaError("");
+    setPekerjaanError("");
+    setRtError("");
+    setRwError("");
+  };
 
   // Reset form function
   const resetForm = () => {
@@ -118,6 +152,7 @@ const SuratPengantarDesaForm = ({
     setBerlakuMulaiDate(undefined);
     setBerlakuSampaiDate(undefined);
     setKeteranganLain("");
+    setSelectedPerson(null);
 
     // Reset error states
     setNamaError("");
@@ -185,7 +220,9 @@ const SuratPengantarDesaForm = ({
     let isValid = true;
 
     if (!nama.trim()) {
-      setNamaError("Nama harus diisi");
+      setNamaError(
+        "Nama harus diisi. Gunakan pencarian untuk memilih data dari database."
+      );
       isValid = false;
     } else {
       setNamaError("");
@@ -306,199 +343,217 @@ const SuratPengantarDesaForm = ({
   return (
     <Dialog open={isOpen} onOpenChange={handleDialogClose}>
       <DialogContent className="sm:max-w-[650px] p-8 max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
+        <DialogHeader className="pb-0">
           <DialogTitle className="text-2xl font-bold">
             Formulir Surat Keterangan Pengantar Desa
           </DialogTitle>
-          <DialogDescription className="text-base mt-2">
+          <DialogDescription className="text-base mt-1 mb-0">
             Silakan lengkapi data berikut untuk pembuatan Surat Keterangan
             Pengantar Desa.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmitForm} className="space-y-6 mt-4">
-          <div className="space-y-2">
-            <Label htmlFor="nama" className="text-base">
-              Nama
-            </Label>
-            <Input
-              id="nama"
-              placeholder="Masukkan nama lengkap"
-              className={`text-base mt-3 ${
-                namaError ? "border-red-500" : "border-gray-400"
-              }`}
-              value={nama}
-              onChange={(e) => {
-                setNama(e.target.value);
-                setNamaError("");
-              }}
+
+        <form onSubmit={handleSubmitForm} className="space-y-4 mt-0">
+          {/* Data Pemohon */}
+          <div className="pt-2 mt-1">
+            <h3 className="text-lg font-semibold mb-4">Data Pemohon</h3>
+            
+            <PersonSearchBar
+              selectedPerson={selectedPerson}
+              onPersonSelect={handlePersonSelect}
+              placeholder="Cari data pemohon..."
+              className="mb-4"
             />
-            {namaError && (
-              <p className="text-base text-red-500 mt-1">{namaError}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="jenisKelamin" className="text-base">
-              Jenis Kelamin
-            </Label>
-            <div className="flex space-x-4 mt-3">
-              <div className="flex items-center">
-                <input
-                  type="radio"
-                  id="jenisKelaminLk"
-                  name="jenisKelamin"
-                  value="Lk"
-                  checked={jenisKelamin === "Lk"}
-                  onChange={() => setJenisKelamin("Lk")}
-                  className="mr-2"
-                />
-                <Label htmlFor="jenisKelaminLk">Laki-laki</Label>
-              </div>
-              <div className="flex items-center">
-                <input
-                  type="radio"
-                  id="jenisKelaminPr"
-                  name="jenisKelamin"
-                  value="Pr"
-                  checked={jenisKelamin === "Pr"}
-                  onChange={() => setJenisKelamin("Pr")}
-                  className="mr-2"
-                />
-                <Label htmlFor="jenisKelaminPr">Perempuan</Label>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="tempatLahir" className="text-base">
-                Tempat Lahir
-              </Label>
-              <Input
-                id="tempatLahir"
-                placeholder="Masukkan tempat lahir"
-                className="text-base mt-3 border-gray-400"
-                value={tempatLahir}
-                onChange={(e) => setTempatLahir(e.target.value)}
-              />
-            </div>
 
             <div className="space-y-2">
-              <Label htmlFor="tanggalLahir" className="text-base">
-                Tanggal Lahir
+              <Label htmlFor="nama" className="text-base">
+                Nama
               </Label>
               <Input
-                id="tanggalLahir"
-                placeholder="Masukkan tanggal lahir"
-                className={`text-base mt-3 ${
-                  tanggalLahirError ? "border-red-500" : "border-gray-400"
+                id="nama"
+                placeholder="Masukkan nama lengkap"
+                className={`text-base mt-2 ${
+                  namaError ? "border-red-500" : "border-gray-400"
                 }`}
-                value={tanggalLahir}
+                value={nama}
+                onChange={(e) => setNama(e.target.value)}
+                required
+              />
+              {namaError && (
+                <p className="text-base text-red-500 mt-1">{namaError}</p>
+              )}
+            </div>
+
+            <div className="space-y-2 mt-4">
+              <Label htmlFor="jenisKelamin" className="text-base">
+                Jenis Kelamin
+              </Label>
+              <div className="flex space-x-4 mt-2">
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="jenisKelaminLk"
+                    name="jenisKelamin"
+                    value="Lk"
+                    checked={jenisKelamin === "Lk"}
+                    onChange={() => setJenisKelamin("Lk")}
+                    className="mr-2"
+                  />
+                  <Label htmlFor="jenisKelaminLk" className="text-base">Laki-laki</Label>
+                </div>
+                <div className="flex items-center">
+                  <input
+                    type="radio"
+                    id="jenisKelaminPr"
+                    name="jenisKelamin"
+                    value="Pr"
+                    checked={jenisKelamin === "Pr"}
+                    onChange={() => setJenisKelamin("Pr")}
+                    className="mr-2"
+                  />
+                  <Label htmlFor="jenisKelaminPr" className="text-base">Perempuan</Label>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              <div className="space-y-2">
+                <Label htmlFor="tempatLahir" className="text-base">
+                  Tempat Lahir
+                </Label>
+                <Input
+                  id="tempatLahir"
+                  placeholder="Masukkan tempat lahir"
+                  className="text-base mt-2 border-gray-400"
+                  value={tempatLahir}
+                  onChange={(e) => setTempatLahir(e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="tanggalLahir" className="text-base">
+                  Tanggal Lahir
+                </Label>
+                <Input
+                  id="tanggalLahir"
+                  placeholder="Masukkan tanggal lahir"
+                  className={`text-base mt-2 ${
+                    tanggalLahirError ? "border-red-500" : "border-gray-400"
+                  }`}
+                  value={tanggalLahir}
+                  onChange={(e) => {
+                    setTanggalLahir(e.target.value);
+                    setTanggalLahirError("");
+                  }}
+                />
+                {tanggalLahirError && (
+                  <p className="text-base text-red-500 mt-1">
+                    {tanggalLahirError}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-2 mt-4">
+              <Label htmlFor="agama" className="text-base">
+                Agama
+              </Label>
+              <Input
+                id="agama"
+                placeholder="Masukkan agama"
+                className={`text-base mt-2 ${
+                  agamaError ? "border-red-500" : "border-gray-400"
+                }`}
+                value={agama}
                 onChange={(e) => {
-                  setTanggalLahir(e.target.value);
-                  setTanggalLahirError("");
+                  setAgama(e.target.value);
+                  setAgamaError("");
                 }}
               />
-              {tanggalLahirError && (
-                <p className="text-base text-red-500 mt-1">
-                  {tanggalLahirError}
-                </p>
+              {agamaError && (
+                <p className="text-base text-red-500 mt-1">{agamaError}</p>
+              )}
+            </div>
+
+            <div className="space-y-2 mt-4">
+              <Label htmlFor="pekerjaan" className="text-base">
+                Pekerjaan
+              </Label>
+              <Input
+                id="pekerjaan"
+                placeholder="Masukkan pekerjaan"
+                className={`text-base mt-2 ${
+                  pekerjaanError ? "border-red-500" : "border-gray-400"
+                }`}
+                value={pekerjaan}
+                onChange={(e) => {
+                  setPekerjaan(e.target.value);
+                  setPekerjaanError("");
+                }}
+              />
+              {pekerjaanError && (
+                <p className="text-base text-red-500 mt-1">{pekerjaanError}</p>
               )}
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="agama" className="text-base">
-              Agama
-            </Label>
-            <Input
-              id="agama"
-              placeholder="Masukkan agama"
-              className={`text-base mt-3 ${
-                agamaError ? "border-red-500" : "border-gray-400"
-              }`}
-              value={agama}
-              onChange={(e) => {
-                setAgama(e.target.value);
-                setAgamaError("");
-              }}
-            />
-            {agamaError && (
-              <p className="text-base text-red-500 mt-1">{agamaError}</p>
-            )}
-          </div>
+          {/* Data Alamat */}
+          <div className="pt-2">
+            <h3 className="text-lg font-semibold mb-4">Data Alamat</h3>
 
-          <div className="space-y-2">
-            <Label htmlFor="pekerjaan" className="text-base">
-              Pekerjaan
-            </Label>
-            <Input
-              id="pekerjaan"
-              placeholder="Masukkan pekerjaan"
-              className={`text-base mt-3 ${
-                pekerjaanError ? "border-red-500" : "border-gray-400"
-              }`}
-              value={pekerjaan}
-              onChange={(e) => {
-                setPekerjaan(e.target.value);
-                setPekerjaanError("");
-              }}
-            />
-            {pekerjaanError && (
-              <p className="text-base text-red-500 mt-1">{pekerjaanError}</p>
-            )}
-          </div>
+            <div className="space-y-2">
+              <Label className="text-base">Tempat Tinggal</Label>
+              <div className="grid grid-cols-2 gap-4 mt-2">
+                <div className="space-y-2">
+                  <Label htmlFor="rt" className="text-base">
+                    RT
+                  </Label>
+                  <Input
+                    id="rt"
+                    placeholder="Masukkan RT"
+                    className={`text-base mt-2 ${
+                      rtError ? "border-red-500" : "border-gray-400"
+                    }`}
+                    value={rt}
+                    onChange={(e) => {
+                      setRt(e.target.value);
+                      setRtError("");
+                    }}
+                  />
+                  {rtError && (
+                    <p className="text-base text-red-500 mt-1">{rtError}</p>
+                  )}
+                </div>
 
-          <div className="space-y-2">
-            <Label className="text-base">Tempat Tinggal</Label>
-            <div className="grid grid-cols-2 gap-4 mt-2">
-              <div className="space-y-2">
-                <Label htmlFor="rt" className="text-base">
-                  RT
-                </Label>
-                <Input
-                  id="rt"
-                  placeholder="Masukkan RT"
-                  className={`text-base ${
-                    rtError ? "border-red-500" : "border-gray-400"
-                  }`}
-                  value={rt}
-                  onChange={(e) => {
-                    setRt(e.target.value);
-                    setRtError("");
-                  }}
-                />
-                {rtError && (
-                  <p className="text-base text-red-500 mt-1">{rtError}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="rw" className="text-base">
-                  RW
-                </Label>
-                <Input
-                  id="rw"
-                  placeholder="Masukkan RW"
-                  className={`text-base ${
-                    rwError ? "border-red-500" : "border-gray-400"
-                  }`}
-                  value={rw}
-                  onChange={(e) => {
-                    setRw(e.target.value);
-                    setRwError("");
-                  }}
-                />
-                {rwError && (
-                  <p className="text-base text-red-500 mt-1">{rwError}</p>
-                )}
+                <div className="space-y-2">
+                  <Label htmlFor="rw" className="text-base">
+                    RW
+                  </Label>
+                  <Input
+                    id="rw"
+                    placeholder="Masukkan RW"
+                    className={`text-base mt-2 ${
+                      rwError ? "border-red-500" : "border-gray-400"
+                    }`}
+                    value={rw}
+                    onChange={(e) => {
+                      setRw(e.target.value);
+                      setRwError("");
+                    }}
+                  />
+                  {rwError && (
+                    <p className="text-base text-red-500 mt-1">{rwError}</p>
+                  )}
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label className="text-base">Surat Bukti Diri</Label>
-            <div className="space-y-4 mt-2">
+          {/* Data Dokumen */}
+          <div className="pt-2">
+            <h3 className="text-lg font-semibold mb-4">Data Dokumen</h3>
+            
+            <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="ktpNomor" className="text-base">
                   Nomor KTP
@@ -506,7 +561,7 @@ const SuratPengantarDesaForm = ({
                 <Input
                   id="ktpNomor"
                   placeholder="Masukkan nomor KTP"
-                  className={`text-base mt-3 ${
+                  className={`text-base mt-2 ${
                     ktpNomorError ? "border-red-500" : "border-gray-400"
                   }`}
                   value={ktpNomor}
@@ -527,7 +582,7 @@ const SuratPengantarDesaForm = ({
                 <Input
                   id="kkNomor"
                   placeholder="Masukkan nomor KK"
-                  className={`text-base mt-3 ${
+                  className={`text-base mt-2 ${
                     kkNomorError ? "border-red-500" : "border-gray-400"
                   }`}
                   value={kkNomor}
@@ -543,102 +598,106 @@ const SuratPengantarDesaForm = ({
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="keperluan" className="text-base">
-              Keperluan
-            </Label>
-            <textarea
-              id="keperluan"
-              placeholder="Masukkan keperluan"
-              className={`flex h-24 w-full mt-3 rounded-md border bg-background px-4 py-3 text-base ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:border-black ${
-                keperluanError ? "border-red-500" : "border-gray-400"
-              }`}
-              rows={4}
-              value={keperluan}
-              onChange={(e) => {
-                setKeperluan(e.target.value);
-                setKeperluanError("");
-              }}
-            />
-            {keperluanError && (
-              <p className="text-base text-red-500 mt-1">{keperluanError}</p>
-            )}
-          </div>
+          {/* Data Keperluan */}
+          <div className="pt-2">
+            <h3 className="text-lg font-semibold mb-4">Data Keperluan</h3>
 
-          <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="berlakuMulai" className="text-base">
-                Berlaku Mulai
+              <Label htmlFor="keperluan" className="text-base">
+                Keperluan
               </Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={`w-full mt-3 justify-start text-left font-normal ${
-                      berlakuMulaiError ? "border-red-500" : "border-gray-400"
-                    }`}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {berlakuMulaiDate ? (
-                      format(berlakuMulaiDate, "dd MMMM yyyy", { locale: id })
-                    ) : (
-                      <span className="text-muted-foreground">
-                        Masukkan tanggal mulai
-                      </span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <IndonesianCalendar
-                    value={berlakuMulaiDate}
-                    onChange={(date) => {
-                      if (date) {
-                        setBerlakuMulaiDate(date);
-                        const formattedDate = format(date, "dd MMMM yyyy", {
-                          locale: id,
-                        });
-                        setBerlakuMulai(formattedDate);
-                        setBerlakuMulaiError("");
-
-                        // Close the popover immediately after selection
-                        const closeEvent = new Event("keydown");
-                        Object.defineProperty(closeEvent, "key", {
-                          value: "Escape",
-                        });
-                        document.dispatchEvent(closeEvent);
-                      }
-                    }}
-                  />
-                </PopoverContent>
-              </Popover>
-              {berlakuMulaiError && (
-                <p className="text-base text-red-500 mt-1">
-                  {berlakuMulaiError}
-                </p>
+              <textarea
+                id="keperluan"
+                placeholder="Masukkan keperluan"
+                className={`flex h-24 w-full mt-2 rounded-md border bg-background px-4 py-3 text-base ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:border-black ${
+                  keperluanError ? "border-red-500" : "border-gray-400"
+                }`}
+                rows={4}
+                value={keperluan}
+                onChange={(e) => {
+                  setKeperluan(e.target.value);
+                  setKeperluanError("");
+                }}
+              />
+              {keperluanError && (
+                <p className="text-base text-red-500 mt-1">{keperluanError}</p>
               )}
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="berlakuSampai" className="text-base">
-                Berlaku Sampai
-              </Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={`w-full mt-3 justify-start text-left font-normal ${
-                      berlakuSampaiError ? "border-red-500" : "border-gray-400"
-                    }`}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {berlakuSampaiDate ? (
-                      format(berlakuSampaiDate, "dd MMMM yyyy", {
-                        locale: id,
-                      })
-                    ) : (
-                      <span className="text-muted-foreground">
-                        Masukkan tanggal akhir
-                      </span>
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              <div className="space-y-2">
+                <Label htmlFor="berlakuMulai" className="text-base">
+                  Berlaku Mulai
+                </Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={`w-full mt-2 justify-start text-left font-normal ${
+                        berlakuMulaiError ? "border-red-500" : "border-gray-400"
+                      }`}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {berlakuMulaiDate ? (
+                        format(berlakuMulaiDate, "dd MMMM yyyy", { locale: id })
+                      ) : (
+                        <span className="text-muted-foreground">
+                          Masukkan tanggal mulai
+                        </span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <IndonesianCalendar
+                      value={berlakuMulaiDate}
+                      onChange={(date) => {
+                        if (date) {
+                          setBerlakuMulaiDate(date);
+                          const formattedDate = format(date, "dd MMMM yyyy", {
+                            locale: id,
+                          });
+                          setBerlakuMulai(formattedDate);
+                          setBerlakuMulaiError("");
+
+                          // Close the popover immediately after selection
+                          const closeEvent = new Event("keydown");
+                          Object.defineProperty(closeEvent, "key", {
+                            value: "Escape",
+                          });
+                          document.dispatchEvent(closeEvent);
+                        }
+                      }}
+                    />
+                  </PopoverContent>
+                </Popover>
+                {berlakuMulaiError && (
+                  <p className="text-base text-red-500 mt-1">
+                    {berlakuMulaiError}
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="berlakuSampai" className="text-base">
+                  Berlaku Sampai
+                </Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={`w-full mt-2 justify-start text-left font-normal ${
+                        berlakuSampaiError ? "border-red-500" : "border-gray-400"
+                      }`}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {berlakuSampaiDate ? (
+                        format(berlakuSampaiDate, "dd MMMM yyyy", {
+                          locale: id,
+                        })
+                      ) : (
+                        <span className="text-muted-foreground">
+                          Masukkan tanggal akhir
+                        </span>
                     )}
                   </Button>
                 </PopoverTrigger>
@@ -673,18 +732,19 @@ const SuratPengantarDesaForm = ({
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="keteranganLain" className="text-base">
-              Keterangan Lain-lain
-            </Label>
-            <textarea
-              id="keteranganLain"
-              placeholder="Masukkan keterangan lain (opsional)"
-              className="flex h-24 mt-3 w-full rounded-md border border-gray-400 bg-background px-4 py-3 text-base ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:border-black"
-              rows={4}
-              value={keteranganLain}
-              onChange={(e) => setKeteranganLain(e.target.value)}
-            />
+            <div className="space-y-2 mt-4">
+              <Label htmlFor="keteranganLain" className="text-base">
+                Keterangan Lain-lain
+              </Label>
+              <textarea
+                id="keteranganLain"
+                placeholder="Masukkan keterangan lain (opsional)"
+                className="flex h-24 mt-2 w-full rounded-md border border-gray-400 bg-background px-4 py-3 text-base ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:border-black"
+                rows={4}
+                value={keteranganLain}
+                onChange={(e) => setKeteranganLain(e.target.value)}
+              />
+            </div>
           </div>
 
           <DialogFooter className="mt-8">

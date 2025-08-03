@@ -13,6 +13,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, Download } from "lucide-react";
+import { alamatGroupsShort } from "@/app/layanan-surat/data/alamatGroupsShort";
+import PersonSearchBar from "@/components/layanan-surat/common/PersonSearchBar";
+import type { PersonData } from "@/components/ui/person-search";
+import { convertTimestampToDate } from "@/components/ui/person-search";
 
 export interface KelahiranFormData {
   namaPemohon: string;
@@ -46,7 +50,7 @@ const SuratKelahiranForm: React.FC<SuratKelahiranFormProps> = ({
 }) => {
   // Form state - Data Pemohon
   const [namaPemohon, setNamaPemohon] = useState("");
-  const [tempatLahirPemohon, setTempatLahirPemohon] = useState("");
+  const [tempatLahirPemohon, setTempatLahirPemohon] = useState("Pati");
   const [tanggalLahirPemohon, setTanggalLahirPemohon] = useState("");
   const [jenisKelaminPemohon, setJenisKelaminPemohon] = useState("L");
   const [pekerjaanPemohon, setPekerjaanPemohon] = useState("");
@@ -63,6 +67,9 @@ const SuratKelahiranForm: React.FC<SuratKelahiranFormProps> = ({
   // Form state - Data Orang Tua
   const [namaAyah, setNamaAyah] = useState("");
   const [namaIbu, setNamaIbu] = useState("");
+
+  // Person search state
+  const [selectedPerson, setSelectedPerson] = useState<PersonData | null>(null);
 
   // Error states - Data Pemohon
   const [namaPemohonError, setNamaPemohonError] = useState("");
@@ -82,10 +89,48 @@ const SuratKelahiranForm: React.FC<SuratKelahiranFormProps> = ({
   const [namaAyahError, setNamaAyahError] = useState("");
   const [namaIbuError, setNamaIbuError] = useState("");
 
+  // Function to map RT/RW to simple alamat format
+  const mapRTRWToAlamat = (rt: string, rw: string): string => {
+    return `RT ${rt || ""}/RW ${rw || ""}, Desa Kepohkencono`;
+  };
+
+  // Function to handle person selection
+  const handlePersonSelect = (person: PersonData | null) => {
+    setSelectedPerson(person);
+    
+    if (person) {
+      // Auto-fill available fields for pemohon
+      setNamaPemohon(person.NAMA || "");
+      setTempatLahirPemohon(person.TMPT_LHR || "");
+      
+      // Convert timestamp to date if available
+      if (person.TGL_LHR) {
+        const dateStr = convertTimestampToDate(person.TGL_LHR);
+        setTanggalLahirPemohon(dateStr);
+      }
+      
+      setJenisKelaminPemohon(person.JK || "L");
+      setPekerjaanPemohon(person.PEKERJAAN || "");
+      
+      // Map RT/RW to alamat
+      if (person.RT && person.RW) {
+        const alamat = mapRTRWToAlamat(person.RT, person.RW);
+        setAlamatPemohon(alamat);
+      }
+      
+      // Clear related errors
+      setNamaPemohonError("");
+      setTempatLahirPemohonError("");
+      setTanggalLahirPemohonError("");
+      setPekerjaanPemohonError("");
+      setAlamatPemohonError("");
+    }
+  };
+
   const resetForm = () => {
     // Reset form fields - Data Pemohon
     setNamaPemohon("");
-    setTempatLahirPemohon("");
+    setTempatLahirPemohon("Pati");
     setTanggalLahirPemohon("");
     setJenisKelaminPemohon("L");
     setPekerjaanPemohon("");
@@ -102,6 +147,9 @@ const SuratKelahiranForm: React.FC<SuratKelahiranFormProps> = ({
     // Reset form fields - Data Orang Tua
     setNamaAyah("");
     setNamaIbu("");
+
+    // Reset person search state
+    setSelectedPerson(null);
 
     // Reset error states - Data Pemohon
     setNamaPemohonError("");
@@ -251,8 +299,15 @@ const SuratKelahiranForm: React.FC<SuratKelahiranFormProps> = ({
     onOpenChange(false);
   };
 
+  const handleDialogClose = (open: boolean) => {
+    if (!open) {
+      resetForm();
+    }
+    onOpenChange(open);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleDialogClose}>
       <DialogContent className="sm:max-w-[650px] p-6 max-h-[90vh] overflow-y-auto">
         <DialogHeader className="pb-0">
           <DialogTitle className="text-2xl font-bold">
@@ -266,7 +321,14 @@ const SuratKelahiranForm: React.FC<SuratKelahiranFormProps> = ({
         <form onSubmit={handleSubmit} className="space-y-4 mt-0">
           {/* Data Pemohon */}
           <div className="pt-2 mt-1">
-            <h3 className="text-lg font-semibold mb-1">Data Pemohon</h3>
+            <h3 className="text-lg font-semibold mb-4">Data Pemohon</h3>
+            
+            <PersonSearchBar
+              selectedPerson={selectedPerson}
+              onPersonSelect={handlePersonSelect}
+              placeholder="Cari data pemohon..."
+              className="mb-4"
+            />
 
             <div className="space-y-2">
               <Label htmlFor="namaPemohon" className="text-base">

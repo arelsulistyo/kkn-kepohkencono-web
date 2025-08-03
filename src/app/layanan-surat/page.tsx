@@ -26,6 +26,7 @@ import SpecialNavbar, {
 } from "@/components/layout/SpecialNavbar";
 import StepGuide from "@/components/layanan-surat/common/StepGuide";
 import ServicesGrid from "@/components/layanan-surat/common/ServicesGrid";
+import DatabaseLookupInfo from "@/components/layanan-surat/common/DatabaseLookupInfo";
 
 const LayananSurat = () => {
   const navbarRef = useRef<SpecialNavbarRef>(null);
@@ -328,6 +329,23 @@ const LayananSurat = () => {
       />
       {/* How to Create Letters - Step by Step Guide */}
       <StepGuide />
+
+      {/* Database Lookup Feature Info - Collapsible */}
+      <DatabaseLookupInfo navbarRef={navbarRef} />
+
+      {/* Call to Action Badge */}
+      <div className="bg-gradient-to-r from-green-50 to-emerald-50 py-8">
+        <div className="container mx-auto px-4">
+          <div className="text-center">
+            <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full px-6 py-3 shadow-lg">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span className="text-sm font-medium text-gray-700">
+                Siap untuk membuat surat? Mulai sekarang!
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Services Grid */}
       <ServicesGrid

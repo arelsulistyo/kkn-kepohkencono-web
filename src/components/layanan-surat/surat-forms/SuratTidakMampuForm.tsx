@@ -13,6 +13,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, Download } from "lucide-react";
+import { alamatGroupsShort } from "@/app/layanan-surat/data/alamatGroupsShort";
+import PersonSearchBar from "@/components/layanan-surat/common/PersonSearchBar";
+import type { PersonData } from "@/components/ui/person-search";
+import { convertTimestampToDate } from "@/components/ui/person-search";
 
 export interface TidakMampuFormData {
   namaPemohonTidakMampu: string;
@@ -39,30 +43,86 @@ const SuratTidakMampuForm = ({
 }: SuratTidakMampuFormProps) => {
   // State variables
   const [namaPemohonTidakMampu, setNamaPemohonTidakMampu] = useState("");
-  const [tempatLahirPemohonTidakMampu, setTempatLahirPemohonTidakMampu] = useState("");
-  const [tanggalLahirPemohonTidakMampu, setTanggalLahirPemohonTidakMampu] = useState("");
-  const [jenisKelaminPemohonTidakMampu, setJenisKelaminPemohonTidakMampu] = useState("");
-  const [pekerjaanPemohonTidakMampu, setPekerjaanPemohonTidakMampu] = useState("");
+  const [tempatLahirPemohonTidakMampu, setTempatLahirPemohonTidakMampu] =
+    useState("Pati");
+  const [tanggalLahirPemohonTidakMampu, setTanggalLahirPemohonTidakMampu] =
+    useState("");
+  const [jenisKelaminPemohonTidakMampu, setJenisKelaminPemohonTidakMampu] =
+    useState("L");
+  const [pekerjaanPemohonTidakMampu, setPekerjaanPemohonTidakMampu] =
+    useState("");
   const [alamatPemohonTidakMampu, setAlamatPemohonTidakMampu] = useState("");
   const [persyaratanTidakMampu, setPersyaratanTidakMampu] = useState("");
 
+  // Person search state
+  const [selectedPerson, setSelectedPerson] = useState<PersonData | null>(null);
+
   // Error state variables
-  const [namaPemohonTidakMampuError, setNamaPemohonTidakMampuError] = useState("");
-  const [tempatLahirPemohonTidakMampuError, setTempatLahirPemohonTidakMampuError] = useState("");
-  const [tanggalLahirPemohonTidakMampuError, setTanggalLahirPemohonTidakMampuError] = useState("");
-  const [pekerjaanPemohonTidakMampuError, setPekerjaanPemohonTidakMampuError] = useState("");
-  const [alamatPemohonTidakMampuError, setAlamatPemohonTidakMampuError] = useState("");
-  const [persyaratanTidakMampuError, setPersyaratanTidakMampuError] = useState("");
+  const [namaPemohonTidakMampuError, setNamaPemohonTidakMampuError] =
+    useState("");
+  const [
+    tempatLahirPemohonTidakMampuError,
+    setTempatLahirPemohonTidakMampuError,
+  ] = useState("");
+  const [
+    tanggalLahirPemohonTidakMampuError,
+    setTanggalLahirPemohonTidakMampuError,
+  ] = useState("");
+  const [pekerjaanPemohonTidakMampuError, setPekerjaanPemohonTidakMampuError] =
+    useState("");
+  const [alamatPemohonTidakMampuError, setAlamatPemohonTidakMampuError] =
+    useState("");
+  const [persyaratanTidakMampuError, setPersyaratanTidakMampuError] =
+    useState("");
+
+  // Function to map RT/RW to simple alamat format
+  const mapRTRWToAlamat = (rt: string, rw: string): string => {
+    return `RT ${rt || ""}/RW ${rw || ""}, Desa Kepohkencono`;
+  };
+
+  // Function to handle person selection
+  const handlePersonSelect = (person: PersonData | null) => {
+    setSelectedPerson(person);
+    
+    if (person) {
+      // Auto-fill available fields
+      setNamaPemohonTidakMampu(person.NAMA || "");
+      setTempatLahirPemohonTidakMampu(person.TMPT_LHR || "");
+      
+      // Convert timestamp to date if available
+      if (person.TGL_LHR) {
+        const dateStr = convertTimestampToDate(person.TGL_LHR);
+        setTanggalLahirPemohonTidakMampu(dateStr);
+      }
+      
+      setJenisKelaminPemohonTidakMampu(person.JK || "");
+      setPekerjaanPemohonTidakMampu(person.PEKERJAAN || "");
+      
+      // Map RT/RW to alamat
+      if (person.RT && person.RW) {
+        const alamat = mapRTRWToAlamat(person.RT, person.RW);
+        setAlamatPemohonTidakMampu(alamat);
+      }
+      
+      // Clear related errors
+      setNamaPemohonTidakMampuError("");
+      setTempatLahirPemohonTidakMampuError("");
+      setTanggalLahirPemohonTidakMampuError("");
+      setPekerjaanPemohonTidakMampuError("");
+      setAlamatPemohonTidakMampuError("");
+    }
+  };
 
   const resetForm = () => {
     setNamaPemohonTidakMampu("");
-    setTempatLahirPemohonTidakMampu("");
+    setTempatLahirPemohonTidakMampu("Pati");
     setTanggalLahirPemohonTidakMampu("");
-    setJenisKelaminPemohonTidakMampu("");
+    setJenisKelaminPemohonTidakMampu("L");
     setPekerjaanPemohonTidakMampu("");
     setAlamatPemohonTidakMampu("");
     setPersyaratanTidakMampu("");
-    
+    setSelectedPerson(null);
+
     // Reset errors
     setNamaPemohonTidakMampuError("");
     setTempatLahirPemohonTidakMampuError("");
@@ -74,42 +134,42 @@ const SuratTidakMampuForm = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Basic validation
     let hasError = false;
-    
+
     if (!namaPemohonTidakMampu.trim()) {
       setNamaPemohonTidakMampuError("Nama harus diisi");
       hasError = true;
     }
-    
+
     if (!tempatLahirPemohonTidakMampu.trim()) {
       setTempatLahirPemohonTidakMampuError("Tempat lahir harus diisi");
       hasError = true;
     }
-    
+
     if (!tanggalLahirPemohonTidakMampu.trim()) {
       setTanggalLahirPemohonTidakMampuError("Tanggal lahir harus diisi");
       hasError = true;
     }
-    
+
     if (!pekerjaanPemohonTidakMampu.trim()) {
       setPekerjaanPemohonTidakMampuError("Pekerjaan harus diisi");
       hasError = true;
     }
-    
+
     if (!alamatPemohonTidakMampu.trim()) {
       setAlamatPemohonTidakMampuError("Alamat harus diisi");
       hasError = true;
     }
-    
+
     if (!persyaratanTidakMampu.trim()) {
       setPersyaratanTidakMampuError("Persyaratan harus diisi");
       hasError = true;
     }
-    
+
     if (hasError) return;
-    
+
     const formData: TidakMampuFormData = {
       namaPemohonTidakMampu,
       tempatLahirPemohonTidakMampu,
@@ -119,7 +179,7 @@ const SuratTidakMampuForm = ({
       alamatPemohonTidakMampu,
       persyaratanTidakMampu,
     };
-    
+
     onSubmit(formData);
   };
 
@@ -138,13 +198,20 @@ const SuratTidakMampuForm = ({
             Formulir Surat Keterangan Tidak Mampu
           </DialogTitle>
           <DialogDescription className="text-base mt-1 mb-0">
-            Silakan lengkapi data berikut untuk pembuatan Surat Keterangan
-            Tidak Mampu.
+            Silakan lengkapi data berikut untuk pembuatan Surat Keterangan Tidak
+            Mampu.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 mt-0">
           <div className="pt-2 mt-1">
-            <h3 className="text-lg font-semibold mb-1">Data Pemohon</h3>
+            <h3 className="text-lg font-semibold mb-4">Data Pemohon</h3>
+            
+            <PersonSearchBar
+              selectedPerson={selectedPerson}
+              onPersonSelect={handlePersonSelect}
+              placeholder="Cari data pemohon..."
+              className="mb-4"
+            />
 
             <div className="space-y-2">
               <Label htmlFor="namaPemohonTidakMampu" className="text-base">
@@ -269,10 +336,7 @@ const SuratTidakMampuForm = ({
             </div>
 
             <div className="space-y-2 mt-3">
-              <Label
-                htmlFor="pekerjaanPemohonTidakMampu"
-                className="text-base"
-              >
+              <Label htmlFor="pekerjaanPemohonTidakMampu" className="text-base">
                 Pekerjaan
               </Label>
               <Input

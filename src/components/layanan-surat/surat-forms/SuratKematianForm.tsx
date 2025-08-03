@@ -13,6 +13,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, Download } from "lucide-react";
+import { alamatGroupsShort } from "@/app/layanan-surat/data/alamatGroupsShort";
+import { PersonData, convertTimestampToDate } from "@/components/ui/person-search";
+import PersonSearchBar from "@/components/layanan-surat/common/PersonSearchBar";
 
 export interface KematianFormData {
   namaKematian: string;
@@ -43,10 +46,11 @@ const SuratKematianForm: React.FC<SuratKematianFormProps> = ({
   isLoading,
 }) => {
   // Form state
+  const [selectedPerson, setSelectedPerson] = useState<PersonData | null>(null);
   const [namaKematian, setNamaKematian] = useState("");
-  const [tempatLahirKematian, setTempatLahirKematian] = useState("");
+  const [tempatLahirKematian, setTempatLahirKematian] = useState("Pati");
   const [tanggalLahirKematian, setTanggalLahirKematian] = useState("");
-  const [jenisKelaminKematian, setJenisKelaminKematian] = useState("");
+  const [jenisKelaminKematian, setJenisKelaminKematian] = useState("L");
   const [pekerjaanKematian, setPekerjaanKematian] = useState("");
   const [alamatKematian, setAlamatKematian] = useState("");
   const [agamaKematian, setAgamaKematian] = useState("");
@@ -59,7 +63,8 @@ const SuratKematianForm: React.FC<SuratKematianFormProps> = ({
   // Error state
   const [namaKematianError, setNamaKematianError] = useState("");
   const [tempatLahirKematianError, setTempatLahirKematianError] = useState("");
-  const [tanggalLahirKematianError, setTanggalLahirKematianError] = useState("");
+  const [tanggalLahirKematianError, setTanggalLahirKematianError] =
+    useState("");
   const [pekerjaanKematianError, setPekerjaanKematianError] = useState("");
   const [alamatKematianError, setAlamatKematianError] = useState("");
   const [agamaKematianError, setAgamaKematianError] = useState("");
@@ -69,11 +74,49 @@ const SuratKematianForm: React.FC<SuratKematianFormProps> = ({
   const [yangMenerangkanError, setYangMenerangkanError] = useState("");
   const [tempatKematianError, setTempatKematianError] = useState("");
 
+  // Helper function to map RT/RW to simple alamat format
+  const mapRTRWToAlamat = (rt: string, rw: string): string => {
+    return `RT ${rt || ""}/RW ${rw || ""}, Desa Kepohkencono`;
+  };
+
+  // Handle person selection from search bar
+  const handlePersonSelect = (person: PersonData) => {
+    setSelectedPerson(person);
+    
+    // Auto-fill form fields
+    setNamaKematian(person.NAMA || "");
+    setTempatLahirKematian(person.TMPT_LHR || "Pati");
+    
+    // Convert timestamp to date string if available
+    if (person.TGL_LHR) {
+      const dateStr = convertTimestampToDate(person.TGL_LHR);
+      setTanggalLahirKematian(dateStr);
+    }
+    
+    setJenisKelaminKematian(person.JK || "L");
+    setPekerjaanKematian(person.PEKERJAAN || "");
+    
+    // Map RT/RW to alamat
+    const alamat = mapRTRWToAlamat(person.RT || "", person.RW || "");
+    setAlamatKematian(alamat);
+    
+    setAgamaKematian(person.AGAMA || "");
+    
+    // Clear related errors
+    setNamaKematianError("");
+    setTempatLahirKematianError("");
+    setTanggalLahirKematianError("");
+    setPekerjaanKematianError("");
+    setAlamatKematianError("");
+    setAgamaKematianError("");
+  };
+
   const resetForm = () => {
+    setSelectedPerson(null);
     setNamaKematian("");
-    setTempatLahirKematian("");
+    setTempatLahirKematian("Pati");
     setTanggalLahirKematian("");
-    setJenisKelaminKematian("");
+    setJenisKelaminKematian("L");
     setPekerjaanKematian("");
     setAlamatKematian("");
     setAgamaKematian("");
@@ -82,7 +125,7 @@ const SuratKematianForm: React.FC<SuratKematianFormProps> = ({
     setSebabKematian("");
     setYangMenerangkan("");
     setTempatKematian("");
-    
+
     // Reset errors
     setNamaKematianError("");
     setTempatLahirKematianError("");
@@ -205,15 +248,22 @@ const SuratKematianForm: React.FC<SuratKematianFormProps> = ({
             Formulir Surat Keterangan Kematian
           </DialogTitle>
           <DialogDescription className="text-base mt-1">
-            Silakan lengkapi data berikut untuk pembuatan Surat Keterangan Kematian.
+            Silakan lengkapi data berikut untuk pembuatan Surat Keterangan
+            Kematian.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 mt-2">
           {/* Data Almarhum/Almarhumah */}
           <div className="pt-2 mt-1">
-            <h3 className="text-lg font-semibold mb-3">
+            <h3 className="text-lg font-semibold mb-4">
               Data Almarhum/Almarhumah
             </h3>
+
+            <PersonSearchBar
+              selectedPerson={selectedPerson}
+              onPersonSelect={handlePersonSelect}
+              placeholder="Cari data almarhum/almarhumah..."
+            />
 
             <div className="space-y-2 mt-2">
               <Label htmlFor="namaKematian" className="text-base">
@@ -330,9 +380,7 @@ const SuratKematianForm: React.FC<SuratKematianFormProps> = ({
                 id="pekerjaanKematian"
                 placeholder="Masukkan pekerjaan"
                 className={`text-base mt-2 ${
-                  pekerjaanKematianError
-                    ? "border-red-500"
-                    : "border-gray-400"
+                  pekerjaanKematianError ? "border-red-500" : "border-gray-400"
                 }`}
                 value={pekerjaanKematian}
                 onChange={(e) => {

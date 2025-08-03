@@ -132,15 +132,6 @@ const StepGuide: React.FC = () => {
           </div>
         </div>
 
-        {/* Call to Action */}
-        <div className="text-center mt-12">
-          <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full px-6 py-3 shadow-lg">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <span className="text-sm font-medium text-gray-700">
-              Siap untuk membuat surat? Mulai sekarang!
-            </span>
-          </div>
-        </div>
       </div>
     </div>
   );
