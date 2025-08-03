@@ -24,7 +24,7 @@ interface PersonData {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { nik: string } }
+  { params }: { params: Promise<{ nik: string }> }
 ) {
   try {
     const { nik } = await params;
