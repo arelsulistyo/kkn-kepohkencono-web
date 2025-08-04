@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Leaf, FileText, BarChart3 } from "lucide-react";
 import { Button } from "./ui/button";
 
@@ -16,7 +16,10 @@ const Navbar: React.FC<NavbarProps> = ({
   showNavbar = true,
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLayananSuratLoading, setIsLayananSuratLoading] = useState(false);
+  const [isVisualisasiDataLoading, setIsVisualisasiDataLoading] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   const isActive = (page: string) => currentPage === page;
 
@@ -108,32 +111,58 @@ const Navbar: React.FC<NavbarProps> = ({
             </Link>
 
             {/* Special Letter Templates Navigation */}
-            <Link
-              href="/layanan-surat"
-              className={`relative group flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 shadow-lg font-sans ${
+            <button
+              className={`relative group flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 shadow-lg font-sans disabled:opacity-70 disabled:cursor-not-allowed ${
                 isActive("layanan-surat")
                   ? "bg-gradient-to-r from-green-600 to-emerald-700 text-white"
                   : "bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700"
               }`}
+              disabled={isLayananSuratLoading}
+              onClick={() => {
+                setIsLayananSuratLoading(true);
+                router.push('/layanan-surat');
+              }}
             >
-              <FileText className="h-4 w-4" />
-              Layanan Surat
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-            </Link>
+              {isLayananSuratLoading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  Memuat...
+                </>
+              ) : (
+                <>
+                  <FileText className="h-4 w-4" />
+                  Layanan Surat
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                </>
+              )}
+            </button>
 
             {/* Special Data Visualization Navigation */}
-            <Link
-              href="/visualisasi-data"
-              className={`relative group flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 shadow-lg font-sans ${
+            <button
+              className={`relative group flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 shadow-lg font-sans disabled:opacity-70 disabled:cursor-not-allowed ${
                 isActive("visualisasi-data")
                   ? "bg-gradient-to-r from-teal-700 to-cyan-700 text-white"
                   : "bg-gradient-to-r from-teal-600 to-cyan-600 text-white hover:from-teal-700 hover:to-cyan-700"
               }`}
+              disabled={isVisualisasiDataLoading}
+              onClick={() => {
+                setIsVisualisasiDataLoading(true);
+                router.push('/visualisasi-data');
+              }}
             >
-              <BarChart3 className="h-4 w-4" />
-              Visualisasi Data
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-orange-500 rounded-full animate-pulse"></div>
-            </Link>
+              {isVisualisasiDataLoading ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  Memuat...
+                </>
+              ) : (
+                <>
+                  <BarChart3 className="h-4 w-4" />
+                  Visualisasi Data
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-orange-500 rounded-full animate-pulse"></div>
+                </>
+              )}
+            </button>
           </div>
 
           <div className="xl:hidden">
@@ -212,35 +241,61 @@ const Navbar: React.FC<NavbarProps> = ({
             </Link>
 
             <div className="pt-4 space-y-3">
-              <Link
-                href="/layanan-surat"
-                className={`block w-full text-center px-4 py-3 rounded-lg font-medium transition-all duration-300 font-sans ${
+              <button
+                className={`block w-full text-center px-4 py-3 rounded-lg font-medium transition-all duration-300 font-sans disabled:opacity-70 disabled:cursor-not-allowed ${
                   isActive("layanan-surat")
                     ? "bg-gradient-to-r from-green-600 to-emerald-700 text-white"
                     : "bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700"
                 }`}
-                onClick={() => setIsMobileMenuOpen(false)}
+                disabled={isLayananSuratLoading}
+                onClick={() => {
+                  setIsLayananSuratLoading(true);
+                  setIsMobileMenuOpen(false);
+                  router.push('/layanan-surat');
+                }}
               >
                 <div className="flex items-center justify-center gap-2">
-                  <FileText className="h-4 w-4" />
-                  Layanan Surat
+                  {isLayananSuratLoading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      Memuat...
+                    </>
+                  ) : (
+                    <>
+                      <FileText className="h-4 w-4" />
+                      Layanan Surat
+                    </>
+                  )}
                 </div>
-              </Link>
+              </button>
 
-              <Link
-                href="/visualisasi-data"
-                className={`block w-full text-center px-4 py-3 rounded-lg font-medium transition-all duration-300 font-sans ${
+              <button
+                className={`block w-full text-center px-4 py-3 rounded-lg font-medium transition-all duration-300 font-sans disabled:opacity-70 disabled:cursor-not-allowed ${
                   isActive("visualisasi-data")
                     ? "bg-gradient-to-r from-teal-700 to-cyan-700 text-white"
                     : "bg-gradient-to-r from-teal-600 to-cyan-600 text-white hover:from-teal-700 hover:to-cyan-700"
                 }`}
-                onClick={() => setIsMobileMenuOpen(false)}
+                disabled={isVisualisasiDataLoading}
+                onClick={() => {
+                  setIsVisualisasiDataLoading(true);
+                  setIsMobileMenuOpen(false);
+                  router.push('/visualisasi-data');
+                }}
               >
                 <div className="flex items-center justify-center gap-2">
-                  <BarChart3 className="h-4 w-4" />
-                  Visualisasi Data
+                  {isVisualisasiDataLoading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      Memuat...
+                    </>
+                  ) : (
+                    <>
+                      <BarChart3 className="h-4 w-4" />
+                      Visualisasi Data
+                    </>
+                  )}
                 </div>
-              </Link>
+              </button>
             </div>
           </div>
         </div>
