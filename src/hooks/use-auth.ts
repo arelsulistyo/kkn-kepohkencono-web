@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { auth } from "@/lib/firebase";
-import { User, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword } from "firebase/auth";
+import { User, signInWithEmailAndPassword, signOut } from "firebase/auth";
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
@@ -33,14 +33,5 @@ export function useAuth() {
     }
   };
 
-  const signup = async (email: string, password: string) => {
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      return { success: true };
-    } catch (error) {
-      return { success: false, error };
-    }
-  };
-
-  return { user, loading, login, logout, signup };
+  return { user, loading, login, logout };
 }

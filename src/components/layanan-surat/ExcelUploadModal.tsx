@@ -5,26 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Upload,
@@ -34,6 +20,8 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
+import { authFetch } from "@/lib/auth-fetch";
+import ModalShell from "./ModalShell";
 
 interface SheetInfo {
   name: string;
@@ -99,7 +87,7 @@ export default function ExcelUploadModal({
       const formData = new FormData();
       formData.append("file", selectedFile);
 
-      const response = await fetch("/api/sheets", {
+      const response = await authFetch("/api/sheets", {
         method: "POST",
         body: formData,
       });
@@ -155,7 +143,7 @@ export default function ExcelUploadModal({
       formData.append("rowStart", rowStart);
       formData.append("rowEnd", rowEnd);
 
-      const response = await fetch("/api/upload", {
+      const response = await authFetch("/api/upload", {
         method: "POST",
         body: formData,
       });
@@ -221,16 +209,13 @@ export default function ExcelUploadModal({
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleDialogClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-gray-900">
-            Upload Data Excel
-          </DialogTitle>
-          <DialogDescription className="text-gray-600 mt-2">
-            Upload file Excel untuk memperbarui data warga secara massal
-          </DialogDescription>
-        </DialogHeader>
+    <ModalShell
+      open={isOpen}
+      onOpenChange={handleDialogClose}
+      title="Upload Data Excel"
+      description="Upload file Excel untuk memperbarui data warga secara massal"
+      size="wide"
+    >
 
         <div className="space-y-6">
           {/* Progress Steps */}
@@ -640,7 +625,6 @@ export default function ExcelUploadModal({
             </div>
           )}
         </div>
-      </DialogContent>
-    </Dialog>
+    </ModalShell>
   );
 }

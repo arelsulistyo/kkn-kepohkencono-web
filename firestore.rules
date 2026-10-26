@@ -1,0 +1,38 @@
+rules_version = '2';
+
+// Client SDK access is limited to the letter-number counters used by
+// getNextLetterNumber(). Resident data (`villagers`) is read and written only
+// by the server through the Admin SDK, which bypasses these rules.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Keep this list in sync with the STAFF_EMAILS environment variable.
+    function isStaff() {
+      return request.auth != null
+        && request.auth.token.email in [
+          'ganti-dengan-email-staf@kepohkencono.desa.id'
+        ];
+    }
+
+    function isLetterType(letterType) {
+      return letterType in [
+        'domisili', 'pengantar-desa', 'izin-keramaian', 'usaha',
+        'tidak-mampu', 'kelahiran', 'kematian'
+      ];
+    }
+
+    match /counters/{letterType} {
+      allow read: if isStaff() && isLetterType(letterType);
+      allow create: if isStaff() && isLetterType(letterType)
+        && request.resource.data.keys().hasOnly(['count'])
+        && request.resource.data.count == 1;
+      allow update: if isStaff() && isLetterType(letterType)
+        && request.resource.data.keys().hasOnly(['count'])
+        && request.resource.data.count == resource.data.count + 1;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

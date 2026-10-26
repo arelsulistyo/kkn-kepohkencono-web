@@ -14,7 +14,6 @@ import {
   GraduationCap,
   BarChart3,
   Leaf,
-  FileText,
 } from "lucide-react";
 import { FaTiktok } from "react-icons/fa";
 import Link from "next/link";
@@ -27,7 +26,6 @@ const Index = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [showNavbar, setShowNavbar] = useState(false);
   const [scrollY, setScrollY] = useState(0);
-  const [isLayananSuratLoading, setIsLayananSuratLoading] = useState(false);
   const [isVisualisasiDataLoading, setIsVisualisasiDataLoading] = useState(false);
   const [populationData, setPopulationData] = useState({
     total: 0,
@@ -209,28 +207,6 @@ const Index = () => {
               >
                 Jelajahi Desa Kami
                 <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-8 py-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2 border border-white/20 text-lg disabled:opacity-70 disabled:cursor-not-allowed"
-                disabled={isLayananSuratLoading}
-                onClick={() => {
-                  setIsLayananSuratLoading(true);
-                  router.push('/layanan-surat');
-                }}
-              >
-                {isLayananSuratLoading ? (
-                  <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    Memuat...
-                  </>
-                ) : (
-                  <>
-                    <FileText className="h-5 w-5" />
-                    Layanan Surat
-                  </>
-                )}
               </Button>
 
               <Button
@@ -1065,14 +1041,6 @@ const Index = () => {
                     className="hover:text-emerald-400 transition-colors"
                   >
                     Tentang Kami
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/layanan-surat"
-                    className="hover:text-emerald-400 transition-colors"
-                  >
-                    Layanan Surat
                   </Link>
                 </li>
                 <li>

@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import * as XLSX from 'xlsx';
 import { adminDb } from '@/lib/firebase-admin';
+import { requireStaff } from '@/lib/require-staff';
 
 export async function POST(req: NextRequest) {
+  const denied = await requireStaff(req);
+  if (denied) return denied;
+
   try {
     const formData = await req.formData();
     const file = formData.get('file') as File | null;
@@ -82,7 +86,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const collectionRef = adminDb.collection('villagers');
+    const collectionRef = adminDb().collection('villagers');
     const uploadedRecords = [];
     const errors = [];
 
@@ -242,7 +246,10 @@ export async function POST(req: NextRequest) {
 }
 
 // GET endpoint to retrieve available sheets from uploaded file
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const denied = await requireStaff(req);
+  if (denied) return denied;
+
   return NextResponse.json(
     { message: 'Upload endpoint is ready. Use POST to upload Excel files.' },
     { status: 200 }

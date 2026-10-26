@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Leaf, FileText, BarChart3 } from "lucide-react";
+import { Leaf, BarChart3 } from "lucide-react";
 import { Button } from "./ui/button";
 
 interface NavbarProps {
@@ -16,7 +16,6 @@ const Navbar: React.FC<NavbarProps> = ({
   showNavbar = true,
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isLayananSuratLoading, setIsLayananSuratLoading] = useState(false);
   const [isVisualisasiDataLoading, setIsVisualisasiDataLoading] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
@@ -109,33 +108,6 @@ const Navbar: React.FC<NavbarProps> = ({
             >
               Tentang Kami
             </Link>
-
-            {/* Special Letter Templates Navigation */}
-            <button
-              className={`relative group flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all duration-300 transform hover:scale-105 shadow-lg font-sans disabled:opacity-70 disabled:cursor-not-allowed ${
-                isActive("layanan-surat")
-                  ? "bg-gradient-to-r from-green-600 to-emerald-700 text-white"
-                  : "bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700"
-              }`}
-              disabled={isLayananSuratLoading}
-              onClick={() => {
-                setIsLayananSuratLoading(true);
-                router.push('/layanan-surat');
-              }}
-            >
-              {isLayananSuratLoading ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  Memuat...
-                </>
-              ) : (
-                <>
-                  <FileText className="h-4 w-4" />
-                  Layanan Surat
-                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-                </>
-              )}
-            </button>
 
             {/* Special Data Visualization Navigation */}
             <button
@@ -241,34 +213,6 @@ const Navbar: React.FC<NavbarProps> = ({
             </Link>
 
             <div className="pt-4 space-y-3">
-              <button
-                className={`block w-full text-center px-4 py-3 rounded-lg font-medium transition-all duration-300 font-sans disabled:opacity-70 disabled:cursor-not-allowed ${
-                  isActive("layanan-surat")
-                    ? "bg-gradient-to-r from-green-600 to-emerald-700 text-white"
-                    : "bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700"
-                }`}
-                disabled={isLayananSuratLoading}
-                onClick={() => {
-                  setIsLayananSuratLoading(true);
-                  setIsMobileMenuOpen(false);
-                  router.push('/layanan-surat');
-                }}
-              >
-                <div className="flex items-center justify-center gap-2">
-                  {isLayananSuratLoading ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                      Memuat...
-                    </>
-                  ) : (
-                    <>
-                      <FileText className="h-4 w-4" />
-                      Layanan Surat
-                    </>
-                  )}
-                </div>
-              </button>
-
               <button
                 className={`block w-full text-center px-4 py-3 rounded-lg font-medium transition-all duration-300 font-sans disabled:opacity-70 disabled:cursor-not-allowed ${
                   isActive("visualisasi-data")

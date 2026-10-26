@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { adminDb } from '@/lib/firebase-admin';
+import { noStoreJson, requireStaff } from '@/lib/require-staff';
 
 // Full person data interface
 interface PersonData {
@@ -26,22 +27,25 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ nik: string }> }
 ) {
+  const denied = await requireStaff(request);
+  if (denied) return denied;
+
   try {
     const { nik } = await params;
 
     if (!nik) {
-      return NextResponse.json(
+      return noStoreJson(
         { error: 'NIK is required' },
         { status: 400 }
       );
     }
 
     // Query Firestore villagers collection
-    const villagersRef = adminDb.collection('villagers');
+    const villagersRef = adminDb().collection('villagers');
     const snapshot = await villagersRef.where('NIK', '==', nik).limit(1).get();
 
     if (snapshot.empty) {
-      return NextResponse.json(
+      return noStoreJson(
         { error: 'Person not found' },
         { status: 404 }
       );
@@ -69,10 +73,10 @@ export async function GET(
       PDDK_AKHIR: data.PDDK_AKHIR?.toString()
     };
 
-    return NextResponse.json(person);
+    return noStoreJson(person);
   } catch (error) {
     console.error('Error fetching person data:', error);
-    return NextResponse.json(
+    return noStoreJson(
       { error: 'Failed to fetch person data' },
       { status: 500 }
     );
