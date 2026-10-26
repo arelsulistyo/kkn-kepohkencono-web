@@ -5,6 +5,32 @@ import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 import ModalShell from "./ModalShell";
 
+type LoginProblem = { field?: "email" | "password"; message: string };
+
+/** Plain-language explanation for a Firebase Auth error code. */
+function describeLoginError(error: unknown): LoginProblem {
+  const code = (error as { code?: string } | null)?.code ?? "";
+  switch (code) {
+    case "auth/invalid-credential":
+    case "auth/invalid-login-credentials":
+    case "auth/wrong-password":
+    case "auth/user-not-found":
+      return { field: "password", message: "Email atau kata sandi salah. Silakan periksa kembali." };
+    case "auth/invalid-email":
+      return { field: "email", message: "Format email tidak valid." };
+    case "auth/missing-password":
+      return { field: "password", message: "Kata sandi wajib diisi." };
+    case "auth/user-disabled":
+      return { message: "Akun ini dinonaktifkan. Hubungi admin desa." };
+    case "auth/too-many-requests":
+      return { message: "Terlalu banyak percobaan login. Tunggu beberapa menit, lalu coba lagi." };
+    case "auth/network-request-failed":
+      return { message: "Tidak dapat terhubung. Periksa koneksi internet Anda." };
+    default:
+      return { message: "Login gagal. Silakan coba lagi." };
+  }
+}
+
 interface LoginDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -44,26 +70,18 @@ export default function LoginDialog({ open, onOpenChange, onLoggedIn }: LoginDia
         });
         setPassword("");
         onLoggedIn();
-      } else if (result.error) {
-        const errorMessage =
-          result.error instanceof Error ? result.error.message : String(result.error);
-        if (errorMessage.includes("email")) {
-          setEmailError(errorMessage);
-        } else if (errorMessage.includes("password")) {
-          setPasswordError(errorMessage);
-        } else {
-          toast({
-            variant: "destructive",
-            title: "Login gagal",
-            description: errorMessage || "Terjadi kesalahan. Silakan coba lagi.",
-          });
-        }
+      } else {
+        console.error("Login gagal:", result.error);
+        const problem = describeLoginError(result.error);
+        if (problem.field === "email") setEmailError(problem.message);
+        else if (problem.field === "password") setPasswordError(problem.message);
+        toast({ variant: "destructive", title: "Login gagal", description: problem.message });
       }
     } catch {
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Terjadi kesalahan saat login",
+        title: "Login gagal",
+        description: "Terjadi kesalahan saat login. Silakan coba lagi.",
       });
     } finally {
       setIsLoading(false);

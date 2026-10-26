@@ -26,6 +26,7 @@ const staffEmails = () =>
 export async function requireStaff(request: NextRequest): Promise<NextResponse | null> {
   const match = /^Bearer\s+(.+)$/i.exec(request.headers.get('authorization') ?? '');
   if (!match) {
+    console.warn('requireStaff: request has no Bearer token');
     return noStoreJson({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -33,11 +34,14 @@ export async function requireStaff(request: NextRequest): Promise<NextResponse |
   try {
     const decoded = await adminAuth().verifyIdToken(match[1]);
     email = decoded.email?.toLowerCase();
-  } catch {
+  } catch (error) {
+    // Usually missing/invalid FIREBASE_* admin credentials or a project mismatch.
+    console.error('requireStaff: could not verify ID token:', error);
     return noStoreJson({ error: 'Unauthorized' }, { status: 401 });
   }
 
   if (!email || !staffEmails().has(email)) {
+    console.warn(`requireStaff: ${email ?? 'account without email'} is not in STAFF_EMAILS`);
     return noStoreJson({ error: 'Forbidden' }, { status: 403 });
   }
   return null;

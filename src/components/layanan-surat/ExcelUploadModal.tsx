@@ -49,6 +49,44 @@ interface UploadResponse {
   };
 }
 
+/** An error whose message is already written for the user. */
+class UploadProblem extends Error {}
+
+/** Plain-language message for a failed /api/sheets or /api/upload response. */
+async function describeFailure(response: Response): Promise<UploadProblem> {
+  const data = await response.json().catch(() => ({}));
+  const serverError: string = data.error ?? "";
+  const message = (() => {
+    switch (response.status) {
+      case 401:
+        return "Sesi login berakhir. Silakan login kembali.";
+      case 403:
+        return "Akun ini tidak memiliki izin untuk memperbarui data penduduk.";
+      case 413:
+        return "Ukuran file terlalu besar.";
+      case 400:
+        if (serverError.includes("Invalid file type")) return "File harus berformat Excel (.xlsx atau .xls).";
+        if (serverError.includes("not found")) return "Sheet yang dipilih tidak ditemukan di dalam file.";
+        if (serverError.includes("empty")) return "Sheet yang dipilih kosong.";
+        if (serverError.includes("headers")) return "Baris pertama sheet harus berisi judul kolom.";
+        if (serverError.includes("exceeds")) return "Baris awal melebihi jumlah data di sheet.";
+        if (serverError.includes("Row")) return "Nomor baris awal atau akhir tidak valid.";
+        return "File atau pengaturan upload tidak lengkap. Periksa kembali file Excel Anda.";
+      default:
+        return "Terjadi kesalahan di server. Silakan coba lagi nanti.";
+    }
+  })();
+  console.error("Excel upload gagal:", response.status, serverError);
+  return new UploadProblem(message);
+}
+
+const userMessage = (err: unknown, fallback: string) =>
+  err instanceof UploadProblem
+    ? err.message
+    : err instanceof TypeError
+      ? "Tidak dapat terhubung ke server. Periksa koneksi internet Anda."
+      : fallback;
+
 interface ExcelUploadModalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
@@ -92,11 +130,10 @@ export default function ExcelUploadModal({
         body: formData,
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.error || "Failed to read file");
+        throw await describeFailure(response);
       }
+      const data = await response.json();
 
       setSheets(data.sheets);
       setUploadStep(2); // Move to step 2 after successful file load
@@ -105,11 +142,10 @@ export default function ExcelUploadModal({
         description: `Ditemukan ${data.totalSheets} sheet dalam file.`,
       });
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Gagal membaca file";
+      const errorMessage = userMessage(err, "File tidak dapat dibaca. Pastikan file Excel tidak rusak.");
       setError(errorMessage);
       toast({
-        title: "Error",
+        title: "Gagal membaca file",
         description: errorMessage,
         variant: "destructive",
       });
@@ -128,7 +164,7 @@ export default function ExcelUploadModal({
     const endRow = parseInt(rowEnd);
 
     if (startRow < 1 || endRow < startRow) {
-      setError("Baris awal harus >= 1 dan baris akhir harus >= baris awal");
+      setError("Baris awal minimal 1, dan baris akhir tidak boleh lebih kecil dari baris awal.");
       return;
     }
 
@@ -148,11 +184,10 @@ export default function ExcelUploadModal({
         body: formData,
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.error || "Upload gagal");
+        throw await describeFailure(response);
       }
+      const data = await response.json();
 
       setUploadResult(data);
       const { newRecords, updatedRecords } = data.summary;
@@ -169,7 +204,7 @@ export default function ExcelUploadModal({
         description: description,
       });
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Upload gagal";
+      const errorMessage = userMessage(err, "Upload gagal. Silakan coba lagi.");
       setError(errorMessage);
       toast({
         title: "Upload gagal",
