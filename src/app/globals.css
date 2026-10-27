@@ -368,24 +368,3 @@ a,
 .card-component {
   border-color: rgb(229 231 235) !important; /* gray-200 */
 }
-
-/* Loading animations */
-.animation-delay-200 {
-  animation-delay: 0.2s;
-}
-
-@keyframes loading-bar {
-  0% {
-    transform: translateX(-100%);
-  }
-  50% {
-    transform: translateX(0%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-.animate-loading-bar {
-  animation: loading-bar 2s ease-in-out infinite;
-}

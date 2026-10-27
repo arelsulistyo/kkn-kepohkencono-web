@@ -247,6 +247,7 @@ export default function ExcelUploadModal({
     <ModalShell
       open={isOpen}
       onOpenChange={handleDialogClose}
+      kicker="database warga"
       title="Upload Data Excel"
       description="Upload file Excel untuk memperbarui data warga secara massal"
       size="wide"
@@ -260,9 +261,9 @@ export default function ExcelUploadModal({
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all duration-300 ${
                     step <= uploadStep
-                      ? "bg-green-600 text-white"
-                      : "bg-gray-200 text-gray-600"
-                  } ${step === uploadStep ? "ring-4 ring-green-200" : ""}`}
+                      ? "bg-[var(--brand)] text-white"
+                      : "bg-[var(--brand-wash)] text-[var(--muted)]"
+                  } ${step === uploadStep ? "ring-4 ring-[var(--brand-wash)]" : ""}`}
                 >
                   {step < uploadStep ? (
                     <svg
@@ -285,7 +286,7 @@ export default function ExcelUploadModal({
                 {step < 4 && (
                   <div
                     className={`h-1 w-8 transition-all duration-300 ${
-                      step < uploadStep ? "bg-green-600" : "bg-gray-200"
+                      step < uploadStep ? "bg-[var(--brand)]" : "bg-[var(--brand-wash)]"
                     }`}
                   />
                 )}
@@ -294,13 +295,13 @@ export default function ExcelUploadModal({
           </div>
 
           <div className="text-center mb-6">
-            <h4 className="text-lg font-semibold text-gray-900">
+            <h4 className="text-lg font-semibold text-[var(--ink)]">
               {uploadStep === 1 && "Pilih File Excel"}
               {uploadStep === 2 && "Pilih Sheet"}
               {uploadStep === 3 && "Atur Rentang Baris"}
               {uploadStep === 4 && "Upload & Proses"}
             </h4>
-            <p className="text-gray-600 text-sm">
+            <p className="text-[var(--muted)] text-sm">
               {uploadStep === 1 &&
                 "Upload file Excel yang berisi data penerima"}
               {uploadStep === 2 && "Pilih sheet mana yang berisi data Anda"}
@@ -312,7 +313,7 @@ export default function ExcelUploadModal({
           {/* Step 1: File Selection */}
           {uploadStep === 1 && (
             <div className="space-y-4">
-              <div className="border-2 border-dashed border-green-300 rounded-xl p-8 text-center hover:border-green-400 transition-colors duration-300">
+              <div className="border-2 border-dashed border-[var(--input-border)] rounded-[16px] bg-[var(--card)] p-8 text-center hover:border-[var(--brand)] transition-colors duration-300">
                 <input
                   type="file"
                   accept=".xlsx,.xls"
@@ -322,14 +323,14 @@ export default function ExcelUploadModal({
                 />
                 <label htmlFor="excel-upload-modal" className="cursor-pointer">
                   <div className="flex flex-col items-center gap-4">
-                    <div className="p-4 bg-green-100 rounded-full">
-                      <Upload className="h-12 w-12 text-green-600" />
+                    <div className="p-4 bg-[var(--brand-wash)] rounded-full">
+                      <Upload className="h-12 w-12 text-[var(--brand)]" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                      <h3 className="text-lg font-semibold text-[var(--ink)] mb-2">
                         Choose Excel File
                       </h3>
-                      <p className="text-gray-600 text-sm">
+                      <p className="text-[var(--muted)] text-sm">
                         Klik untuk browse atau seret dan lepas file .xlsx atau
                         .xls Anda
                       </p>
@@ -340,9 +341,9 @@ export default function ExcelUploadModal({
 
               {isLoadingSheets && (
                 <div className="flex justify-center">
-                  <Alert className="border-green-200 bg-green-50 w-fit">
-                    <FileSpreadsheet className="h-4 w-4 text-green-600" />
-                    <AlertDescription className="text-gray-900">
+                  <Alert className="border-0 rounded-[12px] bg-[var(--brand-wash)] w-fit">
+                    <FileSpreadsheet className="h-4 w-4 text-[var(--brand)]" />
+                    <AlertDescription className="text-[var(--ink)]">
                       Membaca file dan menganalisis sheet...
                     </AlertDescription>
                   </Alert>
@@ -354,17 +355,17 @@ export default function ExcelUploadModal({
           {/* Step 2: Sheet Selection */}
           {uploadStep === 2 && (
             <div className="space-y-4">
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+              <div className="bg-[var(--brand-wash)] rounded-[12px] p-4 mb-4">
                 <div className="flex items-center gap-2">
-                  <CheckCircle className="h-5 w-5 text-green-600" />
-                  <span className="font-medium text-green-900">
+                  <CheckCircle className="h-5 w-5 text-[var(--brand)]" />
+                  <span className="font-medium text-[var(--ink)]">
                     File berhasil diupload: {file?.name}
                   </span>
                 </div>
               </div>
 
               <div>
-                <h4 className="font-medium text-gray-900 mb-3">
+                <h4 className="font-medium text-[var(--ink)] mb-3">
                   Sheet yang Tersedia:
                 </h4>
                 <div className="grid gap-3">
@@ -375,18 +376,18 @@ export default function ExcelUploadModal({
                         setSelectedSheet(sheet.name);
                         setUploadStep(3);
                       }}
-                      className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-green-300 hover:bg-green-50 transition-all duration-200 text-left"
+                      className="flex items-center justify-between p-4 rounded-[12px] bg-[var(--card)] shadow-[var(--shadow)] hover:border-[var(--brand)] hover:bg-[var(--brand-wash)] transition-all duration-200 text-left"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="p-2 bg-green-100 rounded">
-                          <FileSpreadsheet className="h-4 w-4 text-green-600" />
+                        <div className="p-2 bg-[var(--brand-wash)] rounded">
+                          <FileSpreadsheet className="h-4 w-4 text-[var(--brand)]" />
                         </div>
-                        <span className="font-medium text-gray-900">
+                        <span className="font-medium text-[var(--ink)]">
                           {sheet.name}
                         </span>
                       </div>
                       <svg
-                        className="h-5 w-5 text-gray-400"
+                        className="h-5 w-5 text-[var(--muted)]"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -407,7 +408,7 @@ export default function ExcelUploadModal({
                 <Button
                   onClick={() => setUploadStep(1)}
                   variant="outline"
-                  className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50 py-3"
+                  className="flex-1 rounded-[12px] border-[var(--input-border)] bg-[var(--card)] text-[var(--ink)] hover:bg-[var(--brand-wash)] py-3"
                 >
                   Kembali ke Pilihan File
                 </Button>
@@ -418,10 +419,10 @@ export default function ExcelUploadModal({
           {/* Step 3: Row Range Selection */}
           {uploadStep === 3 && (
             <div className="space-y-6">
-              <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-6">
+              <div className="bg-[var(--brand-wash)] rounded-[12px] p-4 mb-6">
                 <div className="flex items-center gap-3">
-                  <FileSpreadsheet className="h-6 w-6 text-green-600" />
-                  <span className="font-semibold text-green-900">
+                  <FileSpreadsheet className="h-6 w-6 text-[var(--brand)]" />
+                  <span className="font-semibold text-[var(--ink)]">
                     Sheet Terpilih: {selectedSheet}
                   </span>
                 </div>
@@ -429,7 +430,7 @@ export default function ExcelUploadModal({
 
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-3">
-                  <Label className="block text-sm font-semibold text-gray-700">
+                  <Label className="block text-sm font-semibold text-[var(--ink)]">
                     Baris Awal
                   </Label>
                   <Input
@@ -437,16 +438,16 @@ export default function ExcelUploadModal({
                     min="1"
                     value={rowStart}
                     onChange={(e) => setRowStart(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
+                    className="w-full px-4 py-3 h-12 border border-[var(--input-border)] rounded-[12px] bg-white text-base focus:ring-[3px] focus:ring-[rgba(59,90,69,0.35)] focus:border-[var(--brand)] transition-colors"
                     placeholder="2"
                   />
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-[var(--muted)]">
                     Biasanya baris 2 (setelah header)
                   </p>
                 </div>
 
                 <div className="space-y-3">
-                  <Label className="block text-sm font-semibold text-gray-700">
+                  <Label className="block text-sm font-semibold text-[var(--ink)]">
                     Baris Akhir
                   </Label>
                   <Input
@@ -454,10 +455,10 @@ export default function ExcelUploadModal({
                     min="1"
                     value={rowEnd}
                     onChange={(e) => setRowEnd(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
+                    className="w-full px-4 py-3 h-12 border border-[var(--input-border)] rounded-[12px] bg-white text-base focus:ring-[3px] focus:ring-[rgba(59,90,69,0.35)] focus:border-[var(--brand)] transition-colors"
                     placeholder="100"
                   />
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-[var(--muted)]">
                     Baris terakhir yang akan diproses
                   </p>
                 </div>
@@ -467,13 +468,13 @@ export default function ExcelUploadModal({
                 <Button
                   onClick={() => setUploadStep(2)}
                   variant="outline"
-                  className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50 py-3"
+                  className="flex-1 rounded-[12px] border-[var(--input-border)] bg-[var(--card)] text-[var(--ink)] hover:bg-[var(--brand-wash)] py-3"
                 >
                   Kembali ke Pilihan Sheet
                 </Button>
                 <Button
                   onClick={() => setUploadStep(4)}
-                  className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3"
+                  className="flex-1 rounded-[12px] bg-[var(--brand)] hover:bg-[var(--brand-dark)] text-white py-3"
                 >
                   Lanjut ke Review
                 </Button>
@@ -484,7 +485,7 @@ export default function ExcelUploadModal({
           {/* Step 4: Review and Upload */}
           {uploadStep === 4 && (
             <div className="space-y-6">
-              <Card>
+              <Card className="rounded-[16px] border-0 bg-[var(--card)] shadow-[var(--shadow)]">
                 <CardHeader>
                   <CardTitle>Review Pengaturan Upload</CardTitle>
                   <CardDescription>
@@ -494,7 +495,7 @@ export default function ExcelUploadModal({
                 </CardHeader>
                 <CardContent>
                   <div className="grid gap-4">
-                    <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="grid grid-cols-2 gap-2 text-sm [&>div]:rounded-[12px] [&>div]:bg-[var(--brand-wash)] [&>div]:px-3 [&>div]:py-2">
                       <div>
                         <strong>File:</strong> {file?.name}
                       </div>
@@ -509,7 +510,7 @@ export default function ExcelUploadModal({
                       </div>
                     </div>
                     {selectedSheetInfo && (
-                      <div className="text-sm text-gray-600">
+                      <div className="text-sm text-[var(--muted)]">
                         <strong>Info Sheet:</strong>{" "}
                         {selectedSheetInfo.rowCount} baris,{" "}
                         {selectedSheetInfo.columnCount} kolom
@@ -523,14 +524,14 @@ export default function ExcelUploadModal({
                 <Button
                   onClick={() => setUploadStep(3)}
                   variant="outline"
-                  className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50 py-3"
+                  className="flex-1 rounded-[12px] border-[var(--input-border)] bg-[var(--card)] text-[var(--ink)] hover:bg-[var(--brand-wash)] py-3"
                 >
                   Kembali ke Pengaturan
                 </Button>
                 <Button
                   onClick={handleUpload}
                   disabled={isUploading}
-                  className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3"
+                  className="flex-1 rounded-[12px] bg-[var(--brand)] hover:bg-[var(--brand-dark)] text-white py-3"
                 >
                   {isUploading ? (
                     <>
@@ -580,10 +581,10 @@ export default function ExcelUploadModal({
           {/* Upload Result */}
           {uploadResult && (
             <div className="mt-6">
-              <Card>
+              <Card className="rounded-[16px] border-0 bg-[var(--card)] shadow-[var(--shadow)]">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <CheckCircle className="h-5 w-5 text-green-600" />
+                    <CheckCircle className="h-5 w-5 text-[var(--brand)]" />
                     Upload Selesai
                   </CardTitle>
                 </CardHeader>
@@ -602,14 +603,14 @@ export default function ExcelUploadModal({
                       </div>
                       <div>
                         Upload berhasil:{" "}
-                        <strong className="text-green-600">
+                        <strong className="text-[var(--brand)]">
                           {uploadResult.summary.successfulUploads}
                         </strong>
                       </div>
                       {uploadResult.summary.newRecords > 0 && (
                         <div>
                           Data baru:{" "}
-                          <strong className="text-blue-600">
+                          <strong className="text-[var(--brand)]">
                             {uploadResult.summary.newRecords}
                           </strong>
                         </div>
@@ -617,7 +618,7 @@ export default function ExcelUploadModal({
                       {uploadResult.summary.updatedRecords > 0 && (
                         <div>
                           Data diperbarui:{" "}
-                          <strong className="text-orange-600">
+                          <strong className="text-[var(--accent)]">
                             {uploadResult.summary.updatedRecords}
                           </strong>
                         </div>
@@ -625,7 +626,7 @@ export default function ExcelUploadModal({
                       {uploadResult.summary.errorCount > 0 && (
                         <div>
                           Error:{" "}
-                          <strong className="text-red-600">
+                          <strong className="text-[var(--error)]">
                             {uploadResult.summary.errorCount}
                           </strong>
                         </div>
@@ -638,7 +639,7 @@ export default function ExcelUploadModal({
                           <h4 className="font-medium mb-2">Contoh Error:</h4>
                           <div className="space-y-1 text-sm">
                             {uploadResult.summary.errors.map((error, index) => (
-                              <div key={index} className="text-red-600">
+                              <div key={index} className="text-[var(--error)]">
                                 Baris {error.rowIndex}: {error.error}
                               </div>
                             ))}
@@ -649,7 +650,7 @@ export default function ExcelUploadModal({
                     <div className="flex justify-center mt-6">
                       <Button
                         onClick={resetUploadProcess}
-                        className="bg-green-600 hover:bg-green-700 text-white px-6 py-2"
+                        className="rounded-[12px] bg-[var(--brand)] hover:bg-[var(--brand-dark)] text-white px-6 py-2"
                       >
                         Upload File Lain
                       </Button>

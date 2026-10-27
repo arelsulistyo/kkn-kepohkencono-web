@@ -140,4 +140,4 @@ export const getService = (id: LetterId): Service =>
 
 /** "SKD · No. 01" */
 export const letterReference = (service: Service) =>
-  `${service.code} · No. ${String(service.number).padStart(2, "0")}`;
+  `${service.code} · no. ${String(service.number).padStart(2, "0")}`;

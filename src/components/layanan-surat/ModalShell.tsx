@@ -2,11 +2,14 @@
 
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { LS_ROOT_CLASS } from "@/app/layanan-surat/fonts";
+import { CloseGlyph } from "./glyphs";
 
 interface ModalShellProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title: string;
+  /** Small italic label above the title. */
+  kicker: string;
   description?: string;
   size?: "narrow" | "wide";
   children: React.ReactNode;
@@ -17,6 +20,7 @@ export default function ModalShell({
   open,
   onOpenChange,
   title,
+  kicker,
   description,
   size = "narrow",
   children,
@@ -31,6 +35,7 @@ export default function ModalShell({
         >
           <div className="ls-modal-header">
             <div>
+              <p className="ls-kicker">{kicker}</p>
               <DialogPrimitive.Title className="ls-modal-title">{title}</DialogPrimitive.Title>
               {description && (
                 <DialogPrimitive.Description className="ls-modal-description">
@@ -38,8 +43,8 @@ export default function ModalShell({
                 </DialogPrimitive.Description>
               )}
             </div>
-            <DialogPrimitive.Close className="text-action muted-action">
-              Tutup <span aria-hidden="true">×</span>
+            <DialogPrimitive.Close className="round-close" aria-label="Tutup">
+              <CloseGlyph />
             </DialogPrimitive.Close>
           </div>
           {children}

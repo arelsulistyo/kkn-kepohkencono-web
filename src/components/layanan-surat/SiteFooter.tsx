@@ -1,8 +1,10 @@
 export default function SiteFooter() {
   return (
-    <footer className="site-footer">
-      <span>Desa Kepohkencono</span>
-      <span>Arsip Layanan Surat · {new Date().getFullYear()}</span>
+    <footer className="service-footer">
+      <div className="service-footer-inner">
+        <strong>Desa Kepohkencono</strong>
+        <em>Arsip Layanan Surat · 2025</em>
+      </div>
     </footer>
   );
 }

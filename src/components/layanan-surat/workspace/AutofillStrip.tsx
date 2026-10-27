@@ -23,16 +23,16 @@ export default function AutofillStrip({
   compact = false,
 }: AutofillStripProps) {
   return (
-    <div className={`autofill-strip ${compact ? "is-compact" : ""}`}>
-      <span className="micro-label" id={`${id}-label`}>
+    <div className={`create-autofill ${compact ? "is-compact" : ""}`}>
+      <p className="ls-kicker" id={`${id}-label`}>
         {label}
-      </span>
+      </p>
       {person ? (
         <div className="selected-resident" role="status">
           <span>
-            Data diisi dari: <strong>{person.NAMA}</strong> · NIK {person.NIK}
+            Data diisi dari <strong>{person.NAMA}</strong> · NIK {person.NIK}
           </span>
-          <button type="button" onClick={onClear}>
+          <button type="button" className="chip-button" onClick={onClear}>
             Ganti
           </button>
         </div>

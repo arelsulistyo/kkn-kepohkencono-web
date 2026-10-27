@@ -19,7 +19,7 @@ export default function ServiceTools({
   counts,
 }: ServiceToolsProps) {
   return (
-    <div className="service-tools">
+    <div className="template-controls">
       <label className="service-search">
         <span className="sr-only">Cari layanan surat</span>
         <SearchGlyph />
@@ -30,21 +30,18 @@ export default function ServiceTools({
           onChange={(event) => onQueryChange(event.target.value)}
         />
       </label>
-      <div className="filters-scroller">
-        <div className="filters" role="group" aria-label="Filter kategori">
-          {(["Semua", ...CATEGORIES] as const).map((filter) => (
-            <button
-              type="button"
-              key={filter}
-              className={category === filter ? "active" : ""}
-              aria-pressed={category === filter}
-              onClick={() => onCategoryChange(filter)}
-            >
-              <span>{filter}</span>
-              <small>{counts[filter]}</small>
-            </button>
-          ))}
-        </div>
+      <div className="filter-chips" role="group" aria-label="Filter kategori">
+        {(["Semua", ...CATEGORIES] as const).map((filter) => (
+          <button
+            type="button"
+            key={filter}
+            className={category === filter ? "active" : ""}
+            aria-pressed={category === filter}
+            onClick={() => onCategoryChange(filter)}
+          >
+            {filter} <small>{counts[filter]}</small>
+          </button>
+        ))}
       </div>
     </div>
   );

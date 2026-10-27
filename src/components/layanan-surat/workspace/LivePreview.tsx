@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { CloseGlyph } from "../glyphs";
 import type { LetterConfig, LetterValues } from "./types";
 
 const DEBOUNCE_MS = 600;
@@ -110,42 +111,45 @@ export default function LivePreview({
       {...(mobileOpen ? { role: "dialog", "aria-modal": true } : {})}
     >
       <div className="live-preview-heading">
-        <span className="micro-label">Pratinjau surat</span>
-        <span className="preview-status" role="status">
+        <p className="ls-kicker">pratinjau surat</p>
+        <span className={`preview-status ${failed ? "is-error" : ""}`} role="status">
           {failed ? "Pratinjau gagal dimuat" : updating ? "Memperbarui…" : ""}
         </span>
+        <button
+          ref={closeRef}
+          type="button"
+          className="round-close mobile-preview-close"
+          aria-label="Tutup pratinjau"
+          onClick={onMobileClose}
+        >
+          <CloseGlyph />
+        </button>
       </div>
-      <button
-        ref={closeRef}
-        type="button"
-        className="text-action mobile-preview-close"
-        onClick={onMobileClose}
-      >
-        Tutup <span aria-hidden="true">×</span>
-      </button>
 
-      <div className="letter-frame">
-        {!shown && (
-          <div className="sheet-placeholder" aria-hidden="true">
-            {Array.from({ length: 14 }, (_, i) => (
-              <span key={i} />
-            ))}
-          </div>
-        )}
-        {frames.map((url) => {
-          const buffering = url === pending;
-          return (
-            <iframe
-              key={url}
-              src={url + VIEWER_PARAMS}
-              title={`Pratinjau ${title}`}
-              className={buffering ? "is-buffer" : ""}
-              aria-hidden={buffering || undefined}
-              tabIndex={buffering ? -1 : undefined}
-              onLoad={buffering ? () => promote(url) : undefined}
-            />
-          );
-        })}
+      <div className="preview-desk">
+        <div className="letter-frame">
+          {!shown && (
+            <div className="sheet-placeholder" aria-hidden="true">
+              {Array.from({ length: 14 }, (_, i) => (
+                <span key={i} />
+              ))}
+            </div>
+          )}
+          {frames.map((url) => {
+            const buffering = url === pending;
+            return (
+              <iframe
+                key={url}
+                src={url + VIEWER_PARAMS}
+                title={`Pratinjau ${title}`}
+                className={buffering ? "is-buffer" : ""}
+                aria-hidden={buffering || undefined}
+                tabIndex={buffering ? -1 : undefined}
+                onLoad={buffering ? () => promote(url) : undefined}
+              />
+            );
+          })}
+        </div>
       </div>
       {shown && (
         <a className="preview-open-link" href={shown} target="_blank" rel="noopener noreferrer">

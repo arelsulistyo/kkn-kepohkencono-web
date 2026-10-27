@@ -55,21 +55,23 @@ export default function LayananSuratPage() {
         title="Layanan Surat Desa"
         subtitle="Template Siap Pakai untuk Administrasi Desa Kepohkencono"
         facts={[
-          { value: String(services.length), label: "Template surat" },
-          { value: "PDF", label: "Siap cetak" },
+          { value: String(services.length), label: "template surat" },
+          { value: "PDF", label: "siap cetak" },
         ]}
       />
 
-      <main>
+      <main className="service-main">
         <StepsGuide />
         <AutofillPanel />
 
-        <section className="section services-section" aria-labelledby="ls-services-heading">
-          <div className="services-heading">
-            <h2 id="ls-services-heading">Pilih Jenis Surat</h2>
+        <section className="section template-section" aria-labelledby="ls-services-heading">
+          <div className="template-heading">
+            <div>
+              <p className="ls-kicker">pilih template</p>
+              <h2 id="ls-services-heading">Pilih Jenis Surat</h2>
+            </div>
             <p className="result-count" aria-live="polite">
-              Menunjukkan <strong>{filteredServices.length}</strong> dari{" "}
-              <strong>{services.length}</strong> template
+              menampilkan {filteredServices.length} dari {services.length} template
             </p>
           </div>
 

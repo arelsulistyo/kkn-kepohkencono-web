@@ -1,38 +1,29 @@
 import { MetadataRoute } from 'next'
 
+const SECTIONS = ['tentang', 'dukuh', 'budaya', 'data', 'galeri', 'kontak']
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://desakepohkencono.com'
-  
+  const lastModified = new Date()
+
   return [
     {
       url: baseUrl,
-      lastModified: new Date(),
+      lastModified,
       changeFrequency: 'weekly',
       priority: 1,
     },
     {
-      url: `${baseUrl}/#about`,
-      lastModified: new Date(),
+      url: `${baseUrl}/visualisasi-data`,
+      lastModified,
       changeFrequency: 'monthly',
-      priority: 0.8,
+      priority: 0.9,
     },
-    {
-      url: `${baseUrl}/#demografi`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/#potensi`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/#contact`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
+    ...SECTIONS.map((section) => ({
+      url: `${baseUrl}/#${section}`,
+      lastModified,
+      changeFrequency: 'monthly' as const,
       priority: 0.7,
-    },
+    })),
   ]
 }

@@ -58,31 +58,31 @@ export default function LetterCard({ service, createHref, onCreateBlocked, onPre
   const titleId = `ls-card-${service.id}`;
   return (
     <li className="letter-card" aria-labelledby={titleId}>
-      <span className="folder-tab">{service.category}</span>
-      <span className="letter-code">{letterReference(service)}</span>
+      <div className="letter-meta">
+        <span className="category-chip">{service.category}</span>
+        <em>{letterReference(service)}</em>
+      </div>
       <h3 id={titleId}>{service.title}</h3>
       <p className="card-description">{service.description}</p>
-      <div className="requirements">
-        <span className="micro-label">Syarat</span>
-        <ul>
+      <div className="letter-req">
+        <em>Syarat</em>
+        <ul className="service-requirements">
           {service.requirements.map((requirement) => (
             <li key={requirement}>{requirement}</li>
           ))}
         </ul>
       </div>
-      <div className="card-actions">
-        <div className="card-actions-row">
-          <button
-            type="button"
-            className="preview-button"
-            onClick={(event) => onPreview(event.currentTarget)}
-            aria-label={`Lihat contoh ${service.title}`}
-          >
-            <EyeGlyph />
-            Lihat contoh
-          </button>
-          <CreateLetterLink href={createHref} onBlocked={onCreateBlocked} describedBy={titleId} />
-        </div>
+      <div className="letter-actions">
+        <button
+          type="button"
+          className="preview-button"
+          onClick={(event) => onPreview(event.currentTarget)}
+          aria-label={`Lihat contoh ${service.title}`}
+        >
+          <EyeGlyph />
+          Lihat contoh
+        </button>
+        <CreateLetterLink href={createHref} onBlocked={onCreateBlocked} describedBy={titleId} />
       </div>
     </li>
   );

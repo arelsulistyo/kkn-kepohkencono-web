@@ -1,1091 +1,735 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  Users,
-  Briefcase,
-  ArrowRight,
-  Play,
-  Heart,
-  MapPin,
-  Instagram,
-  Phone,
-  Mail,
-  GraduationCap,
-  BarChart3,
-  Leaf,
-} from "lucide-react";
-import { FaTiktok } from "react-icons/fa";
+import Image, { type StaticImageData } from "next/image";
 import Link from "next/link";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import Navbar from "@/components/Navbar";
+import { ArrowRight, ChevronRight, ExternalLink, Play, X } from "lucide-react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type RefObject,
+} from "react";
+import SiteFooter from "@/components/site/SiteFooter";
+import SiteNav, { type NavId } from "@/components/site/SiteNav";
+import {
+  nextTabIndex,
+  useActiveSection,
+  useDialog,
+  useReveal,
+} from "@/components/site/hooks";
+import { KP_ROOT_CLASS } from "@/lib/fonts";
+import {
+  ageGroups,
+  education,
+  formatNumber,
+  formatPercent,
+  jobs,
+  jobsWorkingTotal,
+  share,
+  totals,
+  type SexBreakdown,
+} from "@/lib/village-data";
+import "@/styles/kepohkencono.css";
 
-const Index = () => {
-  const [activeSection, setActiveSection] = useState("");
-  const [isVisible, setIsVisible] = useState(false);
-  const [showNavbar, setShowNavbar] = useState(false);
-  const [scrollY, setScrollY] = useState(0);
-  const [isVisualisasiDataLoading, setIsVisualisasiDataLoading] = useState(false);
-  const [populationData, setPopulationData] = useState({
-    total: 0,
-    households: 0,
-  });
-  const router = useRouter();
+import baldes from "../../public/images/home/baldes_kepohkencono.jpg";
+import bancaan from "../../public/images/home/bancaan.jpg";
+import campursari from "../../public/images/home/campursari.jpg";
+import gallery1 from "../../public/images/home/galeri_desa/galeri_desa_1.jpg";
+import gallery2 from "../../public/images/home/galeri_desa/galeri_desa_2.jpg";
+import gallery3 from "../../public/images/home/galeri_desa/galeri_desa_3.jpg";
+import gallery4 from "../../public/images/home/galeri_desa/galeri_desa_4.jpg";
+import gallery5 from "../../public/images/home/galeri_desa/galeri_desa_5.jpg";
+import gallery6 from "../../public/images/home/galeri_desa/galeri_desa_6.jpg";
+import gallery7 from "../../public/images/home/galeri_desa/galeri_desa_7.jpg";
+import gallery8 from "../../public/images/home/galeri_desa/galeri_desa_8.jpg";
+import ketoprak from "../../public/images/home/ketoprak.jpg";
+import sedekahBumi from "../../public/images/home/sedekah_bumi.jpg";
+import sunset from "../../public/images/home/sunset_kepohkencono_centered.jpg";
 
-  const scrollToContent = () => {
-    const aboutSection = document.getElementById("about");
-    if (aboutSection) {
-      aboutSection.scrollIntoView({ behavior: "smooth" });
-    }
-  };
+const DUKUH = [
+  {
+    name: "Manding",
+    leader: "—",
+    mapLink: "https://maps.app.goo.gl/69K3brhnb2fCAeYG9",
+    embedUrl:
+      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15845.282238606706!2d111.13487324999998!3d-6.852124999999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e77337a065a0ca9%3A0x402f608a3a862ff!2sManding%2C%20Kepohkencono%2C%20Pucakwangi%2C%20Pati%20Regency%2C%20Central%20Java!5e0!3m2!1sen!2sid!4v1753696946278!5m2!1sen!2sid",
+  },
+  {
+    name: "Panggang",
+    leader: "Bapak Pardi",
+    mapLink: "https://maps.app.goo.gl/2dxwjwUrxk3MrXMDA",
+    embedUrl:
+      "https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15845.570175924187!2d111.1301171!3d-6.8434551!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e77347c2f18d4e9%3A0xb5a29788e3c841b!2sPanggang%2C%20Kepohkencono%2C%20Pucakwangi%2C%20Pati%20Regency%2C%20Central%20Java!5e0!3m2!1sen!2sid!4v1753697081840!5m2!1sen!2sid",
+  },
+  {
+    name: "Prau",
+    leader: "Bapak Ngasmani",
+    mapLink: "https://maps.app.goo.gl/D4Zv955qhTAHaqLZ7",
+    embedUrl:
+      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3961.4776241579593!2d111.1516987!3d-6.8331938!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e77334abf4a08bd%3A0x865f9762969b0383!2sDk.%20Prahu%20Ds.%20kepohkencono%20Kec.%20Pucakwangi%20Kab.%20Pati%20Jawa%20Tengah%20Indonesia!5e0!3m2!1sen!2sid!4v1753697107468!5m2!1sen!2sid",
+  },
+  {
+    name: "Ngepoh",
+    leader: "Bapak Zamzuri",
+    mapLink: "https://maps.app.goo.gl/965Cm1wVJyUFyQMVA",
+    embedUrl:
+      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15845.570172605165!2d111.14043835!3d-6.8434552!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7733756e2640f3%3A0x436d0d32ed3f7eb4!2sKepoh%2C%20Kepohkencono%2C%20Pucakwangi%2C%20Pati%20Regency%2C%20Central%20Java!5e0!3m2!1sen!2sid!4v1753697121727!5m2!1sen!2sid",
+  },
+  {
+    name: "Jatikebo",
+    leader: "Bapak Muntono",
+    mapLink: "https://maps.app.goo.gl/WgCyGsxMdCPLsSj29",
+    embedUrl:
+      "https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15845.520969435069!2d111.1459171!3d-6.8449375!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e773399f1c7880f%3A0x62c00c74b263e449!2sJati%20Kebo%2C%20Kepohkencono%2C%20Pucakwangi%2C%20Pati%20Regency%2C%20Central%20Java!5e0!3m2!1sen!2sid!4v1753697134464!5m2!1sen!2sid",
+  },
+  {
+    name: "Dangklik",
+    leader: "Bapak Moh Santoso Edi",
+    mapLink: "https://maps.app.goo.gl/krLRQB5LBxvuKf489",
+    embedUrl:
+      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15845.740101319167!2d111.15134735000001!3d-6.8383334499999995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7733a31c434147%3A0x263764942683a661!2sDangklik%2C%20Kepohkencono%2C%20Pucakwangi%2C%20Pati%20Regency%2C%20Central%20Java!5e0!3m2!1sen!2sid!4v1753697149731!5m2!1sen!2sid",
+  },
+];
 
-  useEffect(() => {
-    setIsVisible(true);
+const EVENTS = [
+  {
+    image: bancaan,
+    title: "Banca’an di Punden",
+    label: "Punden desa",
+    description:
+      "Banca’an di punden melambangkan rasa syukur dan penghormatan kepada leluhur dengan membawa hasil bumi dan makanan tradisional.",
+  },
+  {
+    image: ketoprak,
+    title: "Kesenian Ketoprak",
+    label: "Pertunjukan tradisional",
+    description:
+      "Ketoprak adalah seni pertunjukan rakyat yang menyampaikan nilai moral, sejarah, dan budaya melalui cerita dan dialog.",
+  },
+  {
+    image: campursari,
+    title: "Campursari",
+    label: "Musik kebersamaan",
+    description:
+      "Campursari adalah musik perpaduan tradisional dan modern yang memperkuat suasana kebersamaan dalam Sedekah Bumi.",
+  },
+];
 
-    // Load population data
-    const loadPopulationData = async () => {
-      try {
-        // Load demographic data for total population
-        const demographicResponse = await fetch("/data/Demografi_Umur.json");
-        const demographicData = await demographicResponse.json();
+/** Order and alt text follow the mosaic's grid areas a–h. */
+const GALLERY: { image: StaticImageData; alt: string }[] = [
+  { image: gallery3, alt: "Matahari terbenam di atas padang rumput desa" },
+  { image: gallery4, alt: "Gapura dan jalan di tepi desa" },
+  { image: gallery1, alt: "Pohon besar dan gazebo di tepi sawah saat senja" },
+  { image: gallery6, alt: "Petani di tengah sawah hijau" },
+  { image: gallery2, alt: "Papan nama Kantor Kepala Desa Kepohkencono" },
+  { image: gallery5, alt: "Papan penunjuk arah Desa Kepohkencono" },
+  { image: gallery7, alt: "Pohon rindang di tengah hamparan sawah" },
+  { image: gallery8, alt: "Petani di sawah yang mulai menguning" },
+];
 
-        // Load household data
-        const householdResponse = await fetch("/data/Kepala_Keluarga.json");
-        const householdData = await householdResponse.json();
+const MARQUEE = DUKUH.map((dukuh) => dukuh.name).join(" · ");
 
-        if (demographicData && demographicData.length > 0) {
-          const data = demographicData[0];
+/** Three largest rows of a breakdown, as shares of `whole`. */
+function topShares(rows: SexBreakdown[], whole: number) {
+  return [...rows]
+    .sort((a, b) => b.total - a.total)
+    .slice(0, 3)
+    .map((row) => ({ label: row.label, percent: share(row.total, whole) }));
+}
 
-          // Calculate total population by summing all age groups
-          let totalPopulation = 0;
-          const ageRanges = [
-            "00-04",
-            "05-09",
-            "10-14",
-            "15-19",
-            "20-24",
-            "25-29",
-            "30-34",
-            "35-39",
-            "40-44",
-            "45-49",
-            "50-54",
-            "55-59",
-            "60-64",
-            "65-69",
-            "70-74",
-            ">75",
-          ];
+const LEDGERS = [
+  {
+    title: "Kelompok usia",
+    rows: topShares(ageGroups, totals.population).map((row) => ({
+      ...row,
+      label: `${row.label} tahun`,
+    })),
+    caption: (label: string) => `berusia ${label}`,
+  },
+  {
+    title: "Pekerjaan utama",
+    rows: topShares(jobs, jobsWorkingTotal),
+    caption: (label: string) => `bekerja sebagai ${label.toLowerCase()}`,
+  },
+  {
+    title: "Tingkat pendidikan",
+    rows: topShares(education, totals.population),
+    caption: (label: string) => label,
+  },
+];
 
-          ageRanges.forEach((range) => {
-            totalPopulation +=
-              (data[`${range} L`] || 0) + (data[`${range} P`] || 0);
-          });
+/** Page sections, in page order, whose ids match the nav items. */
+const SECTIONS: readonly NavId[] = [
+  "beranda",
+  "tentang",
+  "dukuh",
+  "budaya",
+  "data",
+  "galeri",
+  "kontak",
+];
 
-          // Get household data
-          const totalHouseholds =
-            householdData && householdData.length > 0
-              ? householdData[0]["KEPALA KELUARGA JML"] || 0
-              : 0;
-
-          setPopulationData({
-            total: totalPopulation,
-            households: totalHouseholds,
-          });
-        }
-      } catch (error) {
-        console.error("Error loading population data:", error);
-        // Fallback to hardcoded values if data loading fails
-        setPopulationData({ total: 4212, households: 1593 });
-      }
-    };
-
-    loadPopulationData();
-
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-
-      // Show navbar when scrolled past the about section
-      const aboutSection = document.getElementById("about");
-      if (aboutSection) {
-        const rect = aboutSection.getBoundingClientRect();
-        setShowNavbar(rect.top <= 0);
-      }
-
-      const sections = ["budaya", "gallery"];
-      const scrollPosition = window.scrollY;
-
-      for (const section of sections) {
-        const element = document.getElementById(section);
-        if (element) {
-          const { top, bottom } = element.getBoundingClientRect();
-          if (top <= 100 && bottom >= 100) {
-            setActiveSection(section);
-            return;
-          }
-        }
-      }
-
-      // If no section is in view, set active to home if at top
-      if (scrollPosition < 100) {
-        setActiveSection("home");
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    handleScroll(); // Initial check
-
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+export default function Index() {
+  useReveal();
+  const active = useActiveSection(SECTIONS);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-blue-50">
-      {/* Navbar */}
-      <Navbar currentPage={activeSection} showNavbar={showNavbar} />
-
-      {/* Hero Section */}
-      <section className="relative min-h-screen overflow-hidden">
-        {/* Background Image */}
-        <div className="absolute inset-0">
-          <img
-            src="/images/home/sunset_kepohkencono_centered.jpg"
-            alt="Sunset over Desa Kepohkencono fields"
-            className="w-full h-full object-cover object-center"
-          />
-          {/* Gradient overlay - darker at bottom, lighter at top to work with sunset */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-black/20"></div>
-        </div>
-
-        {/* Main Content - Structured to frame the sun */}
-        <div className="relative z-10 min-h-screen flex flex-col justify-center px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-          <div
-            className={`transition-all duration-1000 ${
-              isVisible
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-10"
-            }`}
-          >
-            {/* Top Section - Badge */}
-            <div className="text-center mb-8 sm:mb-6 md:mb-4">
-              <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm rounded-full px-3 sm:px-4 py-2 shadow-lg border border-white/20">
-                <Leaf className="h-4 w-4 text-green-300" />
-                <span className="text-xs sm:text-sm font-medium text-white font-sans">
-                  Jelajahi Warisan Kami
-                </span>
-              </div>
-            </div>
-
-            {/* Upper Text - Headline positioned above the sun */}
-            <div className="text-center mb-6 sm:mb-8 md:mb-10 lg:mb-12">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-tight font-sans px-2">
-                <span className="drop-shadow-2xl block">Selamat Datang di</span>
-                <span className="bg-gradient-to-r from-green-300 via-emerald-300 to-green-400 bg-clip-text text-transparent drop-shadow-2xl font-extrabold block -mt-2 sm:-mt-3 md:-mt-4">
-                  Desa Kepohkencono
-                </span>
-              </h1>
-            </div>
-
-            {/* Sun Space - Larger space for mobile to show sun between text elements */}
-            <div className="h-16 sm:h-12 md:h-16 lg:h-36 xl:h-40"></div>
-
-            {/* Lower Text - Description positioned below the sun */}
-            <div className="text-center mb-8 sm:mb-12 md:mb-12">
-              <p className="text-base sm:text-lg md:text-xl text-white/90 leading-relaxed drop-shadow-lg font-medium max-w-4xl mx-auto font-sans px-4">
-                Sebuah desa di mana waktu mengalir perlahan, kehidupan tumbuh
-                bersama, dan senja bercerita di antara hamparan rumput dan sawah
-                yang membentang.
-              </p>
-            </div>
-
-            {/* Button Section - Hidden on mobile and tablet, visible on larger screens */}
-            <div className="hidden lg:flex flex-row gap-4 justify-center mb-8 sm:mb-12 px-4">
-              <Button
-                size="lg"
-                className="bg-white text-green-600 border-2 border-green-600 hover:bg-green-50 hover:text-green-700 hover:border-green-700 px-8 py-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 text-lg"
-                onClick={scrollToContent}
-              >
-                Jelajahi Desa Kami
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white px-8 py-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 flex items-center gap-2 border border-white/20 text-lg disabled:opacity-70 disabled:cursor-not-allowed"
-                disabled={isVisualisasiDataLoading}
-                onClick={() => {
-                  setIsVisualisasiDataLoading(true);
-                  router.push('/visualisasi-data');
-                }}
-              >
-                {isVisualisasiDataLoading ? (
-                  <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    Memuat...
-                  </>
-                ) : (
-                  <>
-                    <BarChart3 className="h-5 w-5" />
-                    Visualisasi Data
-                  </>
-                )}
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* About Section */}
-      <section id="about" className="py-20 bg-white">
-        <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-4xl font-bold text-green-900 mb-6">
-                Tentang Desa Kepohkencono
-              </h2>
-              <p className="text-lg text-gray-700 mb-6 leading-relaxed text-justify">
-                Desa Kepohkencono adalah sepotong harmoni yang tumbuh di antara
-                hamparan sawah dan bisik angin pagi. Terletak di hamparan sawah
-                hijau, di mana udara pagi terasa sejuk dan lembut. Mayoritas
-                warganya bekerja sebagai petani, hidup berdampingan harmonis
-                dengan alam. Tradisi yang paling dikenal adalah Sedekah Bumi,
-                yang dirayakan dengan membawa hasil panen ke punden, menikmati
-                pertunjukan ketoprak dan musik campursari bersama seluruh warga.
-              </p>
-              <p className="text-lg text-gray-700 mb-8 leading-relaxed text-justify">
-                Di desa ini, budaya bukan hanya warisan, tapi bagian hidup yang
-                selalu dijaga kebersamaan dan maknanya.
-              </p>
-
-              {/* Key Features Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
-                <div className="flex items-center gap-3 p-4 bg-green-50 rounded-lg border border-green-100">
-                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                    <Leaf className="h-5 w-5 text-green-600" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-green-900">
-                      Lingkungan Asri
-                    </h4>
-                    <p className="text-sm text-gray-600">
-                      Udara segar & pemandangan hijau
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg border border-blue-100">
-                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                    <Users className="h-5 w-5 text-blue-600" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-blue-900">
-                      Komunitas Solid
-                    </h4>
-                    <p className="text-sm text-gray-600">
-                      Gotong royong & kekeluargaan
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="relative">
-              <img
-                src="/images/home/baldes_kepohkencono.jpg"
-                alt="Baldes Kepohkencono"
-                className="rounded-lg shadow-2xl"
-              />
-              <div className="absolute -bottom-6 -left-6 bg-white p-4 rounded-lg shadow-lg">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center">
-                    <p className="text-xl font-bold text-emerald-600">
-                      {populationData.total.toLocaleString()}
-                    </p>
-                    <p className="text-gray-600 text-xs">Penduduk</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xl font-bold text-teal-600">
-                      {populationData.households.toLocaleString()}
-                    </p>
-                    <p className="text-gray-600 text-xs">Kepala Keluarga</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Dukuh-dukuh Desa Section */}
-      <section className="py-12 bg-gray-50">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-green-900 mb-4">
-              Dukuh-dukuh Desa Kepohkencono
-            </h2>
-            <p className="text-xl text-gray-700 max-w-4xl mx-auto">
-              Desa Kepohkencono terdiri dari enam dukuh (dusun) yang
-              masing-masing memiliki karakteristik dan pesona unik, membentuk
-              mozaik kehidupan desa yang kaya.
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 mb-8">
-            {[
-              {
-                name: "Dukuh Manding",
-                kepalaDukuh: "-",
-                mapLink: "https://maps.app.goo.gl/69K3brhnb2fCAeYG9",
-                embedUrl:
-                  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15845.282238606706!2d111.13487324999998!3d-6.852124999999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e77337a065a0ca9%3A0x402f608a3a862ff!2sManding%2C%20Kepohkencono%2C%20Pucakwangi%2C%20Pati%20Regency%2C%20Central%20Java!5e0!3m2!1sen!2sid!4v1753696946278!5m2!1sen!2sid",
-              },
-              {
-                name: "Dukuh Panggang",
-                kepalaDukuh: "Bapak Pardi",
-                mapLink: "https://maps.app.goo.gl/2dxwjwUrxk3MrXMDA",
-                embedUrl:
-                  "https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15845.570175924187!2d111.1301171!3d-6.8434551!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e77347c2f18d4e9%3A0xb5a29788e3c841b!2sPanggang%2C%20Kepohkencono%2C%20Pucakwangi%2C%20Pati%20Regency%2C%20Central%20Java!5e0!3m2!1sen!2sid!4v1753697081840!5m2!1sen!2sid",
-              },
-              {
-                name: "Dukuh Prau",
-                kepalaDukuh: "Bapak Ngasmani",
-                mapLink: "https://maps.app.goo.gl/D4Zv955qhTAHaqLZ7",
-                embedUrl:
-                  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3961.4776241579593!2d111.1516987!3d-6.8331938!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e77334abf4a08bd%3A0x865f9762969b0383!2sDk.%20Prahu%20Ds.%20kepohkencono%20Kec.%20Pucakwangi%20Kab.%20Pati%20Jawa%20Tengah%20Indonesia!5e0!3m2!1sen!2sid!4v1753697107468!5m2!1sen!2sid",
-              },
-              {
-                name: "Dukuh Ngepoh",
-                kepalaDukuh: "Bapak Zamzuri",
-                mapLink: "https://maps.app.goo.gl/965Cm1wVJyUFyQMVA",
-                embedUrl:
-                  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15845.570172605165!2d111.14043835!3d-6.8434552!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7733756e2640f3%3A0x436d0d32ed3f7eb4!2sKepoh%2C%20Kepohkencono%2C%20Pucakwangi%2C%20Pati%20Regency%2C%20Central%20Java!5e0!3m2!1sen!2sid!4v1753697121727!5m2!1sen!2sid",
-              },
-              {
-                name: "Dukuh Jatikebo",
-                kepalaDukuh: "Bapak Muntono",
-                mapLink: "https://maps.app.goo.gl/WgCyGsxMdCPLsSj29",
-                embedUrl:
-                  "https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15845.520969435069!2d111.1459171!3d-6.8449375!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e773399f1c7880f%3A0x62c00c74b263e449!2sJati%20Kebo%2C%20Kepohkencono%2C%20Pucakwangi%2C%20Pati%20Regency%2C%20Central%20Java!5e0!3m2!1sen!2sid!4v1753697134464!5m2!1sen!2sid",
-              },
-              {
-                name: "Dukuh Dangklik",
-                kepalaDukuh: "Bapak Moh Santoso Edi",
-                mapLink: "https://maps.app.goo.gl/krLRQB5LBxvuKf489",
-                embedUrl:
-                  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15845.740101319167!2d111.15134735000001!3d-6.8383334499999995!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7733a31c434147%3A0x263764942683a661!2sDangklik%2C%20Kepohkencono%2C%20Pucakwangi%2C%20Pati%20Regency%2C%20Central%20Java!5e0!3m2!1sen!2sid!4v1753697149731!5m2!1sen!2sid",
-              },
-            ].map((dukuh, index) => (
-              <div
-                key={index}
-                className="p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 flex flex-col"
-              >
-                <h4 className="text-lg font-semibold text-gray-900 mb-2 text-center">
-                  {dukuh.name}
-                </h4>
-                <p className="text-gray-600 text-sm mb-4 text-center">
-                  Kepala Dukuh: {dukuh.kepalaDukuh}
-                </p>
-
-                {/* Embedded Google Map */}
-                <div className="mb-4 rounded-lg overflow-hidden">
-                  <iframe
-                    src={dukuh.embedUrl}
-                    width="100%"
-                    height="200"
-                    style={{ border: 0 }}
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    title={`Map of ${dukuh.name}`}
-                  ></iframe>
-                </div>
-
-                <a
-                  href={dukuh.mapLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-full text-sm font-medium hover:bg-green-700 transition-colors shadow-md"
-                >
-                  <MapPin className="h-4 w-4" />
-                  Lihat di Peta
-                </a>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Budaya Section */}
-      <section id="budaya" className="py-12 bg-amber-50">
-        <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-                <div className="relative aspect-video group">
-                  <video
-                    id="budaya-video"
-                    className="w-full h-full object-cover"
-                    poster="/images/home/baldes_kepohkencono.jpg"
-                  >
-                    <source
-                      src="/video/video_profil_kepohkencono.mp4"
-                      type="video/mp4"
-                    />
-                    Your browser does not support the video tag.
-                  </video>
-                  <div
-                    id="video-overlay"
-                    className="absolute inset-0 bg-black/30 flex items-center justify-center cursor-pointer group-hover:bg-black/50 transition-all duration-300 ease-in-out"
-                    onClick={(event) => {
-                      const video = document.getElementById(
-                        "budaya-video"
-                      ) as HTMLVideoElement;
-                      const overlay = document.getElementById(
-                        "video-overlay"
-                      ) as HTMLElement;
-                      if (video.paused) {
-                        video.play();
-                        video.controls = true;
-                        overlay.style.display = "none";
-                      }
-                    }}
-                  >
-                    <div className="text-center transform group-hover:scale-110 transition-transform duration-300 ease-in-out">
-                      <div className="w-20 h-20 bg-white/90 rounded-full flex items-center justify-center mx-auto mb-4 hover:bg-white hover:scale-105 transition-all duration-200 shadow-lg group-hover:shadow-xl">
-                        <Play className="w-8 h-8 text-amber-600 ml-1" />
-                      </div>
-                      <p className="text-white font-semibold text-lg group-hover:text-amber-100 transition-colors duration-300">
-                        Klik untuk Memutar
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold text-amber-800 mb-2">
-                    Video Profil Desa Kepohkencono
-                  </h3>
-                  <p className="text-gray-600">
-                    Saksikan keindahan dan kehidupan sehari-hari di Desa
-                    Kepohkencono melalui video profil ini.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <div className="text-left mb-8">
-                <h2 className="text-4xl font-bold text-amber-800 mb-4">
-                  Budaya & Tradisi
-                </h2>
-                <p className="text-xl text-gray-700 mb-6">
-                  Kekayaan warisan budaya yang dilestarikan turun-temurun di
-                  Desa Kepohkencono
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                <p className="text-gray-700 text-justify leading-relaxed">
-                  Desa Kepohkencono memiliki kekayaan budaya dan tradisi yang
-                  telah diwariskan secara turun-temurun dari generasi ke
-                  generasi. Nilai-nilai luhur yang terkandung dalam setiap
-                  tradisi mencerminkan kearifan lokal masyarakat yang masih
-                  sangat dijaga dan dilestarikan hingga saat ini.
-                </p>
-
-                <p className="text-gray-700 text-justify leading-relaxed">
-                  Keberagaman tradisi yang ada di desa ini tidak hanya menjadi
-                  identitas budaya, tetapi juga menjadi perekat sosial yang
-                  memperkuat rasa kebersamaan dan gotong royong antarwarga.
-                  Setiap upacara dan kegiatan budaya selalu melibatkan
-                  partisipasi aktif seluruh masyarakat.
-                </p>
-
-                {/* Cultural Heritage Cards */}
-                <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* Traditional Wisdom Card */}
-                  <div className="bg-amber-50 rounded-xl p-4 border border-amber-100">
-                    <div className="flex items-start space-x-3">
-                      <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <Heart className="w-5 h-5 text-amber-600" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-amber-900 mb-1">
-                          Kearifan Lokal
-                        </h4>
-                        <p className="text-sm text-amber-700">
-                          Nilai-nilai luhur turun temurun
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Cultural Unity Card */}
-                  <div className="bg-orange-50 rounded-xl p-4 border border-orange-100">
-                    <div className="flex items-start space-x-3">
-                      <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <Users className="w-5 h-5 text-orange-600" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-orange-900 mb-1">
-                          Persatuan Budaya
-                        </h4>
-                        <p className="text-sm text-orange-700">
-                          Tradisi yang mempersatukan
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Sedekah Bumi Section */}
-      <section className="py-12 bg-amber-50">
-        <div className="container mx-auto px-6">
-          <div className="bg-white rounded-2xl p-8 shadow-lg">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-              {/* Content */}
-              <div className="space-y-6">
-                <h3 className="text-3xl font-bold text-amber-900 mb-4">
-                  Sedekah Bumi
-                </h3>
-                <p className="text-gray-700 text-justify leading-relaxed">
-                  Sedekah Bumi adalah sebuah tradisi adat masyarakat yang
-                  dilakukan sebagai bentuk rasa syukur kepada Tuhan atas hasil
-                  panen dan rezeki yang diberikan melalui bumi. Dalam
-                  pelaksanaannya, warga desa biasanya membawa hasil bumi ke
-                  tempat sakral seperti punden atau balai desa, lalu menggelar
-                  doa bersama, makan bersama (banca'an), serta pertunjukan
-                  kesenian seperti ketoprak dan campursari.
-                </p>
-                <p className="text-gray-700 text-justify leading-relaxed">
-                  Tradisi ini juga menjadi ajang mempererat kebersamaan
-                  antarwarga dan menjaga warisan budaya yang telah ada secara
-                  turun-temurun.
-                </p>
-              </div>
-
-              {/* Image */}
-              <div className="relative">
-                <div className="aspect-video overflow-hidden rounded-xl shadow-lg">
-                  <img
-                    src="/images/home/sedekah_bumi.jpg"
-                    alt="Sedekah Bumi"
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent rounded-xl"></div>
-                <div className="absolute top-4 right-4 bg-amber-500/90 backdrop-blur-sm rounded-full px-3 py-1">
-                  <span className="text-white text-sm font-semibold">
-                    Tradisi Turun Temurun
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Rangkaian Acara Section */}
-            <div className="mt-8">
-              <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-8 border border-amber-200 shadow-lg relative overflow-hidden">
-                {/* Decorative elements */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-amber-200/20 rounded-full -translate-y-16 translate-x-16"></div>
-                <div className="absolute bottom-0 left-0 w-24 h-24 bg-orange-200/20 rounded-full translate-y-12 -translate-x-12"></div>
-
-                <div className="relative z-10">
-                  <div className="text-center mb-8">
-                    <div className="inline-flex items-center gap-3 bg-white/80 backdrop-blur-sm rounded-full px-6 py-3 shadow-lg border border-amber-200">
-                      <div className="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center">
-                        <Heart className="w-4 h-4 text-white" />
-                      </div>
-                      <h4 className="font-bold text-amber-900 text-xl">
-                        Rangkaian Acara Sedekah Bumi
-                      </h4>
-                    </div>
-                    <p className="text-amber-700 mt-4 max-w-2xl mx-auto">
-                      Serangkaian kegiatan sakral yang menghubungkan masyarakat
-                      dengan alam dan leluhur
-                    </p>
-                  </div>
-                  <div className="grid md:grid-cols-3 gap-8">
-                    {/* Banca'an */}
-                    <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-amber-200 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group flex flex-col h-full">
-                      <div className="relative h-48 w-full bg-gradient-to-br from-amber-100 to-orange-100">
-                        <img
-                          src="/images/home/bancaan.jpg"
-                          alt="Banca'an"
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).style.display =
-                              "none";
-                            (
-                              e.target as HTMLImageElement
-                            ).parentElement!.classList.add(
-                              "flex",
-                              "items-center",
-                              "justify-center"
-                            );
-                            (
-                              e.target as HTMLImageElement
-                            ).parentElement!.innerHTML =
-                              '<div class="text-amber-600 text-center"><Heart class="w-12 h-12 mx-auto mb-2" /><p class="font-semibold">Banca\'an</p></div>';
-                          }}
-                        />
-                        <div className="absolute top-3 left-3 bg-amber-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                          Ritual Syukur
-                        </div>
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      </div>
-                      <div className="p-6 flex flex-col flex-1">
-                        <h3 className="text-lg font-bold text-amber-800 mb-3">
-                          Banca'an di Punden
-                        </h3>
-                        <p className="text-gray-700 text-sm leading-relaxed text-justify flex-1">
-                          Banca'an di punden melambangkan rasa syukur dan
-                          penghormatan kepada leluhur dengan membawa hasil bumi
-                          dan makanan tradisional.
-                        </p>
-                        <div className="mt-4 flex items-center text-xs text-amber-600">
-                          <MapPin className="w-3 h-3 mr-1" />
-                          <span>Punden Desa</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Ketoprak */}
-                    <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-amber-200 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group flex flex-col h-full">
-                      <div className="relative h-48 w-full bg-gradient-to-br from-amber-100 to-orange-100">
-                        <img
-                          src="/images/home/ketoprak.jpg"
-                          alt="Kesenian Ketoprak"
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).style.display =
-                              "none";
-                            (
-                              e.target as HTMLImageElement
-                            ).parentElement!.classList.add(
-                              "flex",
-                              "items-center",
-                              "justify-center"
-                            );
-                            (
-                              e.target as HTMLImageElement
-                            ).parentElement!.innerHTML =
-                              '<div class="text-amber-600 text-center"><GraduationCap class="w-12 h-12 mx-auto mb-2" /><p class="font-semibold">Kesenian Ketoprak</p></div>';
-                          }}
-                        />
-                        <div className="absolute top-3 left-3 bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                          Seni Budaya
-                        </div>
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      </div>
-                      <div className="p-6 flex flex-col flex-1">
-                        <h3 className="text-lg font-bold text-amber-800 mb-3">
-                          Kesenian Ketoprak
-                        </h3>
-                        <p className="text-gray-700 text-sm leading-relaxed text-justify flex-1">
-                          Ketoprak adalah seni pertunjukan rakyat yang
-                          menyampaikan nilai moral, sejarah, dan budaya melalui
-                          cerita dan dialog.
-                        </p>
-                        <div className="mt-4 flex items-center text-xs text-orange-600">
-                          <Play className="w-3 h-3 mr-1" />
-                          <span>Pertunjukan Tradisional</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Campursari */}
-                    <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-amber-200 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group flex flex-col h-full">
-                      <div className="relative h-48 w-full bg-gradient-to-br from-amber-100 to-orange-100">
-                        <img
-                          src="/images/home/campursari.jpg"
-                          alt="Campursari"
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).style.display =
-                              "none";
-                            (
-                              e.target as HTMLImageElement
-                            ).parentElement!.classList.add(
-                              "flex",
-                              "items-center",
-                              "justify-center"
-                            );
-                            (
-                              e.target as HTMLImageElement
-                            ).parentElement!.innerHTML =
-                              '<div class="text-amber-600 text-center"><Users class="w-12 h-12 mx-auto mb-2" /><p class="font-semibold">Campursari</p></div>';
-                          }}
-                        />
-                        <div className="absolute top-3 left-3 bg-purple-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                          Musik Tradisional
-                        </div>
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      </div>
-                      <div className="p-6 flex flex-col flex-1">
-                        <h3 className="text-lg font-bold text-amber-800 mb-3">
-                          Campursari
-                        </h3>
-                        <p className="text-gray-700 text-sm leading-relaxed text-justify flex-1">
-                          Campursari adalah musik perpaduan tradisional dan
-                          modern yang memperkuat suasana kebersamaan dalam
-                          Sedekah Bumi.
-                        </p>
-                        <div className="mt-4 flex items-center text-xs text-purple-600">
-                          <Heart className="w-3 h-3 mr-1" />
-                          <span>Musik Kebersamaan</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Data Visualization Preview Section */}
-      <section id="features" className="py-20 bg-green-50">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-green-900 mb-4">
-              Data Desa Terkini
-            </h2>
-            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
-              Jelajahi wawasan komprehensif tentang komunitas kami melalui
-              visualisasi data interaktif
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* Age Distribution Preview */}
-            <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
-              <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-3">
-                <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
-                  <Users className="h-4 w-4 text-orange-600" />
-                </div>
-                Kelompok Usia
-              </h4>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">0-19 tahun</span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-16 h-2 bg-gray-200 rounded-full">
-                      <div className="w-12 h-2 bg-orange-500 rounded-full"></div>
-                    </div>
-                    <span className="text-xs text-gray-500">24%</span>
-                  </div>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">20-34 tahun</span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-16 h-2 bg-gray-200 rounded-full">
-                      <div className="w-14 h-2 bg-orange-500 rounded-full"></div>
-                    </div>
-                    <span className="text-xs text-gray-500">19%</span>
-                  </div>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">35-54 tahun</span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-16 h-2 bg-gray-200 rounded-full">
-                      <div className="w-10 h-2 bg-orange-500 rounded-full"></div>
-                    </div>
-                    <span className="text-xs text-gray-500">31%</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Occupation Distribution Preview */}
-            <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
-              <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-3">
-                <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <Briefcase className="h-4 w-4 text-blue-600" />
-                </div>
-                Pekerjaan Utama
-              </h4>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Petani</span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-16 h-2 bg-gray-200 rounded-full">
-                      <div className="w-12 h-2 bg-green-500 rounded-full"></div>
-                    </div>
-                    <span className="text-xs text-gray-500">51%</span>
-                  </div>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Wiraswasta</span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-16 h-2 bg-gray-200 rounded-full">
-                      <div className="w-10 h-2 bg-blue-500 rounded-full"></div>
-                    </div>
-                    <span className="text-xs text-gray-500">35%</span>
-                  </div>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Karyawan Swasta</span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-16 h-2 bg-gray-200 rounded-full">
-                      <div className="w-3 h-2 bg-purple-500 rounded-full"></div>
-                    </div>
-                    <span className="text-xs text-gray-500">7%</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Education Level Preview */}
-            <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow duration-300">
-              <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-3">
-                <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                  <GraduationCap className="h-4 w-4 text-green-600" />
-                </div>
-                Tingkat Pendidikan
-              </h4>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">SD/Sederajat</span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-16 h-2 bg-gray-200 rounded-full">
-                      <div className="w-12 h-2 bg-[#eab308] rounded-full"></div>
-                    </div>
-                    <span className="text-xs text-gray-500">28%</span>
-                  </div>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">SLTP/Sederajat</span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-16 h-2 bg-gray-200 rounded-full">
-                      <div className="w-10 h-2 bg-[#22c55e] rounded-full"></div>
-                    </div>
-                    <span className="text-xs text-gray-500">21%</span>
-                  </div>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">SLTA/Sederajat</span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-16 h-2 bg-gray-200 rounded-full">
-                      <div className="w-8 h-2 bg-[#3b82f6] rounded-full"></div>
-                    </div>
-                    <span className="text-xs text-gray-500">16%</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Dashboard Button */}
-          <div className="text-center mt-12">
-            <Button
-              size="lg"
-              className="bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-              onClick={() => (window.location.href = "/visualisasi-data")}
-            >
-              <BarChart3 className="h-5 w-5 mr-2" />
-              Jelajahi Dashboard Data Lengkap
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Gallery Preview */}
-      <section id="gallery" className="py-12 bg-white">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-green-900 mb-4">
-              Galeri Desa
-            </h2>
-            <p className="text-xl text-gray-700 max-w-3xl mx-auto">
-              Saksikan keindahan dan kehidupan sehari-hari di Desa Kepohkencono
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="space-y-4">
-              <img
-                src="/images/home/galeri_desa/galeri_desa_1.jpg"
-                alt="Kehidupan Desa Kepohkencono"
-                className="w-full h-48 object-cover rounded-lg hover:scale-105 transition-transform duration-300"
-              />
-              <img
-                src="/images/home/galeri_desa/galeri_desa_2.jpg"
-                alt="Aktivitas Warga Desa"
-                className="w-full h-64 object-cover rounded-lg hover:scale-105 transition-transform duration-300"
-              />
-            </div>
-            <div className="space-y-4">
-              <img
-                src="/images/home/galeri_desa/galeri_desa_3.jpg"
-                alt="Pemandangan Desa Kepohkencono"
-                className="w-full h-64 object-cover rounded-lg hover:scale-105 transition-transform duration-300"
-              />
-              <img
-                src="/images/home/galeri_desa/galeri_desa_4.jpg"
-                alt="Suasana Desa"
-                className="w-full h-48 object-cover rounded-lg hover:scale-105 transition-transform duration-300"
-              />
-            </div>
-            <div className="space-y-4 hidden md:block">
-              <img
-                src="/images/home/galeri_desa/galeri_desa_5.jpg"
-                alt="Kegiatan Masyarakat Desa"
-                className="w-full h-48 object-cover rounded-lg hover:scale-105 transition-transform duration-300"
-              />
-              <img
-                src="/images/home/galeri_desa/galeri_desa_6.jpg"
-                alt="Tradisi Desa Kepohkencono"
-                className="w-full h-64 object-cover rounded-lg hover:scale-105 transition-transform duration-300"
-              />
-            </div>
-            <div className="space-y-4 hidden md:block">
-              <img
-                src="/images/home/galeri_desa/galeri_desa_7.jpg"
-                alt="Budaya Desa Kepohkencono"
-                className="w-full h-64 object-cover rounded-lg hover:scale-105 transition-transform duration-300"
-              />
-              <img
-                src="/images/home/galeri_desa/galeri_desa_8.jpg"
-                alt="Kehidupan Sehari-hari Desa"
-                className="w-full h-48 object-cover rounded-lg hover:scale-105 transition-transform duration-300"
-              />
-            </div>
-          </div>
-
-          {/* <div className="text-center mt-12">
-            <Button
-              variant="outline"
-              size="lg"
-              className="border-green-900 text-green-900 hover:bg-green-900 hover:text-white"
-            >
-              <Camera className="mr-2" />
-              Lihat Semua Foto
-            </Button>
-          </div> */}
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer id="contact" className="bg-gray-900 text-white py-16">
-        <div className="container px-4 md:px-6">
-          <div className="grid gap-8 md:grid-cols-3 lg:grid-cols-3">
-            {/* Column 1: Village Title and Social Media */}
-            <div className="space-y-4 text-center md:text-left">
-              <div className="flex items-center justify-center md:justify-start gap-3">
-                <Leaf className="h-7 w-7 text-emerald-500" />
-                <span className="text-3xl font-bold bg-gradient-to-r from-green-300 via-emerald-300 to-green-400 bg-clip-text text-transparent">
-                  Kepohkencono
-                </span>
-              </div>
-              <p className="text-gray-400 text-lg leading-relaxed">
-                Menjaga tradisi, merangkul masa depan. Sebuah komunitas yang
-                harmonis di tengah keindahan alam.
-              </p>
-              <div className="flex justify-center md:justify-start space-x-6 pt-4">
-                <a
-                  href="https://www.instagram.com/jelajah.pucakwangi?igsh=MTA3c3ZxejVyb3o0Mg%3D%3D&utm_source=qr"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-emerald-400 transition-colors"
-                >
-                  <Instagram className="h-6 w-6" />
-                </a>
-                <a
-                  href="https://www.tiktok.com/@jelajahpucakwangi_?_t=ZS-8yObUMdgxa3&_r=1"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-emerald-400 transition-colors"
-                >
-                  <FaTiktok className="h-6 w-6" />
-                </a>
-              </div>
-            </div>
-
-            {/* Column 2: Tautan Cepat (Quick Links) */}
-            <div className="space-y-4 text-center md:text-left">
-              <h3 className="text-xl font-semibold mb-4 text-white">
-                Tautan Cepat
-              </h3>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <a
-                    href="#about"
-                    className="hover:text-emerald-400 transition-colors"
-                  >
-                    Beranda
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#budaya"
-                    className="hover:text-emerald-400 transition-colors"
-                  >
-                    Budaya
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#gallery"
-                    className="hover:text-emerald-400 transition-colors"
-                  >
-                    Galeri
-                  </a>
-                </li>
-                <li>
-                  <Link
-                    href="/team"
-                    className="hover:text-emerald-400 transition-colors"
-                  >
-                    Tentang Kami
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/visualisasi-data"
-                    className="hover:text-emerald-400 transition-colors"
-                  >
-                    Visualisasi Data
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            {/* Column 3: Contact Information */}
-            <div className="space-y-4 text-center md:text-left">
-              <h3 className="text-xl font-semibold mb-4 text-white">
-                Punya Pertanyaan?
-              </h3>
-              <div className="space-y-3">
-                <div className="flex items-center justify-center md:justify-start gap-3 text-gray-400">
-                  <MapPin className="h-5 w-5 text-emerald-500" />
-                  <span>Desa Kepohkencono, Kec. Pucakwangi</span>
-                </div>
-                <div className="flex items-center justify-center md:justify-start gap-3 text-gray-400">
-                  <Phone className="h-5 w-5 text-emerald-500" />
-                  <span>+62 812-3456-7890</span>
-                </div>
-                <div className="flex items-center justify-center md:justify-start gap-3 text-gray-400">
-                  <Mail className="h-5 w-5 text-emerald-500" />
-                  <span>jelajahpucakwangi@gmail.com</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
-            <p>
-              &copy; {new Date().getFullYear()} Desa Kepohkencono. Dikembangkan
-              oleh Tim KKN Jelajah Pucakwangi
-            </p>
-          </div>
-        </div>
-      </footer>
+    <div className={`${KP_ROOT_CLASS} site-shell`}>
+      <SiteNav variant="overlay" active={active} revealAfter="hero-title" />
+      <main>
+        <Hero />
+        <About />
+        <DukuhSection />
+        <Culture />
+        <SedekahBumi />
+        <DataPreview />
+        <Gallery />
+      </main>
+      <SiteFooter />
     </div>
   );
-};
+}
 
-export default Index;
+function Hero() {
+  return (
+    <>
+      <section className="hero" id="beranda">
+        <Image
+          alt="Matahari terbenam di hamparan sawah Kepohkencono"
+          className="hero-image"
+          fill
+          placeholder="blur"
+          preload
+          sizes="100vw"
+          src={sunset}
+        />
+        <div className="hero-scrim hero-scrim-top" />
+        <div className="hero-scrim hero-scrim-bottom" />
+        <div className="hero-top">
+          <p className="hero-welcome">selamat datang di</p>
+          <h1 id="hero-title">Kepohkencono</h1>
+          <p className="hero-place">
+            Kecamatan Pucakwangi · Kabupaten Pati · Jawa Tengah
+          </p>
+        </div>
+        <div className="hero-copy-block">
+          <p className="hero-copy">
+            Sebuah desa di mana waktu mengalir perlahan, kehidupan tumbuh
+            bersama, dan senja bercerita di antara hamparan rumput dan sawah
+            yang membentang.
+          </p>
+          <div className="hero-actions">
+            <a className="button button-light" href="#tentang">
+              Jelajahi desa <ArrowRight aria-hidden="true" size={18} />
+            </a>
+            <Link className="button button-outline" href="/visualisasi-data">
+              Lihat data desa
+            </Link>
+          </div>
+        </div>
+        <div className="hero-wave" aria-hidden="true" />
+      </section>
+      <div className="fact-wrap">
+        <dl className="fact-strip">
+          <div>
+            <dt>penduduk</dt>
+            <dd>{formatNumber(totals.population)}</dd>
+          </div>
+          <div>
+            <dt>kepala keluarga</dt>
+            <dd>{formatNumber(totals.households)}</dd>
+          </div>
+          <div>
+            <dt>dukuh</dt>
+            <dd>{DUKUH.length}</dd>
+          </div>
+          <div>
+            <dt>tradisi tahunan</dt>
+            <dd className="fact-word">Sedekah Bumi</dd>
+          </div>
+        </dl>
+      </div>
+    </>
+  );
+}
+
+function Squiggle() {
+  return (
+    <svg viewBox="0 0 82 12" aria-hidden="true">
+      <path d="M2 8C15 2 24 11 38 6S61 3 80 7" />
+    </svg>
+  );
+}
+
+function About() {
+  return (
+    <section className="section about-section" id="tentang">
+      <div className="about-grid">
+        <div className="about-copy" data-reveal>
+          <p className="section-index">tentang kami</p>
+          <h2>Tentang Desa Kepohkencono</h2>
+          <p className="intro">
+            Desa Kepohkencono adalah sepotong harmoni yang tumbuh di antara
+            hamparan sawah dan bisik angin pagi.
+          </p>
+          <p>
+            Terletak di hamparan sawah hijau, di mana udara pagi terasa sejuk
+            dan lembut. Mayoritas warganya bekerja sebagai petani, hidup
+            berdampingan harmonis dengan alam. Tradisi yang paling dikenal
+            adalah Sedekah Bumi, yang dirayakan dengan membawa hasil panen ke
+            punden, menikmati pertunjukan ketoprak dan musik campursari bersama
+            seluruh warga.
+          </p>
+          <p>
+            Di desa ini, budaya bukan hanya warisan, tapi bagian hidup yang
+            selalu dijaga kebersamaan dan maknanya.
+          </p>
+          <div className="about-highlights">
+            <div>
+              <h3>
+                Lingkungan{" "}
+                <span className="squiggle-word sage">
+                  asri
+                  <Squiggle />
+                </span>
+              </h3>
+              <p>Udara segar &amp; pemandangan hijau</p>
+            </div>
+            <div>
+              <h3>
+                Komunitas{" "}
+                <span className="squiggle-word terracotta">
+                  solid
+                  <Squiggle />
+                </span>
+              </h3>
+              <p>Gotong royong &amp; kekeluargaan</p>
+            </div>
+          </div>
+        </div>
+        <figure className="about-photo" data-reveal>
+          <div className="image-frame">
+            <Image
+              alt="Kantor Kepala Desa Kepohkencono"
+              fill
+              placeholder="blur"
+              sizes="(max-width: 720px) 90vw, 55vw"
+              src={baldes}
+            />
+          </div>
+          <figcaption>Balai Desa Kepohkencono</figcaption>
+        </figure>
+      </div>
+    </section>
+  );
+}
+
+function DukuhSection() {
+  const [selected, setSelected] = useState(2);
+  const dukuh = DUKUH[selected];
+
+  const onKeyDown = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
+    const next = nextTabIndex(event.key, index, DUKUH.length);
+    if (next === null) return;
+    event.preventDefault();
+    setSelected(next);
+    document.getElementById(`dukuh-tab-${next}`)?.focus();
+  };
+
+  return (
+    <section className="section dukuh-section" id="dukuh">
+      <div className="dukuh-marquee" aria-hidden="true">
+        <div>
+          {MARQUEE} · {MARQUEE} ·
+        </div>
+      </div>
+      <div className="section-heading" data-reveal>
+        <p className="section-index">wilayah desa</p>
+        <h2>Dukuh-dukuh Desa Kepohkencono</h2>
+        <p>
+          Desa Kepohkencono terdiri dari enam dukuh (dusun) yang masing-masing
+          memiliki karakteristik dan pesona unik, membentuk mozaik kehidupan
+          desa yang kaya.
+        </p>
+      </div>
+      <div className="dukuh-layout" data-reveal>
+        <div className="dukuh-list" role="tablist" aria-label="Pilih dukuh">
+          {DUKUH.map((item, index) => (
+            <button
+              aria-controls="dukuh-panel"
+              aria-selected={selected === index}
+              className={selected === index ? "active" : ""}
+              id={`dukuh-tab-${index}`}
+              key={item.name}
+              onClick={() => setSelected(index)}
+              onKeyDown={(event) => onKeyDown(event, index)}
+              role="tab"
+              tabIndex={selected === index ? 0 : -1}
+              type="button"
+            >
+              <strong>{item.name}</strong>
+              <small>Kepala Dukuh: {item.leader}</small>
+            </button>
+          ))}
+        </div>
+        <div
+          aria-labelledby={`dukuh-tab-${selected}`}
+          className="map-panel"
+          id="dukuh-panel"
+          role="tabpanel"
+        >
+          <div className="map-image" key={dukuh.name}>
+            <iframe
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              src={dukuh.embedUrl}
+              title={`Peta Dukuh ${dukuh.name}`}
+            />
+            <a
+              className="map-link"
+              href={dukuh.mapLink}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              Buka di Google Maps{" "}
+              <ExternalLink aria-hidden="true" size={16} />
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Culture() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [playing, setPlaying] = useState(false);
+
+  const play = () => {
+    setPlaying(true);
+    void videoRef.current?.play();
+  };
+
+  return (
+    <section className="section culture-section" id="budaya">
+      <div className="culture-grid">
+        <figure className="video-feature" data-reveal>
+          <div className={`video-poster ${playing ? "is-playing" : ""}`}>
+            <video
+              aria-label="Video profil Desa Kepohkencono"
+              controls={playing}
+              playsInline
+              preload="metadata"
+              ref={videoRef}
+              src="/video/video_profil_kepohkencono.mp4#t=1"
+            />
+            {!playing && (
+              <button
+                aria-label="Putar video profil Desa Kepohkencono"
+                onClick={play}
+                type="button"
+              >
+                <Play aria-hidden="true" fill="currentColor" size={28} />
+              </button>
+            )}
+          </div>
+          <figcaption>
+            Video Profil Desa Kepohkencono — Saksikan keindahan dan kehidupan
+            sehari-hari di Desa Kepohkencono.
+          </figcaption>
+        </figure>
+        <div className="culture-copy" data-reveal>
+          <p className="section-index">warisan lokal</p>
+          <h2>Budaya &amp; Tradisi</h2>
+          <p className="culture-lead">
+            “Di desa ini, budaya bukan hanya warisan, tapi bagian hidup yang
+            selalu dijaga kebersamaan dan maknanya.”
+          </p>
+          <p>
+            Desa Kepohkencono memiliki kekayaan budaya dan tradisi yang telah
+            diwariskan secara turun-temurun dari generasi ke generasi.
+            Nilai-nilai luhur yang terkandung dalam setiap tradisi mencerminkan
+            kearifan lokal masyarakat yang masih sangat dijaga dan dilestarikan
+            hingga saat ini.
+          </p>
+          <p>
+            Keberagaman tradisi yang ada di desa ini tidak hanya menjadi
+            identitas budaya, tetapi juga menjadi perekat sosial yang
+            memperkuat rasa kebersamaan dan gotong royong antarwarga. Setiap
+            upacara dan kegiatan budaya selalu melibatkan partisipasi aktif
+            seluruh masyarakat.
+          </p>
+          <div className="culture-notes">
+            <div>
+              <span className="culture-initial" aria-hidden="true">
+                K
+              </span>
+              <span>
+                <strong>Kearifan lokal</strong>
+                <em>Nilai-nilai luhur turun-temurun</em>
+              </span>
+            </div>
+            <div>
+              <span className="culture-initial" aria-hidden="true">
+                P
+              </span>
+              <span>
+                <strong>Persatuan budaya</strong>
+                <em>Tradisi yang mempersatukan</em>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function SedekahBumi() {
+  return (
+    <section className="section earth-section">
+      <div className="earth-feature" data-reveal>
+        <div className="earth-photo">
+          <span className="earth-tag">Tradisi turun-temurun</span>
+          <Image
+            alt="Warga dalam tradisi Sedekah Bumi"
+            fill
+            placeholder="blur"
+            sizes="(max-width: 720px) 100vw, 60vw"
+            src={sedekahBumi}
+          />
+        </div>
+        <div className="earth-copy">
+          <p className="section-index">tradisi tahunan</p>
+          <h2>Sedekah Bumi</h2>
+          <p className="intro">
+            Sedekah Bumi adalah sebuah tradisi adat masyarakat yang dilakukan
+            sebagai bentuk rasa syukur kepada Tuhan atas hasil panen dan rezeki
+            yang diberikan melalui bumi.
+          </p>
+          <p>
+            Dalam pelaksanaannya, warga desa biasanya membawa hasil bumi ke
+            tempat sakral seperti punden atau balai desa, lalu menggelar doa
+            bersama, makan bersama (banca&apos;an), serta pertunjukan kesenian
+            seperti ketoprak dan campursari.
+          </p>
+          <p>
+            Tradisi ini juga menjadi ajang mempererat kebersamaan antarwarga dan
+            menjaga warisan budaya yang telah ada secara turun-temurun.
+          </p>
+        </div>
+      </div>
+      <div className="procession-heading" data-reveal>
+        <p className="section-index">rangkaian acara</p>
+        <h2>Rangkaian acara Sedekah Bumi</h2>
+      </div>
+      <ol className="procession">
+        {EVENTS.map((event, index) => (
+          <li data-reveal key={event.title}>
+            <div className="event-image">
+              <Image
+                alt={event.title}
+                fill
+                placeholder="blur"
+                sizes="(max-width: 720px) 84vw, 34vw"
+                src={event.image}
+              />
+            </div>
+            <span className="event-number" aria-hidden="true">
+              {index + 1}
+            </span>
+            <h3>{event.title}</h3>
+            <small>{event.label}</small>
+            <p>{event.description}</p>
+          </li>
+        ))}
+      </ol>
+    </section>
+  );
+}
+
+function DataPreview() {
+  return (
+    <section className="section data-section" id="data">
+      <div className="section-heading" data-reveal>
+        <p className="section-index">dalam angka</p>
+        <h2>Data Desa Terkini</h2>
+        <p>
+          Jelajahi wawasan komprehensif tentang komunitas kami melalui
+          visualisasi data interaktif.
+        </p>
+      </div>
+      <div className="ledger-grid">
+        {LEDGERS.map((block) => {
+          const [top] = block.rows;
+          return (
+            <article className="ledger" data-reveal key={block.title}>
+              <h3>{block.title}</h3>
+              <p className="ledger-highlight">
+                <strong>{formatPercent(top.percent, 0)}%</strong>
+                <em>{block.caption(top.label)}</em>
+              </p>
+              <ul className="ledger-rows">
+                {block.rows.map((row, index) => (
+                  <li className="ledger-row" key={row.label}>
+                    <div>
+                      <span>{row.label}</span>
+                      <strong>{formatPercent(row.percent, 0)}%</strong>
+                    </div>
+                    <i aria-hidden="true">
+                      <b
+                        className={index === 0 ? "largest" : ""}
+                        style={{ width: `${row.percent}%` }}
+                      />
+                    </i>
+                  </li>
+                ))}
+              </ul>
+            </article>
+          );
+        })}
+      </div>
+      <div className="data-action" data-reveal>
+        <Link className="button button-brand" href="/visualisasi-data">
+          Jelajahi dashboard data lengkap{" "}
+          <ArrowRight aria-hidden="true" size={18} />
+        </Link>
+      </div>
+    </section>
+  );
+}
+
+function Gallery() {
+  const [lightbox, setLightbox] = useState<number | null>(null);
+  const openerRef = useRef<HTMLButtonElement | null>(null);
+  const close = useCallback(() => setLightbox(null), []);
+
+  return (
+    <section className="section gallery-section" id="galeri">
+      <div className="gallery-heading" data-reveal>
+        <div>
+          <p className="section-index">potret desa</p>
+          <h2>Galeri Desa</h2>
+        </div>
+        <p>Saksikan keindahan dan kehidupan sehari-hari di Desa Kepohkencono.</p>
+      </div>
+      <div className="gallery-mosaic" data-reveal>
+        {GALLERY.map((photo, index) => (
+          <button
+            aria-label={`Buka foto: ${photo.alt}`}
+            key={photo.image.src}
+            onClick={(event) => {
+              openerRef.current = event.currentTarget;
+              setLightbox(index);
+            }}
+            type="button"
+          >
+            <Image
+              alt={photo.alt}
+              fill
+              placeholder="blur"
+              sizes={
+                index === 0
+                  ? "(max-width: 639px) 100vw, (max-width: 1023px) 66vw, 50vw"
+                  : "(max-width: 639px) 50vw, (max-width: 1023px) 33vw, 25vw"
+              }
+              src={photo.image}
+            />
+            <span aria-hidden="true">Sehari-hari di Kepohkencono</span>
+          </button>
+        ))}
+      </div>
+      {lightbox !== null && (
+        <Lightbox
+          index={lightbox}
+          onChange={setLightbox}
+          onClose={close}
+          returnFocusRef={openerRef}
+        />
+      )}
+    </section>
+  );
+}
+
+function Lightbox({
+  index,
+  onChange,
+  onClose,
+  returnFocusRef,
+}: {
+  index: number;
+  onChange: (index: number) => void;
+  onClose: () => void;
+  returnFocusRef: RefObject<HTMLButtonElement | null>;
+}) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useDialog(true, onClose, dialogRef, returnFocusRef);
+  const count = GALLERY.length;
+  const photo = GALLERY[index];
+  const step = useCallback(
+    (delta: number) => onChange((index + delta + count) % count),
+    [index, count, onChange],
+  );
+
+  useEffect(() => {
+    const onKeyDown = (event: globalThis.KeyboardEvent) => {
+      if (event.key === "ArrowRight") step(1);
+      if (event.key === "ArrowLeft") step(-1);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [step]);
+
+  return (
+    <div
+      aria-label={`Foto ${index + 1} dari ${count}`}
+      aria-modal="true"
+      className="lightbox"
+      ref={dialogRef}
+      role="dialog"
+    >
+      <button
+        aria-label="Tutup galeri"
+        className="lightbox-close"
+        onClick={onClose}
+        type="button"
+      >
+        <X aria-hidden="true" size={28} />
+      </button>
+      <button
+        aria-label="Foto sebelumnya"
+        className="lightbox-prev"
+        onClick={() => step(-1)}
+        type="button"
+      >
+        <ChevronRight aria-hidden="true" size={34} />
+      </button>
+      <figure>
+        <Image
+          alt={photo.alt}
+          key={photo.image.src}
+          placeholder="blur"
+          sizes="(max-width: 720px) 100vw, 80vw"
+          src={photo.image}
+        />
+        <figcaption>
+          <span>{photo.alt}</span>
+          <strong aria-live="polite">
+            {index + 1} / {count}
+          </strong>
+        </figcaption>
+      </figure>
+      <button
+        aria-label="Foto berikutnya"
+        className="lightbox-next"
+        onClick={() => step(1)}
+        type="button"
+      >
+        <ChevronRight aria-hidden="true" size={34} />
+      </button>
+    </div>
+  );
+}

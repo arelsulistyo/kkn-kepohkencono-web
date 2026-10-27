@@ -61,43 +61,43 @@ export default function AutofillPanel() {
   };
 
   return (
-    <section className={`section database-panel ${expanded ? "is-expanded" : ""}`}>
+    <section
+      className={`autofill-panel ${expanded ? "is-expanded" : ""}`}
+      aria-labelledby="ls-autofill-heading"
+    >
+      <div className="autofill-heading">
+        <p className="ls-kicker">database warga</p>
+        <h3 id="ls-autofill-heading">Fitur Auto-Fill Database</h3>
+        <p>Sistem pencarian otomatis untuk mempercepat pengisian formulir</p>
+      </div>
       <button
         type="button"
-        className="database-toggle"
+        className="autofill-toggle"
         aria-expanded={expanded}
         aria-controls="ls-autofill-content"
         onClick={toggle}
       >
-        <span className="database-heading">
-          <span className="micro-label">Database</span>
-          <strong>Fitur Auto-Fill Database</strong>
-          <span>Sistem pencarian otomatis untuk mempercepat pengisian formulir</span>
-        </span>
-        <span className="toggle-state">
-          {expanded ? "Tutup" : "Buka"}
-          <span className="chevron">
-            <ChevronGlyph />
-          </span>
-        </span>
+        {expanded ? "Tutup" : "Buka"}
+        <span className="sr-only"> fitur auto-fill</span>
+        <ChevronGlyph />
       </button>
 
-      <div id="ls-autofill-content" className="database-content" hidden={!expanded}>
-        <div className="database-features">
+      <div id="ls-autofill-content" className="autofill-open" hidden={!expanded}>
+        <div className="autofill-cards">
           {features.map(([title, description], index) => (
-            <div className="database-feature" key={title}>
-              <span className="feature-index" aria-hidden="true">
-                {String.fromCharCode(65 + index)}
-              </span>
-              <h3>{title}</h3>
-              <p>{description}</p>
-            </div>
+            <article key={title}>
+              <strong aria-hidden="true">{String.fromCharCode(65 + index)}</strong>
+              <div>
+                <h4>{title}</h4>
+                <p>{description}</p>
+              </div>
+            </article>
           ))}
         </div>
 
-        <div className="database-tools">
+        <div className="autofill-tools">
           <div className="resident-search">
-            <span className="micro-label" id="ls-panel-search-label">
+            <span className="sr-only" id="ls-panel-search-label">
               Pencarian data penduduk
             </span>
             {user ? (

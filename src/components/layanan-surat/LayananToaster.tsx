@@ -10,8 +10,9 @@ import {
   ToastViewport,
 } from "@/components/ui/toast";
 import { LS_ROOT_CLASS } from "@/app/layanan-surat/fonts";
+import { CheckGlyph } from "./glyphs";
 
-/** Renders the shared toast queue with Layanan Surat styling, above the sticky action bar. */
+/** Renders the shared toast queue with Layanan Surat styling, above the floating action dock. */
 export default function LayananToaster() {
   const { toasts } = useToast();
 
@@ -19,6 +20,9 @@ export default function LayananToaster() {
     <ToastProvider>
       {toasts.map(({ id, title, description, action, ...props }) => (
         <Toast key={id} {...props} className="ls-toast">
+          <span className="ls-toast-badge" aria-hidden="true">
+            {props.variant === "destructive" ? "!" : <CheckGlyph />}
+          </span>
           <div className="ls-toast-copy">
             {title && <ToastTitle className="ls-toast-title">{title}</ToastTitle>}
             {description && (

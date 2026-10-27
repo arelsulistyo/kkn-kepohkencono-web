@@ -92,6 +92,7 @@ export default function LoginDialog({ open, onOpenChange, onLoggedIn }: LoginDia
     <ModalShell
       open={open}
       onOpenChange={handleOpenChange}
+      kicker="akses petugas"
       title="Login perangkat desa"
       description="Masuk dengan akun petugas untuk membuat dan mengunduh surat."
     >

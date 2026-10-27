@@ -6,6 +6,7 @@ import { format, isValid, parse } from "date-fns";
 import { id as localeId } from "date-fns/locale";
 import IndonesianCalendar from "@/components/ui/indonesian-calendar";
 import { LS_ROOT_CLASS } from "@/app/layanan-surat/fonts";
+import { CalendarGlyph } from "../../glyphs";
 import type { FieldDef } from "../types";
 
 export const fieldId = (name: string) => `field-${name}`;
@@ -56,17 +57,27 @@ function FieldShell({
         .filter(Boolean)
         .join(" ")}
     >
-      {asGroup ? (
-        <span className="field-label" id={`${id}-label`}>
-          {labelContent}
-        </span>
-      ) : (
-        <label className="field-label" htmlFor={id}>
-          {labelContent}
-        </label>
-      )}
+      <div className="field-label-row">
+        {asGroup ? (
+          <span className="field-label" id={`${id}-label`}>
+            {labelContent}
+          </span>
+        ) : (
+          <label className="field-label" htmlFor={id}>
+            {labelContent}
+          </label>
+        )}
+        {autofilled && <em className="field-source">dari database</em>}
+      </div>
       {children}
-      {error && <em id={`${id}-error`}>{error}</em>}
+      {error && (
+        <em className="field-error" id={`${id}-error`}>
+          <span className="error-badge" aria-hidden="true">
+            !
+          </span>
+          {error}
+        </em>
+      )}
     </div>
   );
 }
@@ -108,7 +119,11 @@ export function NumberField(props: FieldProps<Extract<FieldDef, { kind: "number"
           }
         />
         {field.digits && (
-          <small id={counterId} aria-label={`${value.length} dari ${field.digits} digit`}>
+          <small
+            id={counterId}
+            className={value.length === field.digits ? "is-complete" : undefined}
+            aria-label={`${value.length} dari ${field.digits} digit`}
+          >
             {value.length}/{field.digits}
           </small>
         )}
@@ -162,7 +177,7 @@ export function SegmentedField(props: FieldProps<Extract<FieldDef, { kind: "segm
   const id = fieldId(field.name);
   return (
     <FieldShell {...props} asGroup>
-      <div className="segmented-input" role="radiogroup" aria-labelledby={`${id}-label`}>
+      <div className="gender-control" role="radiogroup" aria-labelledby={`${id}-label`}>
         {field.options.map((option, index) => (
           <label key={option.value} className={value === option.value ? "active" : ""}>
             <input
@@ -198,17 +213,20 @@ export function DateField(props: FieldProps<Extract<FieldDef, { kind: "date" }>>
           if (!next) onBlur();
         }}
       >
-        <PopoverPrimitive.Trigger asChild>
-          <button
-            type="button"
-            {...controlProps(props)}
-            aria-required={undefined}
-            onBlur={undefined}
-            className={`date-trigger ${value ? "" : "is-empty"}`}
-          >
-            {value || field.placeholder}
-          </button>
-        </PopoverPrimitive.Trigger>
+        <span className="date-control">
+          <PopoverPrimitive.Trigger asChild>
+            <button
+              type="button"
+              {...controlProps(props)}
+              aria-required={undefined}
+              onBlur={undefined}
+              className={`date-trigger ${value ? "" : "is-empty"}`}
+            >
+              {value || field.placeholder}
+            </button>
+          </PopoverPrimitive.Trigger>
+          <CalendarGlyph />
+        </span>
         <PopoverPrimitive.Portal>
           <PopoverPrimitive.Content
             className={`${LS_ROOT_CLASS} ls-popover`}
