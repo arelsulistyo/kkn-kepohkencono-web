@@ -21,8 +21,6 @@ const publicSans = Public_Sans({
   display: "swap",
 });
 
-/** Classes defining --kp-font-serif / --kp-font-italic / --kp-font-sans; shared with Layanan Surat. */
 export const FONT_VARIABLES = `${youngSerif.variable} ${newsreader.variable} ${publicSans.variable}`;
 
-/** Scope class for the public site (home + visualisasi data). */
 export const KP_ROOT_CLASS = `kp-root ${FONT_VARIABLES}`;

@@ -20,7 +20,6 @@ import {
   type TableState,
 } from "./charts";
 
-/** Jobs beyond the first three share one grey "Lainnya" slice. */
 const NAMED_SLICES = 3;
 const SLICE_COLORS = [CHART_COLORS.male, CHART_COLORS.female, CHART_COLORS.third];
 

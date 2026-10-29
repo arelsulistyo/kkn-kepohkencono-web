@@ -1,10 +1,6 @@
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 
-/**
- * ScrollToTop component that scrolls the window to the top
- * whenever the route changes
- */
 export const ScrollToTop = () => {
   const pathname = usePathname();
 

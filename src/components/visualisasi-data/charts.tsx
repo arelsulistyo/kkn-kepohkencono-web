@@ -16,7 +16,6 @@ export const CHART_COLORS = {
   other: "var(--chart-other)",
 };
 
-/** Sage ramp for ordered education levels, lightest first. */
 export const EDUCATION_RAMP = [
   "#D3E2D5",
   "#A9C6AF",
@@ -26,7 +25,6 @@ export const EDUCATION_RAMP = [
   "#1F4A30",
 ];
 
-/** "78,6%" for a value already in percent. */
 export const pct = (value: number) => `${formatPercent(value)}%`;
 
 export const describeValue = (label: string, value: number, percent: number) =>
@@ -44,7 +42,6 @@ function useMediaQuery(query: string) {
   );
 }
 
-/** Counts up from 0 the first time it scrolls into view. */
 export function CountUp({
   value,
   decimals = 0,
@@ -238,7 +235,6 @@ export function ChartCard({
   );
 }
 
-// ---------- Pie ----------
 
 export type PieSegment = {
   label: string;
@@ -266,7 +262,6 @@ function slicePath(startAngle: number, endAngle: number) {
   return `M ${CX} ${CY} L ${start.x} ${start.y} A ${RADIUS} ${RADIUS} 0 ${largeArc} 0 ${end.x} ${end.y} Z`;
 }
 
-/** Slices with outside label positions, nudged apart per side so none overlap. */
 function layoutSlices(segments: PieSegment[]) {
   const total = segments.reduce((sum, segment) => sum + segment.value, 0);
   let cursor = 0;
@@ -385,7 +380,6 @@ export function PieChart({
   );
 }
 
-// ---------- Ranked bars ----------
 
 export function RankedBars({
   rows,
@@ -398,7 +392,6 @@ export function RankedBars({
   rows: { label: string; value: number }[];
   total: number;
   colors: string[];
-  /** Pie slice index each row belongs to, for linked highlighting. */
   groups: number[];
   active: number | null;
   onActive: (group: number | null) => void;

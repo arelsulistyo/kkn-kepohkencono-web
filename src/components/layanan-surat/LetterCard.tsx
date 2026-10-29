@@ -17,13 +17,11 @@ function CreateLabel() {
 
 interface CreateLetterLinkProps {
   href: string;
-  /** Called instead of navigating when the user must log in first. */
   onBlocked?: () => void;
   className?: string;
   describedBy?: string;
 }
 
-/** "Buat surat →" link; when `onBlocked` is set the click opens login instead of navigating. */
 export function CreateLetterLink({
   href,
   onBlocked,

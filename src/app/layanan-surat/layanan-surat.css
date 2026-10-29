@@ -1,10 +1,4 @@
-/*
- * Layanan Surat — "Sage & Terakota" v2 (matches the home page).
- * Every selector is scoped under .ls-root so nothing leaks into the public site.
- * .ls-root is also set on portaled layers (dialogs, popovers, toasts).
- */
 
-/* ---------- Tokens & base ---------- */
 
 .ls-root {
   --brand: #3b5a45;
@@ -27,12 +21,10 @@
   --r-control: 12px;
   --r-dialog: 20px;
 
-  /* Font variables come from src/lib/fonts.ts (shared with the home page). */
   --ls-heading: var(--kp-font-serif), "Young Serif", Georgia, serif;
   --ls-label: var(--kp-font-italic), "Newsreader", Georgia, serif;
   --ls-body: var(--kp-font-sans), "Public Sans", system-ui, sans-serif;
 
-  /* Shared content column. */
   --ls-content: min(1120px, calc(100% - 48px));
 
   color: var(--ink);
@@ -41,7 +33,6 @@
   -webkit-font-smoothing: antialiased;
 }
 
-/* globals.css sets a font on every element, so override per element too. */
 .ls-root,
 .ls-root * {
   font-family: var(--ls-body);
@@ -78,7 +69,6 @@
   outline-offset: 2px;
 }
 
-/* Line icons; the logo mark keeps its own fills. */
 .ls-root svg:not(.kp-mark) {
   flex: none;
   fill: none;
@@ -91,8 +81,6 @@
 .ls-root :is(button, a) {
   -webkit-tap-highlight-color: transparent;
 }
-
-/* ---------- Shared type & controls ---------- */
 
 .ls-root .ls-kicker {
   margin: 0;
@@ -208,7 +196,6 @@
   cursor: pointer;
 }
 
-/* Search inputs (list search + resident search). */
 .ls-root .service-search,
 .ls-root .input-wrap {
   min-height: 46px;
@@ -253,9 +240,6 @@
   opacity: 0.8;
 }
 
-/* ---------- Header ---------- */
-
-/* Sticky top bar; below dialogs (z 50) and popovers (z 60). */
 .ls-root .service-header {
   position: sticky;
   z-index: 40;
@@ -390,7 +374,6 @@
   background: var(--brand-wash);
 }
 
-/* Dusk banner; copy and facts align with the 1120px content column. */
 .ls-root .service-banner {
   position: relative;
   max-width: 1320px;
@@ -466,8 +449,6 @@
   white-space: nowrap;
 }
 
-/* ---------- List page ---------- */
-
 .ls-root .service-main {
   width: var(--ls-content);
   margin-inline: auto;
@@ -490,7 +471,6 @@
   color: var(--muted);
 }
 
-/* Steps: cards over a dotted path. */
 .ls-root .steps-wrap {
   position: relative;
   margin-top: 32px;
@@ -553,7 +533,6 @@
   line-height: 1.5;
 }
 
-/* Auto-fill panel */
 .ls-root .autofill-panel {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -670,7 +649,6 @@
   color: var(--muted);
 }
 
-/* Resident search dropdown */
 .ls-root .resident-search-field {
   position: relative;
 }
@@ -746,12 +724,10 @@
   font-weight: 600;
 }
 
-/* On the brand-wash panel the row reads as a white card instead. */
 .ls-root .panel-resident {
   background: var(--card);
 }
 
-/* Template section */
 .ls-root .template-heading {
   display: flex;
   align-items: flex-end;
@@ -811,7 +787,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Letter cards: subgrid keeps meta, title, description, Syarat and actions aligned per row. */
 .ls-root .letter-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -938,7 +913,6 @@
   min-height: 40px;
 }
 
-/* Narrow cards (e.g. 3 columns at ~900px): stack the two actions instead of wrapping. */
 @container (max-width: 240px) {
   .ls-root .letter-actions {
     flex-direction: column-reverse;
@@ -1032,8 +1006,6 @@
   font-variant-numeric: lining-nums;
 }
 
-/* ---------- Dialogs ---------- */
-
 .ls-root.ls-backdrop {
   position: fixed;
   z-index: 50;
@@ -1087,7 +1059,6 @@
   gap: 18px;
 }
 
-/* The dialog is already the bg tone, so its inputs read as white fields. */
 .ls-root.ls-modal .form-field input {
   background: #fff;
 }
@@ -1096,7 +1067,6 @@
   margin-top: 4px;
 }
 
-/* Template preview overlay */
 .ls-root.preview-dialog {
   position: fixed;
   z-index: 50;
@@ -1186,7 +1156,6 @@
   inset: 0;
 }
 
-/* Blank sheet with faint lines while a PDF loads. */
 .ls-root .sheet-placeholder {
   padding: 72px 48px;
   background: #fff;
@@ -1232,7 +1201,6 @@
 
 .ls-root .template-stats {
   display: grid;
-  /* Kategori holds the longest value ("Administratif"). */
   grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr) minmax(0, 0.8fr);
   gap: 8px;
   margin-top: 14px;
@@ -1295,8 +1263,6 @@
   display: none;
 }
 
-/* ---------- Create-letter workspace ---------- */
-
 .ls-root .workspace {
   width: var(--ls-content);
   display: grid;
@@ -1304,7 +1270,6 @@
   align-items: start;
   gap: 40px;
   margin-inline: auto;
-  /* Top: room for the overlapping facts card. Bottom: room for the action dock. */
   padding: 110px 0 140px;
 }
 
@@ -1343,7 +1308,6 @@
   font-size: 14px;
 }
 
-/* Section-level autofill sits inside a form card: a wash panel, not a nested card. */
 .ls-root .create-autofill.is-compact {
   margin-top: 20px;
   padding: 18px;
@@ -1577,7 +1541,6 @@
   font-weight: 600;
 }
 
-/* Segmented control (Jenis Kelamin): a well with a raised pill. */
 .ls-root .gender-control {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1657,7 +1620,6 @@
   color: #fff;
 }
 
-/* Live preview */
 .ls-root .live-preview {
   position: sticky;
   top: 84px; /* 64px sticky header + 20px gap */
@@ -1724,7 +1686,6 @@
   font-size: 13px;
 }
 
-/* Floating action dock */
 .ls-root .action-dock {
   position: fixed;
   z-index: 40;
@@ -1858,7 +1819,6 @@
   display: none;
 }
 
-/* Logged-out and loading states */
 .ls-root .login-ledger {
   width: min(480px, 100%);
   margin: 0 auto;
@@ -1925,8 +1885,6 @@
   }
 }
 
-/* ---------- Toasts ---------- */
-
 .ls-root.ls-toast-viewport {
   position: fixed;
   z-index: 100;
@@ -1945,7 +1903,6 @@
   list-style: none;
 }
 
-/* On the create page, stack above the action dock. */
 .ls-root.ls-page:has(.action-dock) .ls-toast-viewport {
   bottom: calc(112px + env(safe-area-inset-bottom));
 }
@@ -2028,8 +1985,6 @@
   color: var(--ink);
 }
 
-/* ---------- Responsive ---------- */
-
 @media (max-width: 899px) {
   .ls-root .steps-path {
     display: none;
@@ -2086,7 +2041,6 @@
     display: none;
   }
 
-  /* Header: wordmark + truncated crumb, login button / avatar only. */
   .ls-root .service-topbar {
     height: 58px;
     gap: 12px;
@@ -2111,7 +2065,6 @@
     margin-right: 10px;
   }
 
-  /* On the create page only the current letter crumb is kept. */
   .ls-root .service-identity a.crumb {
     display: none;
   }
@@ -2208,7 +2161,6 @@
     padding: 28px 0;
   }
 
-  /* Preview overlay becomes a bottom sheet. */
   .ls-root.preview-dialog {
     inset: 16px 0 0;
     max-width: none;
@@ -2249,7 +2201,6 @@
     box-shadow: var(--shadow-lg);
   }
 
-  /* Workspace */
   .ls-root .workspace {
     padding: 32px 0 190px;
   }

@@ -40,7 +40,6 @@ const scrollBehavior = (): ScrollBehavior =>
 const RING_RADIUS = 19;
 const RING_LENGTH = 2 * Math.PI * RING_RADIUS;
 
-/** Circular completion meter; decorative, the text beside it carries the same numbers. */
 function ProgressRing({ value, total }: { value: number; total: number }) {
   const ratio = total ? value / total : 0;
   return (
@@ -77,7 +76,6 @@ export default function LetterWorkspace({ letterId }: { letterId: LetterId }) {
   const [values, setValues] = useState<LetterValues>(config.initialValues);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [submitted, setSubmitted] = useState(false);
-  /** Field name → autofill slot that filled it; removed once the user edits the field. */
   const [autofilled, setAutofilled] = useState<Record<string, string>>({});
   const [sources, setSources] = useState<Record<string, PersonData>>({});
   const [downloading, setDownloading] = useState(false);

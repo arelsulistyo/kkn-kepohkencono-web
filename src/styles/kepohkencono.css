@@ -1,10 +1,4 @@
-/*
- * Public site (home + visualisasi data): "Sage & Terakota".
- * Every selector is scoped under .kp-root so nothing leaks into other pages
- * (App Router keeps this stylesheet loaded after client-side navigation).
- */
 
-/* ---------- Tokens & base ---------- */
 
 .kp-root {
   --brand: #3b5a45;
@@ -39,7 +33,6 @@
   -webkit-font-smoothing: antialiased;
 }
 
-/* globals.css sets a font on every element, so override per element too. */
 .kp-root,
 .kp-root * {
   font-family: var(--kp-sans);
@@ -77,7 +70,6 @@
   width: 1px;
 }
 
-/* Big stat numbers: lining figures (Young Serif's figures are old-style). */
 .kp-root :is(.fact-strip dd:not(.fact-word), .ledger-highlight strong, .key-numbers strong, .split-labels strong, .religion-card strong, .admin-card > strong) {
   font-family: var(--kp-italic);
   font-variant-numeric: lining-nums tabular-nums;
@@ -102,8 +94,6 @@
   overflow: clip;
 }
 
-/* ---------- Navigation ---------- */
-
 .kp-root .site-nav {
   align-items: center;
   background: color-mix(in srgb, var(--bg) 96%, transparent);
@@ -119,7 +109,6 @@
   position: fixed;
   right: 0;
   top: 0;
-  /* Slide in from the top: decelerate into place. */
   --nav-transition:
     transform 480ms cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 360ms ease-out;
@@ -127,12 +116,10 @@
   z-index: 50;
 }
 
-/* Hidden over the hero title; focus-within keeps it reachable by keyboard. */
-.kp-root .site-nav.is-hidden:not(:focus-within) {
+.kp-root .site-nav.is-hidden:not(:has(:focus-visible)) {
   box-shadow: none;
   pointer-events: none;
   transform: translateY(-100%);
-  /* Slide back up: accelerate away, a little quicker than the entrance. */
   --nav-transition:
     transform 360ms cubic-bezier(0.55, 0, 0.75, 0.2),
     box-shadow 200ms ease-in;
@@ -248,8 +235,6 @@
   font-style: italic;
 }
 
-/* ---------- Buttons ---------- */
-
 .kp-root .button {
   align-items: center;
   border: 1.5px solid transparent;
@@ -299,8 +284,6 @@
 .kp-root .button-brand:hover {
   background: var(--brand-dark);
 }
-
-/* ---------- Hero ---------- */
 
 .kp-root .hero {
   color: white;
@@ -451,8 +434,6 @@
   margin-top: 3px;
 }
 
-/* ---------- Sections ---------- */
-
 .kp-root .section {
   padding: 118px max(32px, calc((100vw - 1240px) / 2));
 }
@@ -507,13 +488,10 @@ html[data-kp-reveal] .kp-root [data-reveal].is-visible {
   transform: none;
 }
 
-/* Photos that fill their frame. */
 .kp-root :is(.image-frame, .event-image, .earth-photo, .gallery-mosaic button) img {
   object-fit: cover;
   transition: transform 500ms ease;
 }
-
-/* About */
 
 .kp-root .about-section {
   padding-top: 100px;
@@ -613,8 +591,6 @@ html[data-kp-reveal] .kp-root .about-copy:not(.is-visible) .squiggle-word path {
   transform: rotate(1.5deg);
   z-index: 3;
 }
-
-/* Dukuh */
 
 .kp-root .dukuh-section {
   background: var(--dusk);
@@ -731,8 +707,6 @@ html[data-kp-reveal] .kp-root .about-copy:not(.is-visible) .squiggle-word path {
   right: 20px;
   text-decoration: none;
 }
-
-/* Budaya */
 
 .kp-root .culture-section {
   background: var(--brand-dark);
@@ -876,8 +850,6 @@ html[data-kp-reveal] .kp-root .about-copy:not(.is-visible) .squiggle-word path {
   line-height: 1.25;
 }
 
-/* Sedekah Bumi */
-
 .kp-root .earth-feature {
   align-items: center;
   display: grid;
@@ -1006,8 +978,6 @@ html[data-kp-reveal] .kp-root .about-copy:not(.is-visible) .squiggle-word path {
   margin: 13px 10px 0;
 }
 
-/* Data preview */
-
 .kp-root .data-section {
   background: var(--brand-wash);
 }
@@ -1094,8 +1064,6 @@ html[data-kp-reveal] .kp-root .about-copy:not(.is-visible) .squiggle-word path {
   justify-content: center;
   margin-top: 42px;
 }
-
-/* Gallery */
 
 .kp-root .gallery-heading {
   align-items: end;
@@ -1185,8 +1153,6 @@ html[data-kp-reveal] .kp-root .about-copy:not(.is-visible) .squiggle-word path {
   transform: none;
 }
 
-/* ---------- Lightbox ---------- */
-
 .kp-root .lightbox {
   align-items: center;
   background: rgba(31, 42, 36, 0.95);
@@ -1249,8 +1215,6 @@ html[data-kp-reveal] .kp-root .about-copy:not(.is-visible) .squiggle-word path {
 .kp-root .lightbox-next {
   right: 28px;
 }
-
-/* ---------- Footer ---------- */
 
 .kp-root .site-footer {
   background: var(--brand-dark);
@@ -1349,8 +1313,6 @@ html[data-kp-reveal] .kp-root .about-copy:not(.is-visible) .squiggle-word path {
   font-size: 12px;
   margin-top: 70px;
 }
-
-/* ---------- Visualisasi data ---------- */
 
 .kp-root .data-hero {
   /* The key-number strip hangs over the dusk band's lower edge. */
@@ -1568,7 +1530,6 @@ html[data-kp-reveal] .kp-root .about-copy:not(.is-visible) .squiggle-word path {
   background: var(--chart-female);
 }
 
-/* Tooltips show on hover and on keyboard focus of their mark. */
 .kp-root .data-tooltip {
   background: var(--card);
   border-radius: 12px;
@@ -1649,8 +1610,6 @@ html[data-kp-reveal] .kp-root .about-copy:not(.is-visible) .squiggle-word path {
   border-radius: 0 8px 8px 0;
 }
 
-/* Split bar */
-
 .kp-root .split-summary {
   margin-top: 40px;
 }
@@ -1699,8 +1658,6 @@ html[data-kp-reveal] .kp-root .about-copy:not(.is-visible) .squiggle-word path {
 .kp-root .split-bar:hover > span:not(:hover) {
   opacity: 0.4;
 }
-
-/* Pyramid */
 
 .kp-root .pyramid {
   display: grid;
@@ -1761,8 +1718,6 @@ html[data-kp-reveal] .kp-root .about-copy:not(.is-visible) .squiggle-word path {
   opacity: 0.4;
 }
 
-/* Religion */
-
 .kp-root .religion-card {
   align-items: center;
   background: var(--brand);
@@ -1781,8 +1736,6 @@ html[data-kp-reveal] .kp-root .about-copy:not(.is-visible) .squiggle-word path {
   color: var(--header-muted);
   font-size: 18px;
 }
-
-/* Family bars */
 
 .kp-root .family-bars {
   display: grid;
@@ -1833,8 +1786,6 @@ html[data-kp-reveal] .kp-root .about-copy:not(.is-visible) .squiggle-word path {
 .kp-root :is(.ranked-row, .family-row, .grouped-pair).muted {
   opacity: 0.4;
 }
-
-/* Pie */
 
 .kp-root .pie-bar-layout {
   align-items: start;
@@ -1939,8 +1890,6 @@ html[data-kp-reveal] .kp-root .about-copy:not(.is-visible) .squiggle-word path {
   width: 8px;
 }
 
-/* Ranked bars */
-
 .kp-root .ranked-bars {
   display: grid;
   gap: 18px;
@@ -1988,8 +1937,6 @@ html[data-kp-reveal] .kp-root .about-copy:not(.is-visible) .squiggle-word path {
 .kp-root .chart-total strong {
   color: var(--ink);
 }
-
-/* Grouped vertical bars */
 
 .kp-root .grouped-chart {
   height: 430px;
@@ -2111,8 +2058,6 @@ html[data-kp-reveal] .kp-root .about-copy:not(.is-visible) .squiggle-word path {
   transform: translate(-50%, 0);
 }
 
-/* Administration */
-
 .kp-root .admin-grid {
   display: grid;
   gap: 22px;
@@ -2157,8 +2102,6 @@ html[data-kp-reveal] .kp-root .about-copy:not(.is-visible) .squiggle-word path {
   margin-top: 16px;
 }
 
-/* ---------- Keyframes ---------- */
-
 @keyframes kp-kenburns {
   from { transform: scale(1); }
   to { transform: scale(1.06); }
@@ -2182,8 +2125,6 @@ html[data-kp-reveal] .kp-root .about-copy:not(.is-visible) .squiggle-word path {
   from { transform: scaleX(0); }
   to { transform: scaleX(1); }
 }
-
-/* ---------- Responsive ---------- */
 
 @media (max-width: 1040px) {
   .kp-root .desktop-nav {
@@ -2413,7 +2354,6 @@ html[data-kp-reveal] .kp-root .about-copy:not(.is-visible) .squiggle-word path {
     height: 390px;
   }
 
-
   .kp-root .map-link {
     bottom: 14px;
     right: 14px;
@@ -2445,7 +2385,6 @@ html[data-kp-reveal] .kp-root .about-copy:not(.is-visible) .squiggle-word path {
     text-align: left;
   }
 
-  /* Carousel: straight cards that snap into place. */
   .kp-root .procession {
     justify-content: start;
     margin-right: -20px;
@@ -2531,8 +2470,6 @@ html[data-kp-reveal] .kp-root .about-copy:not(.is-visible) .squiggle-word path {
   .kp-root .lightbox-next {
     right: 20px;
   }
-
-  /* Data page */
 
   .kp-root .data-hero {
     background: linear-gradient(to bottom, var(--dusk) calc(100% - 110px), var(--bg) 0);
@@ -2641,7 +2578,6 @@ html[data-kp-reveal] .kp-root .about-copy:not(.is-visible) .squiggle-word path {
     font-size: 11px;
   }
 
-  /* Grouped bars turn horizontal. */
   .kp-root .grouped-chart {
     height: auto;
     padding: 0;
@@ -2748,8 +2684,6 @@ html[data-kp-reveal] .kp-root .about-copy:not(.is-visible) .squiggle-word path {
   }
 }
 
-/* ---------- Route loading screen ---------- */
-
 .kp-root.page-loading {
   align-items: center;
   display: flex;
@@ -2759,7 +2693,6 @@ html[data-kp-reveal] .kp-root .about-copy:not(.is-visible) .squiggle-word path {
   padding: 24px;
 }
 
-/* Fade in after a beat so fast navigations don't flash the loader. */
 .kp-root .page-loading-inner {
   animation: kp-loader-in 320ms 160ms ease both;
   display: grid;
@@ -2774,7 +2707,6 @@ html[data-kp-reveal] .kp-root .about-copy:not(.is-visible) .squiggle-word path {
   width: 88px;
 }
 
-/* The sun (the mark's only top-level circle) rises and settles behind the tree. */
 .kp-root .page-loading-mark > circle {
   animation: kp-sunrise 1.8s ease-in-out infinite alternate;
   transform-box: fill-box;
@@ -2849,7 +2781,6 @@ html[data-kp-reveal] .kp-root .about-copy:not(.is-visible) .squiggle-word path {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  /* Static: sun up, bar half full. */
   .kp-root .page-loading-mark > circle,
   .kp-root .page-loading-bar > span {
     animation: none !important;

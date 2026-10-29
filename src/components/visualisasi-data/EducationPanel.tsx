@@ -56,7 +56,6 @@ const primaryToJunior = share(
   population,
 );
 
-/** Two-line axis label: break at the space or slash nearest the middle. */
 function splitLabel(label: string): [string, string] {
   let best = -1;
   for (let i = 1; i < label.length; i++) {
@@ -69,7 +68,6 @@ function splitLabel(label: string): [string, string] {
   return [label.slice(0, best).trimEnd(), label.slice(best)];
 }
 
-/** Round axis maximum and tick step for `max` split into ~`ticks` steps. */
 function niceScale(max: number, ticks = 4) {
   const raw = max / ticks;
   const magnitude = 10 ** Math.floor(Math.log10(raw));

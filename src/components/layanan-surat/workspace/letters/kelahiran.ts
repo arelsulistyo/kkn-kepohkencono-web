@@ -78,7 +78,6 @@ export const validate = (values: Values) =>
     namaIbu: "Nama ibu harus diisi",
   });
 
-/** Fills the applicant (pemohon) only, as before. */
 export const fromPerson = (person: PersonData): Partial<Values> =>
   defined({
     namaPemohon: person.NAMA || "",

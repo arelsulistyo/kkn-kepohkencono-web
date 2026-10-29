@@ -3,7 +3,6 @@ import type { NextConfig } from "next";
 const NOINDEX = [{ key: "X-Robots-Tag", value: "noindex, nofollow" }];
 
 const nextConfig: NextConfig = {
-  // SEO optimizations
   trailingSlash: false,
   generateEtags: true,
   poweredByHeader: false,

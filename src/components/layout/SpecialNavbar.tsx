@@ -150,7 +150,6 @@ const SpecialNavbar = forwardRef<SpecialNavbarRef, SpecialNavbarProps>((
               </p>
             </div>
             <div className="hidden sm:flex justify-end">
-              {/* Empty space for responsive layout */}
             </div>
           </div>
         </div>

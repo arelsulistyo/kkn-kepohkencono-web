@@ -2,7 +2,6 @@ import { NextRequest } from 'next/server';
 import { adminDb } from '@/lib/firebase-admin';
 import { noStoreJson, requireStaff } from '@/lib/require-staff';
 
-// Full person data interface
 interface PersonData {
   NAMA: string;
   NIK: string;
@@ -40,7 +39,6 @@ export async function GET(
       );
     }
 
-    // Query Firestore villagers collection
     const villagersRef = adminDb().collection('villagers');
     const snapshot = await villagersRef.where('NIK', '==', nik).limit(1).get();
 
@@ -54,7 +52,6 @@ export async function GET(
     const doc = snapshot.docs[0];
     const data = doc.data();
 
-    // Convert Firestore data to PersonData format
     const person: PersonData = {
       NAMA: data.NAMA?.toString() || '',
       NIK: data.NIK?.toString() || '',

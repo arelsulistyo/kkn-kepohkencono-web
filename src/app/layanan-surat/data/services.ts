@@ -26,7 +26,6 @@ export interface Service {
   templateDocUrl: string;
 }
 
-/** Shared Google Drive folder holding every editable template. */
 export const DRIVE_FOLDER_URL =
   "https://drive.google.com/drive/u/1/folders/1-jAAhp4eszNutZZOBImcUCHhTN95q6d2";
 
@@ -138,6 +137,5 @@ export const isLetterId = (id: string): id is LetterId =>
 export const getService = (id: LetterId): Service =>
   services.find((service) => service.id === id)!;
 
-/** "SKD · No. 01" */
 export const letterReference = (service: Service) =>
   `${service.code} · no. ${String(service.number).padStart(2, "0")}`;

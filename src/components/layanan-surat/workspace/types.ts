@@ -3,7 +3,6 @@ import type { LetterId } from "@/app/layanan-surat/data/services";
 import type { PersonData } from "@/components/ui/person-search";
 import type { GeneratedLetter } from "@/components/layanan-surat/surat-templates/shared";
 
-/** Every form value is a string; dates are stored already formatted ("05 Agustus 2025"). */
 export type LetterValues = Record<string, string>;
 
 export type FieldErrors<V extends LetterValues = LetterValues> = Partial<
@@ -18,9 +17,7 @@ export interface FieldOption {
 interface FieldBase<V extends LetterValues> {
   name: keyof V & string;
   label: string;
-  /** Not required by validation; shown as "(opsional)". */
   optional?: boolean;
-  /** Spans both columns of the field grid. */
   wide?: boolean;
   placeholder?: string;
 }
@@ -28,7 +25,7 @@ interface FieldBase<V extends LetterValues> {
 export type FieldDef<V extends LetterValues = LetterValues> = FieldBase<V> &
   (
     | { kind: "text"; inputMode?: "tel" }
-    | { kind: "number"; /** Exact digit count; shows an "n/16" counter. */ digits?: number }
+    | { kind: "number"; digits?: number }
     | { kind: "textarea" }
     | { kind: "date" }
     | { kind: "select"; options?: FieldOption[]; groups?: { label: string; options: FieldOption[] }[] }
@@ -39,7 +36,6 @@ export interface SectionDef<V extends LetterValues = LetterValues> {
   index: string;
   title: string;
   fields: FieldDef<V>[];
-  /** A second resident search inside this section (e.g. the location owner). */
   autofill?: {
     placeholder: string;
     fromPerson: (person: PersonData) => Partial<V>;
@@ -51,7 +47,6 @@ interface LetterTemplate<T> {
   generate: (data: T) => Promise<GeneratedLetter | null>;
 }
 
-/** What each `letters/<id>.ts` module defines, typed against its own values. */
 export interface LetterSpec<V extends LetterValues, T> {
   id: LetterId;
   searchPlaceholder?: string;
@@ -60,11 +55,9 @@ export interface LetterSpec<V extends LetterValues, T> {
   validate: (values: V) => FieldErrors<V>;
   fromPerson: (person: PersonData) => Partial<V>;
   toTemplateData: (values: V) => T;
-  /** Lazy so jsPDF and the fonts load only on the create page. */
   loadTemplate: () => Promise<LetterTemplate<T>>;
 }
 
-/** Type-erased letter the shared workspace renders. */
 export interface LetterConfig {
   id: LetterId;
   searchPlaceholder: string;
@@ -72,9 +65,7 @@ export interface LetterConfig {
   initialValues: LetterValues;
   validate: (values: LetterValues) => FieldErrors;
   fromPerson: (person: PersonData) => Partial<LetterValues>;
-  /** Builds the PDF with a placeholder number (does not consume a letter number). */
   buildPreview: (values: LetterValues) => Promise<jsPDF>;
-  /** Takes a real letter number, builds and downloads the PDF. */
   download: (values: LetterValues) => Promise<GeneratedLetter | null>;
 }
 
@@ -95,7 +86,6 @@ export function defineLetter<V extends LetterValues, T>(spec: LetterSpec<V, T>):
   };
 }
 
-/** Errors for every listed field that is blank, using the given messages. */
 export function requireFields<V extends LetterValues>(
   values: V,
   messages: Partial<Record<keyof V & string, string>>
@@ -107,7 +97,6 @@ export function requireFields<V extends LetterValues>(
   return errors;
 }
 
-/** "Nomor KTP harus 16 digit" when a filled identity number has the wrong length. */
 export function sixteenDigitError(value: string, label: string): string | undefined {
   const digits = value.trim();
   return digits && digits.length !== 16 ? `${label} harus 16 digit` : undefined;

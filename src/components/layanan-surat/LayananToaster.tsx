@@ -12,7 +12,6 @@ import {
 import { LS_ROOT_CLASS } from "@/app/layanan-surat/fonts";
 import { CheckGlyph } from "./glyphs";
 
-/** Renders the shared toast queue with Layanan Surat styling, above the floating action dock. */
 export default function LayananToaster() {
   const { toasts } = useToast();
 

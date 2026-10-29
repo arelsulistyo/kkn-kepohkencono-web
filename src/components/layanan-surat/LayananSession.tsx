@@ -10,7 +10,6 @@ interface LayananSession {
   user: User | null;
   loading: boolean;
   logout: () => Promise<void>;
-  /** Opens the login dialog; `onLoggedIn` runs once after a successful login. */
   requestLogin: (onLoggedIn?: () => void) => void;
 }
 

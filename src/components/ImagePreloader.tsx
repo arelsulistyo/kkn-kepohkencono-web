@@ -19,10 +19,8 @@ const ImagePreloader: React.FC<ImagePreloaderProps> = ({
   return (
     <div className="fixed inset-0 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 flex items-center justify-center z-50">
       <div className="relative">
-        {/* Background leaf (unfilled) */}
         <Leaf className="w-16 h-16 text-gray-300" />
         
-        {/* Progressively filled leaf */}
         <div 
           className="absolute inset-0 overflow-hidden"
           style={{

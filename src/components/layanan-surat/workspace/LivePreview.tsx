@@ -13,17 +13,11 @@ interface LivePreviewProps {
   config: LetterConfig;
   values: LetterValues;
   title: string;
-  /** Build only while the preview can be seen. */
   enabled: boolean;
   mobileOpen: boolean;
   onMobileClose: () => void;
 }
 
-/**
- * Renders the real jsPDF output in the browser's PDF viewer. Each rebuild loads
- * into a hidden frame that becomes the visible one once loaded (same element,
- * same key), so the page never blanks while typing.
- */
 export default function LivePreview({
   config,
   values,

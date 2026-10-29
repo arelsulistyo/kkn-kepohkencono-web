@@ -8,14 +8,12 @@ interface ModalShellProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title: string;
-  /** Small italic label above the title. */
   kicker: string;
   description?: string;
   size?: "narrow" | "wide";
   children: React.ReactNode;
 }
 
-/** Centered card dialog in the Layanan Surat style (focus trap, Escape, scroll lock via Radix). */
 export default function ModalShell({
   open,
   onOpenChange,

@@ -22,7 +22,6 @@ interface FieldProps<F extends FieldDef = FieldDef> {
   onBlur: () => void;
 }
 
-/** Attributes every native control shares: id, validity, error link. */
 const controlProps = ({ field, error, onBlur }: FieldProps) => ({
   id: fieldId(field.name),
   name: field.name,
@@ -250,7 +249,6 @@ export function DateField(props: FieldProps<Extract<FieldDef, { kind: "date" }>>
   );
 }
 
-/** Renders the right primitive for a field definition. */
 export function FieldControl(props: FieldProps) {
   const { field } = props;
   switch (field.kind) {

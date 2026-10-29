@@ -17,7 +17,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Validate file type
     const allowedTypes = [
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       'application/vnd.ms-excel'
@@ -30,11 +29,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Convert file to buffer
     const buffer = await file.arrayBuffer();
     const workbook = XLSX.read(buffer, { type: 'buffer' });
 
-    // Get sheet information
     const sheetsInfo = workbook.SheetNames.map(sheetName => {
       const sheet = workbook.Sheets[sheetName];
       const data = XLSX.utils.sheet_to_json(sheet, { header: 1 }) as any[][];

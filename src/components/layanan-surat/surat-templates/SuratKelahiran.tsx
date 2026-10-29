@@ -7,28 +7,22 @@ import {
 } from "./shared";
 
 export interface SuratKelahiranProps {
-  // Data pemohon
   namaPemohon: string;
   tempatLahirPemohon: string;
   tanggalLahirPemohon: string;
-  jenisKelaminPemohon: string; // "L" atau "P"
+  jenisKelaminPemohon: string;
   pekerjaanPemohon: string;
   alamatPemohon: string;
-  // Data anak
   namaAnak: string;
   tempatLahirAnak: string;
   tanggalLahirAnak: string;
-  jenisKelaminAnak: string; // "L" atau "P"
+  jenisKelaminAnak: string;
   agamaAnak: string;
   alamatAnak: string;
-  // Data orang tua
   namaAyah: string;
   namaIbu: string;
 }
 
-/**
- * Komponen untuk menghasilkan PDF Surat Keterangan Kelahiran
- */
 export const buildSuratKelahiranDoc = async (
   props: SuratKelahiranProps,
   letterNumber: string = PREVIEW_LETTER_NUMBER
@@ -50,33 +44,27 @@ export const buildSuratKelahiranDoc = async (
     namaIbu,
   } = props;
 
-  // Buat instance jsPDF
   const doc = new jsPDF();
 
-  // Set font ke Bookman Old Style
   doc.setFont("Bookman Old Style", "normal");
 
-  // Coba untuk mendapatkan gambar kop surat
   try {
-    // Gunakan gambar kop surat dari folder public
     const kopSuratDataUrl = await getImgFromUrl(
       "/images/layanan-surat/kop_kepohkencono.png"
     );
 
-    // Header Surat
     doc.addImage(
       kopSuratDataUrl,
       "PNG",
-      20, // x position
-      10, // y position
-      170, // width (hampir selebar halaman A4)
-      40, // height
-      "kop_surat", // alias
-      "MEDIUM" // compression
+      20,
+      10,
+      170,
+      40,
+      "kop_surat",
+      "MEDIUM"
     );
   } catch (error) {
     console.error("Gagal memuat kop surat:", error);
-    // Lanjutkan tanpa kop surat, gunakan teks sebagai fallback
     doc.setFontSize(12);
     doc.setFont("Bookman Old Style", "bold");
     doc.text("PEMERINTAH KABUPATEN PATI", 105, 20, { align: "center" });
@@ -92,14 +80,12 @@ export const buildSuratKelahiranDoc = async (
     );
   }
 
-  // No Kode Desa
   doc.setFontSize(12);
   doc.setFont("Bookman Old Style", "normal");
   doc.text("No Kode Desa : 33.18.05.20.03", 20, 55);
 
   const currentDate = new Date();
 
-  // Title Surat
   doc.setFontSize(18);
   doc.setFont("Bookman Old Style", "bold");
   doc.text("SURAT KETERANGAN KELAHIRAN", 105, 70, { align: "center" });
@@ -112,7 +98,6 @@ export const buildSuratKelahiranDoc = async (
     align: "center",
   });
 
-  // Add content
   doc.setFontSize(12);
   doc.setFont("Bookman Old Style", "normal");
   doc.text(
@@ -122,79 +107,63 @@ export const buildSuratKelahiranDoc = async (
     { maxWidth: 170, align: "justify" }
   );
 
-  // Add pemohon data
   let yPos = 110;
   const lineHeight = 7;
 
-  // Nama Pemohon
   doc.text("Nama", 20, yPos);
   doc.text(": " + namaPemohon, 100, yPos);
   yPos += lineHeight;
 
-  // Tempat/Tgl Lahir Pemohon
   doc.text("Tempat/Tgl Lahir", 20, yPos);
   doc.text(": " + tempatLahirPemohon + ", " + tanggalLahirPemohon, 100, yPos);
   yPos += lineHeight;
 
-  // Jenis Kelamin Pemohon
   doc.text("Jenis Kelamin", 20, yPos);
   doc.text(": " + jenisKelaminPemohon, 100, yPos);
   yPos += lineHeight;
 
-  // Pekerjaan Pemohon
   doc.text("Pekerjaan", 20, yPos);
   doc.text(": " + pekerjaanPemohon, 100, yPos);
   yPos += lineHeight;
 
-  // Alamat Pemohon
   doc.text("Alamat", 20, yPos);
   doc.text(": " + alamatPemohon, 100, yPos);
   yPos += lineHeight * 2;
 
-  // Keterangan kelahiran
   doc.text("Bahwa benar telah lahir seorang anak:", 20, yPos);
   yPos += lineHeight * 1.5;
 
-  // Nama Anak
   doc.text("Nama", 20, yPos);
   doc.text(": " + namaAnak, 100, yPos);
   yPos += lineHeight;
 
-  // Tempat tanggal lahir Anak
   doc.text("Tempat tanggal lahir", 20, yPos);
   doc.text(": " + tempatLahirAnak + ", " + tanggalLahirAnak, 100, yPos);
   yPos += lineHeight;
 
-  // Jenis kelamin Anak
   doc.text("Jenis kelamin", 20, yPos);
   doc.text(": " + jenisKelaminAnak, 100, yPos);
   yPos += lineHeight;
 
-  // Agama Anak
   doc.text("Agama", 20, yPos);
   doc.text(": " + agamaAnak, 100, yPos);
   yPos += lineHeight;
 
-  // Alamat Anak
   doc.text("Alamat", 20, yPos);
   doc.text(": " + alamatAnak, 100, yPos);
   yPos += lineHeight * 1.5;
 
-  // Orang tua
   doc.text("Orang tersebut merupakan anak dari:", 20, yPos);
   yPos += lineHeight * 1.5;
 
-  // Nama ayah
   doc.text("Nama ayah", 20, yPos);
   doc.text(": " + namaAyah, 100, yPos);
   yPos += lineHeight;
 
-  // Nama ibu
   doc.text("Nama ibu", 20, yPos);
   doc.text(": " + namaIbu, 100, yPos);
   yPos += lineHeight * 2;
 
-  // Add closing statement
   doc.text(
     "Demikian surat keterangan ini dibuat untuk dapat dipergunakan sebagaimana mestinya.",
     20,
@@ -202,11 +171,8 @@ export const buildSuratKelahiranDoc = async (
     { maxWidth: 170, align: "justify" }
   );
 
-  // Add signature section with current date
-  // Format the current date in Indonesian style
   const day = currentDate.getDate();
 
-  // Array of month names in Indonesian
   const monthNames = [
     "Januari",
     "Februari",
@@ -226,18 +192,15 @@ export const buildSuratKelahiranDoc = async (
   const year = currentDate.getFullYear();
   const formattedDate = `${day} ${month} ${year}`;
 
-  // Calculate signature position based on closing statement position
-  const signatureY = yPos + 15; // Add space after closing statement
+  const signatureY = yPos + 15;
 
   doc.text(`Kepohkencono, ${formattedDate}`, 130, signatureY);
   doc.text("Pj.Kepala Desa Kepohkencono", 130, signatureY + 5);
 
-  // Space for signature
-  const nameY = signatureY + 30; // Add space for signature
+  const nameY = signatureY + 30;
   doc.setFont("Bookman Old Style", "bold");
   doc.text("NGASIMAN S.H.", 145, nameY);
 
-  // Add underline for the signature name
   const signatureNameWidth = doc.getTextWidth("NGASIMAN S.H.");
   doc.setLineWidth(0.5);
   doc.line(145, nameY + 1, 145 + signatureNameWidth, nameY + 1);
@@ -251,9 +214,6 @@ export const buildSuratKelahiranDoc = async (
 export const suratKelahiranFilename = (props: SuratKelahiranProps) =>
   "Surat_Keterangan_Kelahiran_" + props.namaAnak.replace(/ /g, "_") + ".pdf";
 
-/**
- * Mengambil nomor surat berikutnya, membuat PDF, lalu mengunduhnya.
- */
 const generateSuratKelahiran = (
   props: SuratKelahiranProps
 ): Promise<GeneratedLetter | null> =>

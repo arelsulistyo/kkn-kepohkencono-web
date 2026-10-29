@@ -49,10 +49,8 @@ interface UploadResponse {
   };
 }
 
-/** An error whose message is already written for the user. */
 class UploadProblem extends Error {}
 
-/** Plain-language message for a failed /api/sheets or /api/upload response. */
 async function describeFailure(response: Response): Promise<UploadProblem> {
   const data = await response.json().catch(() => ({}));
   const serverError: string = data.error ?? "";
@@ -119,7 +117,6 @@ export default function ExcelUploadModal({
     setUploadResult(null);
     setError("");
 
-    // Get sheet information
     setIsLoadingSheets(true);
     try {
       const formData = new FormData();
@@ -136,7 +133,7 @@ export default function ExcelUploadModal({
       const data = await response.json();
 
       setSheets(data.sheets);
-      setUploadStep(2); // Move to step 2 after successful file load
+      setUploadStep(2);
       toast({
         title: "File berhasil dimuat",
         description: `Ditemukan ${data.totalSheets} sheet dalam file.`,
@@ -238,7 +235,6 @@ export default function ExcelUploadModal({
     onOpenChange(open);
   };
 
-  // Hide modal if user is not authenticated or still loading
   if (loading || !user) {
     return null;
   }
@@ -254,7 +250,6 @@ export default function ExcelUploadModal({
     >
 
         <div className="space-y-6">
-          {/* Progress Steps */}
           <div className="flex items-center justify-center mb-8">
             {[1, 2, 3, 4].map((step) => (
               <div key={step} className="flex items-center">
@@ -310,7 +305,6 @@ export default function ExcelUploadModal({
             </p>
           </div>
 
-          {/* Step 1: File Selection */}
           {uploadStep === 1 && (
             <div className="space-y-4">
               <div className="border-2 border-dashed border-[var(--input-border)] rounded-[16px] bg-[var(--card)] p-8 text-center hover:border-[var(--brand)] transition-colors duration-300">
@@ -352,7 +346,6 @@ export default function ExcelUploadModal({
             </div>
           )}
 
-          {/* Step 2: Sheet Selection */}
           {uploadStep === 2 && (
             <div className="space-y-4">
               <div className="bg-[var(--brand-wash)] rounded-[12px] p-4 mb-4">
@@ -416,7 +409,6 @@ export default function ExcelUploadModal({
             </div>
           )}
 
-          {/* Step 3: Row Range Selection */}
           {uploadStep === 3 && (
             <div className="space-y-6">
               <div className="bg-[var(--brand-wash)] rounded-[12px] p-4 mb-6">
@@ -482,7 +474,6 @@ export default function ExcelUploadModal({
             </div>
           )}
 
-          {/* Step 4: Review and Upload */}
           {uploadStep === 4 && (
             <div className="space-y-6">
               <Card className="rounded-[16px] border-0 bg-[var(--card)] shadow-[var(--shadow)]">
@@ -568,7 +559,6 @@ export default function ExcelUploadModal({
             </div>
           )}
 
-          {/* Error Display */}
           {error && (
             <div className="mt-6">
               <Alert variant="destructive">
@@ -578,7 +568,6 @@ export default function ExcelUploadModal({
             </div>
           )}
 
-          {/* Upload Result */}
           {uploadResult && (
             <div className="mt-6">
               <Card className="rounded-[16px] border-0 bg-[var(--card)] shadow-[var(--shadow)]">

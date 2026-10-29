@@ -12,7 +12,6 @@ interface PreviewOverlayProps {
   createHref: string;
   onCreateBlocked?: () => void;
   onClose: () => void;
-  /** Element to refocus after closing (the "Lihat contoh" button that opened it). */
   returnFocusTo: HTMLElement | null;
 }
 

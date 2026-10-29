@@ -13,7 +13,6 @@ import { SearchGlyph } from "./glyphs";
 interface ResidentSearchProps {
   placeholder: string;
   onSelect: (person: PersonData) => void;
-  /** Id of the element that labels the input. */
   labelledBy: string;
   describedBy?: string;
 }
@@ -27,7 +26,6 @@ type SearchState =
 const errorMessage = (error: unknown, fallback: string) =>
   error instanceof PersonAccessError ? error.message : fallback;
 
-/** Resident lookup backed by /api/search-person and /api/person/[nik]. */
 export default function ResidentSearch({
   placeholder,
   onSelect,

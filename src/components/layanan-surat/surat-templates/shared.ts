@@ -1,10 +1,8 @@
 import type { jsPDF } from "jspdf";
-// Side-effect imports: each module registers its font with jsPDF on load.
 import "../fonts/BookmanOldStyle-normal.js";
 import "../fonts/BookmanOldStyle-bold.js";
 import { getNextLetterNumber } from "@/lib/firebase";
 
-/** Letter number printed on preview renders, so previews never consume a real number. */
 export const PREVIEW_LETTER_NUMBER = `... / ... / ${new Date().getFullYear()}`;
 
 export interface GeneratedLetter {
@@ -40,10 +38,6 @@ const loadImageAsDataUrl = (imgUrl: string): Promise<string> =>
     img.src = imgUrl;
   });
 
-/**
- * Converts an image URL to a base64 data URL. Results are cached so live
- * previews don't re-decode the letterhead on every render.
- */
 export const getImgFromUrl = (imgUrl: string): Promise<string> => {
   let pending = imageCache.get(imgUrl);
   if (!pending) {
@@ -70,10 +64,6 @@ const downloadBlob = (blob: Blob, filename: string) => {
   }, 100);
 };
 
-/**
- * Takes the next real letter number, builds the document and downloads it.
- * Returns null (after logging) when anything fails.
- */
 export const generateLetter = async <T>(
   counterType: string,
   build: (data: T, letterNumber: string) => Promise<jsPDF>,

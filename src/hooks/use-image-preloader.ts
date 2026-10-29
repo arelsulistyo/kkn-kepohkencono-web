@@ -40,13 +40,13 @@ export const useImagePreloader = ({ imageUrls, onAllImagesLoaded }: UseImagePrel
         img.onerror = () => {
           console.warn(`Failed to load image: ${url}`);
           setLoadedImages(prev => {
-            const updated = { ...prev, [url]: true }; // Mark as "loaded" even if failed to prevent infinite loading
+            const updated = { ...prev, [url]: true };
             const loadedCount = Object.values(updated).filter(Boolean).length;
             const progress = Math.round((loadedCount / imageUrls.length) * 100);
             setLoadProgress(progress);
             return updated;
           });
-          resolve(); // Resolve anyway to not block other images
+          resolve();
         };
         
         img.src = url;

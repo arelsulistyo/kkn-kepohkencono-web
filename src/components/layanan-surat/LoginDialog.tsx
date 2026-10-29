@@ -7,7 +7,6 @@ import ModalShell from "./ModalShell";
 
 type LoginProblem = { field?: "email" | "password"; message: string };
 
-/** Plain-language explanation for a Firebase Auth error code. */
 function describeLoginError(error: unknown): LoginProblem {
   const code = (error as { code?: string } | null)?.code ?? "";
   switch (code) {

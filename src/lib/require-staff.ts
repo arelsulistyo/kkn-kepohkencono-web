@@ -3,7 +3,6 @@ import { adminAuth } from '@/lib/firebase-admin';
 
 const NO_STORE = { 'Cache-Control': 'no-store' };
 
-/** JSON response that browsers and proxies must not cache (resident data). */
 export const noStoreJson = (body: unknown, init: ResponseInit = {}) =>
   NextResponse.json(body, {
     ...init,
@@ -18,11 +17,6 @@ const staffEmails = () =>
       .filter(Boolean)
   );
 
-/**
- * Verifies the Firebase ID token in `Authorization: Bearer <token>` and checks
- * the account against the STAFF_EMAILS allowlist. Returns an error response to
- * send back, or null when the caller is staff. An empty allowlist denies everyone.
- */
 export async function requireStaff(request: NextRequest): Promise<NextResponse | null> {
   const match = /^Bearer\s+(.+)$/i.exec(request.headers.get('authorization') ?? '');
   if (!match) {

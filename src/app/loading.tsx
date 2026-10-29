@@ -2,7 +2,6 @@ import KepohMark from "@/components/site/KepohMark";
 import { KP_ROOT_CLASS } from "@/lib/fonts";
 import "@/styles/kepohkencono.css";
 
-/** Route transition screen: the logo's sun rises behind the kepuh tree. */
 export default function Loading() {
   return (
     <div className={`${KP_ROOT_CLASS} page-loading`} role="status">

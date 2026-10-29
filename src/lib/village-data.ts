@@ -1,7 +1,3 @@
-/**
- * Village statistics for the public site, aggregated from the source tables in
- * /public/data. Imported at build time so every number renders on first paint.
- */
 import aktaJson from "../../public/data/Akta_U17.json";
 import ageJson from "../../public/data/Demografi_Umur.json";
 import familyJson from "../../public/data/Hubungan_Keluarga.json";
@@ -23,7 +19,6 @@ export type SexBreakdown = {
 const firstRow = (table: unknown) => (table as SourceRow[])[0];
 const num = (row: SourceRow, key: string) => Number(row[key]) || 0;
 
-/** Sums the "<KEY> L" / "<KEY> P" columns of every key into one entry. */
 function bySex(
   row: SourceRow,
   label: string,
@@ -45,15 +40,12 @@ const formats = [0, 1].map(
     new Intl.NumberFormat("id-ID", { maximumFractionDigits: digits }),
 );
 
-/** 4212 → "4.212"; 2.644 with 1 digit → "2,6" */
 export const formatNumber = (value: number, digits: 0 | 1 = 0) =>
   formats[digits].format(value);
 
-/** 78.63 → "78,6" (no % sign, so callers can style it). */
 export const formatPercent = (value: number, digits: 0 | 1 = 1) =>
   formats[digits].format(value);
 
-// ---------- Age ----------
 
 const ageRow = firstRow(ageJson);
 
@@ -69,7 +61,6 @@ export const ageGroups = AGE_GROUPS.map(({ label, bands }) =>
   bySex(ageRow, label, bands),
 );
 
-// ---------- Totals ----------
 
 const sumOf = (rows: SexBreakdown[], key: "male" | "female" | "total") =>
   rows.reduce((sum, row) => sum + row[key], 0);
@@ -81,7 +72,6 @@ export const totals = {
   households: num(firstRow(householdJson), "KEPALA KELUARGA JML"),
 };
 
-// ---------- Religion ----------
 
 const religionRow = firstRow(religionJson);
 
@@ -102,7 +92,6 @@ export const religion = (
 
 export const religionTotal = sumOf(religion, "total");
 
-// ---------- Family relations ----------
 
 const familyRow = firstRow(familyJson);
 
@@ -120,7 +109,6 @@ export const familyRelations = (
 
 export const familyRelationsTotal = sumOf(familyRelations, "total");
 
-// ---------- Jobs ----------
 
 const jobsRow = firstRow(jobsJson);
 
@@ -155,7 +143,6 @@ const JOB_GROUPS: { label: string; keys: string[] }[] = [
   { label: "Pensiunan", keys: ["PENSIUNAN"] },
 ];
 
-/** Grouped occupations, largest first. */
 export const jobs = JOB_GROUPS.map(({ label, keys }) =>
   bySex(jobsRow, label, keys),
 )
@@ -164,11 +151,9 @@ export const jobs = JOB_GROUPS.map(({ label, keys }) =>
 
 export const jobsWorkingTotal = sumOf(jobs, "total");
 
-// ---------- Education ----------
 
 const educationRow = firstRow(educationJson);
 
-/** All levels in education order (not ranked). */
 export const education = [
   bySex(educationRow, "Tidak/Belum Sekolah", ["TIDAK/BLM SEKOLAH"]),
   bySex(educationRow, "Belum Tamat SD", ["BELUM TAMAT SD/SEDERAJAT"]),
@@ -186,10 +171,8 @@ export const education = [
   bySex(educationRow, "Strata II", ["STRATA-II"]),
 ];
 
-/** Index of the first higher-education level in `education`. */
 export const HIGHER_EDUCATION_START = 5;
 
-// ---------- Administration ----------
 
 const ktpRow = firstRow(ktpJson);
 const ktpEligible = num(ktpRow, "JML_WKTP");

@@ -1,10 +1,5 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
 
-/**
- * Fades `[data-reveal]` elements in as they scroll into view. Content stays
- * visible without JS: the hidden start state only applies once this hook has
- * flagged <html> with `data-kp-reveal`.
- */
 export function useReveal() {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -30,11 +25,6 @@ export function useReveal() {
   }, []);
 }
 
-/**
- * Scroll-spy: the id of the last section (in page order) whose top has crossed
- * the upper third of the viewport. At the very bottom of the page the final
- * section wins, since a short footer may never reach that line.
- */
 export function useActiveSection<T extends string>(ids: readonly T[]): T {
   const [active, setActive] = useState(ids[0]);
 
@@ -75,10 +65,6 @@ export function useActiveSection<T extends string>(ids: readonly T[]): T {
 const FOCUSABLE =
   'a[href], button:not([disabled]), iframe, video[controls], [tabindex]:not([tabindex="-1"])';
 
-/**
- * Modal behaviour for an open layer: locks body scroll, traps Tab inside
- * `containerRef`, closes on Escape, and returns focus to `returnFocusRef`.
- */
 export function useDialog(
   open: boolean,
   onClose: () => void,
@@ -130,7 +116,6 @@ export function useDialog(
   }, [open, containerRef, returnFocusRef]);
 }
 
-/** Roving-focus target for Arrow/Home/End in a horizontal tablist, or null. */
 export function nextTabIndex(key: string, index: number, count: number) {
   if (key === "ArrowRight") return (index + 1) % count;
   if (key === "ArrowLeft") return (index - 1 + count) % count;

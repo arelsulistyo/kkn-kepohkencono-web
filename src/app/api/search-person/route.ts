@@ -3,7 +3,6 @@ import type { DocumentData } from 'firebase-admin/firestore';
 import { adminDb } from '@/lib/firebase-admin';
 import { noStoreJson, requireStaff } from '@/lib/require-staff';
 
-// Basic person info for search results
 interface PersonSearchResult {
   NAMA: string;
   NIK: string;
@@ -12,11 +11,9 @@ interface PersonSearchResult {
   RW: string;
 }
 
-// Simple in-memory cache for search results (server-side only)
 const searchCache = new Map<string, { results: PersonSearchResult[], timestamp: number }>();
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+const CACHE_DURATION = 5 * 60 * 1000;
 
-// Helper function to normalize search terms
 function normalizeSearchTerm(term: string): string {
   return term.toLowerCase().trim();
 }
@@ -44,7 +41,6 @@ export async function GET(request: NextRequest) {
       return noStoreJson([]);
     }
 
-    // Check cache first
     const cacheKey = query;
     const cached = searchCache.get(cacheKey);
     if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
@@ -54,7 +50,6 @@ export async function GET(request: NextRequest) {
     const villagersRef = adminDb().collection('villagers');
     const searchResults: PersonSearchResult[] = [];
 
-    // Strategy 1: Try exact NIK match first (fastest)
     if (/^\d+$/.test(query)) {
       const nikQuery = await villagersRef
         .where('NIK', '==', query)
@@ -71,7 +66,6 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Strategy 2: Try exact KK match
     if (/^\d+$/.test(query)) {
       const kkQuery = await villagersRef
         .where('NO_KK', '==', query)
@@ -94,7 +88,6 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    // Strategy 3: Name search using range queries for better performance
     const upperQuery = query.slice(0, -1) + String.fromCharCode(query.charCodeAt(query.length - 1) + 1);
 
     const nameQuery = await villagersRef
@@ -110,10 +103,9 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    // If no results from optimized queries, fall back to broader search (limited)
     if (searchResults.length === 0) {
       const fallbackQuery = await villagersRef
-        .limit(500) // Limit to prevent timeout
+        .limit(500)
         .get();
 
       fallbackQuery.forEach(doc => {
@@ -130,12 +122,10 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Sort results by name and limit to 10
     const sortedResults = searchResults
       .sort((a, b) => a.NAMA.localeCompare(b.NAMA))
       .slice(0, 10);
 
-    // Cache the results
     searchCache.set(cacheKey, { results: sortedResults, timestamp: Date.now() });
 
     return noStoreJson(sortedResults);

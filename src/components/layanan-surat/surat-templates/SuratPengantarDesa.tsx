@@ -8,7 +8,7 @@ import {
 
 export interface SuratPengantarDesaProps {
   nama: string;
-  jenisKelamin: string; // "Lk" atau "Pr"
+  jenisKelamin: string;
   tempatLahir: string;
   tanggalLahir: string;
   agama: string;
@@ -27,9 +27,6 @@ export interface SuratPengantarDesaProps {
   keteranganLain: string;
 }
 
-/**
- * Komponen untuk menghasilkan PDF Surat Keterangan Pengantar Desa
- */
 export const buildSuratPengantarDesaDoc = async (
   props: SuratPengantarDesaProps,
   letterNumber: string = PREVIEW_LETTER_NUMBER
@@ -49,33 +46,27 @@ export const buildSuratPengantarDesaDoc = async (
     keteranganLain,
   } = props;
 
-  // Buat instance jsPDF
   const doc = new jsPDF();
 
-  // Set font ke Bookman Old Style
   doc.setFont("Bookman Old Style", "normal");
 
-  // Coba untuk mendapatkan gambar kop surat
   try {
-    // Gunakan gambar kop surat dari folder public
     const kopSuratDataUrl = await getImgFromUrl(
       "/images/layanan-surat/kop_kepohkencono.png"
     );
 
-    // Header Surat
     doc.addImage(
       kopSuratDataUrl,
       "PNG",
-      20, // x position
-      10, // y position
-      170, // width (hampir selebar halaman A4)
-      40, // height
-      "kop_surat", // alias
-      "MEDIUM" // compression
+      20,
+      10,
+      170,
+      40,
+      "kop_surat",
+      "MEDIUM"
     );
   } catch (error) {
     console.error("Gagal memuat kop surat:", error);
-    // Lanjutkan tanpa kop surat, gunakan teks sebagai fallback
     doc.setFontSize(12);
     doc.setFont("Bookman Old Style", "bold");
     doc.text("PEMERINTAH KABUPATEN PATI", 105, 20, { align: "center" });
@@ -91,14 +82,12 @@ export const buildSuratPengantarDesaDoc = async (
     );
   }
 
-  // No Kode Desa
   doc.setFontSize(12);
   doc.setFont("Bookman Old Style", "normal");
   doc.text("No Kode Desa : 33.18.05.20.03", 20, 55);
 
   const currentDate = new Date();
 
-  // Title Surat
   doc.setFontSize(18);
   doc.setFont("Bookman Old Style", "bold");
   doc.text("SURAT KETERANGAN PENGANTAR DESA", 105, 70, { align: "center" });
@@ -111,40 +100,33 @@ export const buildSuratPengantarDesaDoc = async (
     align: "center",
   });
 
-  // Add content
   doc.setFontSize(12);
   doc.setFont("Bookman Old Style", "normal");
   doc.text("Yang bertanda tangan di bawah ini, menerangkan bahwa :", 20, 93);
 
-  // Add user data
   let yPos = 105;
   const lineHeight = 7;
 
-  // 1. Nama
   doc.text("1.", 20, yPos);
   doc.text("Nama", 25, yPos);
   doc.text(": " + nama + " " + "(" + jenisKelamin + ")", 100, yPos);
   yPos += lineHeight;
 
-  // 2. Tempat & tanggal lahir
   doc.text("2.", 20, yPos);
   doc.text("Tempat & tanggal lahir", 25, yPos);
   doc.text(": " + tempatLahir + ", " + tanggalLahir, 100, yPos);
   yPos += lineHeight;
 
-  // 3. Kewarganegaraan & Agama
   doc.text("3.", 20, yPos);
   doc.text("Kewarganegaraan & Agama", 25, yPos);
   doc.text(": Indonesia & " + agama, 100, yPos);
   yPos += lineHeight;
 
-  // 4. Pekerjaan
   doc.text("4.", 20, yPos);
   doc.text("Pekerjaan", 25, yPos);
   doc.text(": " + pekerjaan, 100, yPos);
   yPos += lineHeight;
 
-  // 5. Tempat tinggal
   doc.text("5.", 20, yPos);
   doc.text("Tempat tinggal", 25, yPos);
   doc.text(
@@ -157,7 +139,6 @@ export const buildSuratPengantarDesaDoc = async (
   );
   yPos += lineHeight;
 
-  // Kecamatan, Kabupaten, Propinsi
   doc.text("Kecamatan : Pucakwangi", 103, yPos);
   yPos += lineHeight;
   doc.text("Kabupaten : Pati", 103, yPos);
@@ -165,7 +146,6 @@ export const buildSuratPengantarDesaDoc = async (
   doc.text("Propinsi : Jawa Tengah", 103, yPos);
   yPos += lineHeight;
 
-  // 6. Surat Bukti Diri
   doc.text("6.", 20, yPos);
   doc.text("Surat Bukti Diri", 25, yPos);
   doc.text(": KTP  " + suratBuktiDiri.ktpNomor, 100, yPos);
@@ -173,43 +153,35 @@ export const buildSuratPengantarDesaDoc = async (
   doc.text("KK No. " + suratBuktiDiri.kkNomor, 103, yPos);
   yPos += lineHeight;
 
-  // 7. Keperluan
   doc.text("7.", 20, yPos);
   doc.text("Keperluan", 25, yPos);
 
-  // Split keperluan into multiple lines if needed
   const splitKeperluan = doc.splitTextToSize(keperluan, 80);
   doc.text(": " + splitKeperluan[0], 100, yPos);
 
-  // Add additional lines if keperluan is multi-line
   for (let i = 1; i < splitKeperluan.length; i++) {
     yPos += lineHeight;
     doc.text(splitKeperluan[i], 100, yPos);
   }
   yPos += lineHeight;
 
-  // 8. Berlaku mulai
   doc.text("8.", 20, yPos);
   doc.text("Berlaku mulai", 25, yPos);
   doc.text(": " + berlakuMulai + " s/d " + berlakuSampai, 100, yPos);
   yPos += lineHeight;
 
-  // 9. Keterangan lain-lain
   doc.text("9.", 20, yPos);
   doc.text("Keterangan lain-lain", 25, yPos);
 
-  // Split keterangan into multiple lines if needed
   const splitKeterangan = doc.splitTextToSize(keteranganLain, 80);
   doc.text(": " + splitKeterangan[0], 100, yPos);
 
-  // Add additional lines if keterangan is multi-line
   for (let i = 1; i < splitKeterangan.length; i++) {
     yPos += lineHeight;
     doc.text(splitKeterangan[i], 100, yPos);
   }
   yPos += lineHeight * 2;
 
-  // Add closing statement
   doc.text(
     "Demikian untuk menjadikan maklum bagi yang berkepentingan",
     20,
@@ -217,11 +189,9 @@ export const buildSuratPengantarDesaDoc = async (
   );
   yPos += lineHeight * 2;
 
-  // Add signature section
   doc.text("Tanda tangan pemegang", 20, yPos);
   doc.text("Mengetahui", 85, yPos);
 
-  // Format tanggal untuk bagian tanda tangan
   const today = new Date();
   const formattedDate = `Kepohkencono, ${today.getDate()} ${
     [
@@ -249,13 +219,11 @@ export const buildSuratPengantarDesaDoc = async (
   doc.text("Kepohkencono", 140, yPos);
   yPos += lineHeight * 5;
 
-  // Add signature names
   doc.text("______________________", 20, yPos);
   doc.text("______________________", 85, yPos);
   doc.setFont("Bookman Old Style", "bold");
   doc.text("AGUS SUMANTO", 147, yPos);
 
-  // Add underline for AGUS SUMANTO
   const nameWidth = doc.getTextWidth("AGUS SUMANTO");
   doc.setLineWidth(0.3);
   doc.line(147, yPos + 1, 147 + nameWidth, yPos + 1);
@@ -270,9 +238,6 @@ export const buildSuratPengantarDesaDoc = async (
 export const suratPengantarDesaFilename = (props: SuratPengantarDesaProps) =>
   "Surat_Keterangan_Pengantar_Desa_" + props.nama.replace(/ /g, "_") + ".pdf";
 
-/**
- * Mengambil nomor surat berikutnya, membuat PDF, lalu mengunduhnya.
- */
 const generateSuratPengantarDesa = (
   props: SuratPengantarDesaProps
 ): Promise<GeneratedLetter | null> =>

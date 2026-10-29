@@ -22,7 +22,6 @@ export const initialValues = {
 
 type Values = typeof initialValues;
 
-/** Sections A–D, shared with Surat Permohonan Izin Keramaian. */
 export const sections: SectionDef<Values>[] = [
   {
     index: "A",
@@ -79,7 +78,6 @@ export const sections: SectionDef<Values>[] = [
   },
 ];
 
-/** Validation shared with Izin Keramaian; only the name message differs. */
 export const validatePemohon = (values: Values, namaMessage: string) => {
   const errors = requireFields(values, {
     nama: namaMessage,

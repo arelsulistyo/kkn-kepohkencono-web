@@ -54,7 +54,6 @@ export function Combobox({
 }: ComboboxProps) {
   const [open, setOpen] = React.useState(false);
 
-  // Flatten all options for finding selected value
   const allOptions = React.useMemo(() => {
     if (options) return options;
     if (groups) return groups.flatMap((group) => group.options);

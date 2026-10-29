@@ -1,9 +1,3 @@
-/**
- * Logo mark: a kepuh tree ("kepoh") before a gold setting sun ("kencono") over
- * the sawah. Tree and field lines use currentColor so the mark follows the
- * surrounding text colour. Decorative: always sits next
- * to the "Kepohkencono" wordmark text.
- */
 export default function KepohMark({ className = "" }: { className?: string }) {
   return (
     <svg

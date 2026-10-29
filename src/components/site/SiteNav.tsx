@@ -27,11 +27,6 @@ const NAV_ITEMS: { id: NavId; label: string; href: string }[] = [
 
 type SiteNavProps = { active: NavId } & (
   | { variant: "solid" }
-  /**
-   * "overlay" stays hidden over a hero photo until the element with id
-   * `revealAfter` has scrolled up under the bar. Keyboard focus still
-   * reveals it early.
-   */
   | { variant: "overlay"; revealAfter: string }
 );
 

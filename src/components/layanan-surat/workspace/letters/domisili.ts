@@ -51,7 +51,6 @@ export const validate = (values: Values) =>
 
 const pad2 = (value: string) => String(parseInt(value, 10)).padStart(2, "0");
 
-/** Picks the alamat option ("MANDING 01/01 KEPOHKENCONO …") matching the resident's RT/RW. */
 const alamatOption = (person: PersonData) => {
   if (!person.RT || !person.RW) return undefined;
   const rtRw = `${pad2(person.RT)}/${pad2(person.RW)}`;

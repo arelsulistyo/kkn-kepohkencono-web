@@ -11,10 +11,9 @@ export interface SuratKeteranganUsahaProps {
   pekerjaan: string;
   alamat: string;
   jenisUsaha: string;
-  // Fields for agricultural business details
-  jenisGarapan?: string; // Tambak/Sawah/Tegalan
-  luasLahan?: string; // in Ha
-  lokasiLahan?: string; // Terletak di Desa
+  jenisGarapan?: string;
+  luasLahan?: string;
+  lokasiLahan?: string;
   jenisBibit?: string;
   hasilPanen?: {
     ton?: string;
@@ -23,9 +22,6 @@ export interface SuratKeteranganUsahaProps {
   };
 }
 
-/**
- * Komponen untuk menghasilkan PDF Surat Keterangan Usaha
- */
 export const buildSuratKeteranganUsahaDoc = async (
   props: SuratKeteranganUsahaProps,
   letterNumber: string = PREVIEW_LETTER_NUMBER
@@ -42,33 +38,27 @@ export const buildSuratKeteranganUsahaDoc = async (
     hasilPanen,
   } = props;
 
-  // Buat instance jsPDF
   const doc = new jsPDF();
 
-  // Set font ke Bookman Old Style
   doc.setFont("Bookman Old Style", "normal");
 
-  // Coba untuk mendapatkan gambar kop surat
   try {
-    // Gunakan gambar kop surat dari folder public
     const kopSuratDataUrl = await getImgFromUrl(
       "/images/layanan-surat/kop_kepohkencono.png"
     );
 
-    // Header Surat
     doc.addImage(
       kopSuratDataUrl,
       "PNG",
-      20, // x position
-      10, // y position
-      170, // width (hampir selebar halaman A4)
-      40, // height
-      "kop_surat", // alias
-      "MEDIUM" // compression
+      20,
+      10,
+      170,
+      40,
+      "kop_surat",
+      "MEDIUM"
     );
   } catch (error) {
     console.error("Gagal memuat kop surat:", error);
-    // Lanjutkan tanpa kop surat, gunakan teks sebagai fallback
     doc.setFontSize(12);
     doc.setFont("Bookman Old Style", "bold");
     doc.text("PEMERINTAH KABUPATEN PATI", 105, 20, { align: "center" });
@@ -84,14 +74,12 @@ export const buildSuratKeteranganUsahaDoc = async (
     );
   }
 
-  // No Kode Desa
   doc.setFontSize(12);
   doc.setFont("Bookman Old Style", "normal");
   doc.text("No Kode Desa : 33.18.05.20.03", 20, 55);
 
   const currentDate = new Date();
 
-  // Title Surat
   doc.setFontSize(18);
   doc.setFont("Bookman Old Style", "bold");
   doc.text("SURAT KETERANGAN USAHA", 105, 70, { align: "center" });
@@ -104,53 +92,42 @@ export const buildSuratKeteranganUsahaDoc = async (
     align: "center",
   });
 
-  // Add content
   doc.setFontSize(12);
   doc.setFont("Bookman Old Style", "normal");
   doc.text("Yang bertanda tangan dibawah ini :", 20, 93);
 
-  // Add penandatangan data
   doc.text("Nama", 20, 100);
   doc.text(": NGASIMAN S.H.", 75, 100);
   doc.text("Jabatan", 20, 107);
   doc.text(": Pj.Kepala Desa Kepohkencono", 75, 107);
 
-  // Add description
   doc.text("Menerangkan dengan sesungguhnya bahwa :", 20, 123);
 
-  // Add user data
   doc.text("Nama", 20, 130);
   doc.text(": " + namaPeminta.toUpperCase(), 75, 130);
   doc.text("Pekerjaan", 20, 137);
 
-  // Format pekerjaan as a paragraph with word wrapping
-  const splitPekerjaan = doc.splitTextToSize(pekerjaan, 120); // Split text with max width
+  const splitPekerjaan = doc.splitTextToSize(pekerjaan, 120);
   doc.text(": " + splitPekerjaan[0], 75, 137);
 
-  // Add additional lines if pekerjaan is multi-line
   let currentY = 137;
   for (let i = 1; i < splitPekerjaan.length; i++) {
     currentY += 7;
     doc.text(splitPekerjaan[i], 75, currentY);
   }
 
-  // Adjust alamat position based on pekerjaan height
   const alamatY = currentY + 7;
   doc.text("Alamat", 20, alamatY);
   doc.text(": " + alamat, 75, alamatY);
 
-  // Add business description - adjust position based on alamat position
-  const businessY = alamatY + 16; // Add some space after alamat
+  const businessY = alamatY + 16;
   doc.text("Benar benar mempunyai usaha :", 35, businessY);
 
-  // Format jenisUsaha as a paragraph with word wrapping
-  const splitJenisUsaha = doc.splitTextToSize(jenisUsaha, 130); // Split text with max width
+  const splitJenisUsaha = doc.splitTextToSize(jenisUsaha, 130);
   doc.text(splitJenisUsaha, 35, businessY + 7);
 
-  // Add closing statement - adjust position based on business description
-  // Calculate position based on jenisUsaha length
   const jenisUsahaLines = splitJenisUsaha.length;
-  const closingY = businessY + 7 + jenisUsahaLines * 7 + 10; // Add some space after business description
+  const closingY = businessY + 7 + jenisUsahaLines * 7 + 10;
 
   doc.text(
     "        Demikian Surat Keterangan tersebut kami buat dan dapat dipergunakan seperlunya.",
@@ -159,11 +136,8 @@ export const buildSuratKeteranganUsahaDoc = async (
     { maxWidth: 170, align: "justify" }
   );
 
-  // Add signature section with current date
-  // Format the current date in Indonesian style
   const day = currentDate.getDate();
 
-  // Array of month names in Indonesian
   const monthNames = [
     "Januari",
     "Februari",
@@ -183,18 +157,15 @@ export const buildSuratKeteranganUsahaDoc = async (
   const year = currentDate.getFullYear();
   const formattedDate = `${day} ${month} ${year}`;
 
-  // Calculate signature position based on closing statement position
-  const signatureY = closingY + 15; // Add space after closing statement
+  const signatureY = closingY + 15;
 
   doc.text(`Kepohkencono, ${formattedDate}`, 130, signatureY);
   doc.text("Pj.Kepala Desa Kepohkencono", 130, signatureY + 5);
 
-  // Space for signature
-  const nameY = signatureY + 30; // Add space for signature
+  const nameY = signatureY + 30;
   doc.setFont("Bookman Old Style", "bold");
   doc.text("NGASIMAN S.H.", 145, nameY);
 
-  // Add underline for the signature name
   const signatureNameWidth = doc.getTextWidth("NGASIMAN S.H.");
   doc.setLineWidth(0.5);
   doc.line(145, nameY + 1, 145 + signatureNameWidth, nameY + 1);
@@ -202,16 +173,13 @@ export const buildSuratKeteranganUsahaDoc = async (
   doc.setFont("Bookman Old Style", "normal");
   doc.text("NIP. 197006051992031007", 133, nameY + 6);
 
-  // Add agricultural business details if provided
   if (jenisGarapan) {
-    // Calculate position for agricultural details section based on signature position
-    const agricY = nameY + 15; // Add space after signature
+    const agricY = nameY + 15;
 
     doc.setFontSize(10);
     doc.setFont("Bookman Old Style", "bold");
     doc.text("KETERANGAN GARAPAN UNTUK USAHA PERTANIAN:", 20, agricY);
 
-    // Add underline for the agricultural business details title
     const agricTitleWidth = doc.getTextWidth(
       "KETERANGAN GARAPAN UNTUK USAHA PERTANIAN:"
     );
@@ -258,9 +226,6 @@ export const buildSuratKeteranganUsahaDoc = async (
 export const suratKeteranganUsahaFilename = (props: SuratKeteranganUsahaProps) =>
   "Surat_Keterangan_Usaha_" + props.namaPeminta.replace(/ /g, "_") + ".pdf";
 
-/**
- * Mengambil nomor surat berikutnya, membuat PDF, lalu mengunduhnya.
- */
 const generateSuratKeteranganUsaha = (
   props: SuratKeteranganUsahaProps
 ): Promise<GeneratedLetter | null> =>

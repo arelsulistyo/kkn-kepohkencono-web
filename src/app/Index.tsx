@@ -117,7 +117,6 @@ const EVENTS = [
   },
 ];
 
-/** Order and alt text follow the mosaic's grid areas a–h. */
 const GALLERY: { image: StaticImageData; alt: string }[] = [
   { image: gallery3, alt: "Matahari terbenam di atas padang rumput desa" },
   { image: gallery4, alt: "Gapura dan jalan di tepi desa" },
@@ -131,7 +130,6 @@ const GALLERY: { image: StaticImageData; alt: string }[] = [
 
 const MARQUEE = DUKUH.map((dukuh) => dukuh.name).join(" · ");
 
-/** Three largest rows of a breakdown, as shares of `whole`. */
 function topShares(rows: SexBreakdown[], whole: number) {
   return [...rows]
     .sort((a, b) => b.total - a.total)
@@ -160,7 +158,6 @@ const LEDGERS = [
   },
 ];
 
-/** Page sections, in page order, whose ids match the nav items. */
 const SECTIONS: readonly NavId[] = [
   "beranda",
   "tentang",

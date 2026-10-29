@@ -25,7 +25,6 @@ const subscribeToHash = (onChange: () => void) => {
   return () => window.removeEventListener("hashchange", onChange);
 };
 
-/** The active tab lives in the URL hash so it is linkable and back-able. */
 function useHashTab(): TabId {
   const hash = useSyncExternalStore(
     subscribeToHash,

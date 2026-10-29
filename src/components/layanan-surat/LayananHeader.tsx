@@ -15,7 +15,6 @@ interface LayananHeaderProps {
   title: string;
   subtitle: string;
   facts: [HeaderFact, HeaderFact];
-  /** Title of the current letter; adds a second crumb and links the first one back to the list. */
   currentLabel?: string;
   compact?: boolean;
 }
